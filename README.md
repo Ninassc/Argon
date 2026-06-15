@@ -64,22 +64,81 @@ A plataforma possibilita o cadastro de ativos minerários, gerenciamento de docu
 ## Estrutura do Projeto
 
 ```text
-argon/
+Argon/
+│
 ├── frontend/
-│   └── Flutter
+│   ├── lib/
+│   │   ├── models/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── widgets/
+│   │   └── main.dart
+│   │
+│   ├── web/
+│   ├── test/
+│   ├── android/
+│   ├── ios/
+│   ├── linux/
+│   ├── macos/
+│   └── windows/
 │
 ├── backend/
 │   ├── controllers/
+│   │
 │   ├── models/
-│   ├── routes/
+│   │   ├── usuario.py
+│   │   ├── processo_minerario.py
+│   │   ├── ativo_minerario.py
+│   │   ├── documento.py
+│   │   ├── favorito.py
+│   │   └── acesso.py
+│   │
+│   ├── repositories/
+│   │   ├── usuario_repository.py
+│   │   └── ativo_repository.py
+│   │
 │   ├── services/
-│   └── app.py
+│   │   ├── usuario_service.py
+│   │   └── ativo_service.py
+│   │
+│   ├── database/
+│   │   └── create_database.sql
+│   │
+│   ├── app.py
+│   ├── config.py
+│   └── requirements.txt
 │
-├── database/
-│   └── MySQL
-│
-└── docs/
+├── README.md
+└── .gitignore
 ```
+
+### Organização das Pastas
+
+#### Frontend
+
+Responsável pela interface gráfica da aplicação, desenvolvida em Flutter Web.
+
+* **pages/**: telas da aplicação.
+* **widgets/**: componentes reutilizáveis da interface.
+* **models/**: modelos de dados utilizados no frontend.
+* **services/**: comunicação com a API.
+
+#### Backend
+
+Responsável pelas regras de negócio e comunicação com o banco de dados.
+
+* **controllers/**: recebem as requisições da API e retornam respostas.
+* **services/**: implementam as regras de negócio da aplicação.
+* **models/**: representam as entidades do sistema.
+* **repositories/**: realizam consultas e operações específicas no banco de dados.
+* **database/**: scripts SQL de criação e manutenção do banco.
+* **app.py**: arquivo principal da API Flask.
+* **config.py**: configurações da aplicação.
+* **requirements.txt**: dependências do projeto.
+
+#### Banco de Dados
+
+O sistema utilizará MySQL para armazenamento das informações da plataforma.
 
 ---
 
