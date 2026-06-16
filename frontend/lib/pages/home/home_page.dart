@@ -24,16 +24,15 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
+      appBar: AppBar(
+        centerTitle: true,
+        //title: Image.asset("assets/images/logo_argon.png", height: 50),
+      ),
+
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 24),
-
-            Image.asset(
-              "assets/images/logo_argon.png",
-              height: 50,
-            ),
-
             Expanded(
               child: PageView(
                 controller: controller,
@@ -47,7 +46,7 @@ class _HomePageState extends State<HomePage> {
                     imagem: "assets/images/onboarding1.png",
                     titulo: "Organize seus ativos minerários",
                     descricao:
-                        "Centralize informações e documentos em um único lugar.",
+                        "Organize seus processos minerários com mais clareze, segurança e controle",
                   ),
 
                   OnboardingPageWidget(
@@ -67,16 +66,11 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            OnboardingIndicator(
-              paginaAtual: paginaAtual,
-            ),
+            OnboardingIndicator(paginaAtual: paginaAtual),
 
             const SizedBox(height: 24),
 
-            OnboardingButtons(
-              paginaAtual: paginaAtual,
-              controller: controller,
-            ),
+            OnboardingButtons(paginaAtual: paginaAtual, controller: controller),
 
             const SizedBox(height: 24),
           ],
