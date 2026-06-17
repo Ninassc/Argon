@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/auth/cadastro_page.dart';
+import 'package:frontend/pages/auth/login_page.dart';
+import 'package:frontend/widgets/buttons.dart';
 
 class OnboardingButtons extends StatelessWidget {
   final int paginaAtual;
@@ -46,6 +49,14 @@ class OnboardingButtons extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       // navegar
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return CadastroPage();
+                          },
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF5A81FA),
@@ -88,25 +99,17 @@ class OnboardingButtons extends StatelessWidget {
 
           SizedBox(height: 10),
 
-          SizedBox(
-            height: 48,
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                // navegar
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(color: const Color(0xFF5A81FA), width: 2),
-                ),
-              ),
-              child: const Text(
-                "Já Possuo uma Conta",
-                style: TextStyle(color: Color(0xFF5A81FA)),
-              ),
-            ),
+          Buttons(
+            texto: "Já Possuo uma Conta",
+            corBotao: Colors.white,
+            corTexto: const Color(0xFF5A81FA),
+            onPressed: () {
+              print("aaaaaaaa");
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
+              );
+            },
           ),
         ],
       ),

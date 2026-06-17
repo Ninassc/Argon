@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../widgets/onboarding_buttons.dart';
-import '../../widgets/onboarding_indicator.dart';
-import '../../widgets/onboarding_page_widget.dart';
+import '../../widgets/onboarding/onboarding_buttons.dart';
+import '../../widgets/onboarding/onboarding_indicator.dart';
+import '../../widgets/onboarding/onboarding_page_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

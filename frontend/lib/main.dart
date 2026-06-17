@@ -17,7 +17,10 @@ class MyApp extends StatelessWidget {
       title: 'Argon',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF5A81FA)),
-        scaffoldBackgroundColor: Colors.white
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.white,
+        )
       ),
       home: HomePage(),
     );
