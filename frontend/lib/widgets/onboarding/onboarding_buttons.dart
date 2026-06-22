@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/auth/cadastro_page.dart';
 import 'package:frontend/pages/auth/login_page.dart';
-import 'package:frontend/widgets/buttons.dart';
+import 'package:frontend/widgets/buttons/buttons.dart';
 
 class OnboardingButtons extends StatelessWidget {
   final int paginaAtual;
@@ -66,7 +66,7 @@ class OnboardingButtons extends StatelessWidget {
                     ),
                     child: const Text(
                       "Comece a Pesquisar",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
                 ),
@@ -104,7 +104,6 @@ class OnboardingButtons extends StatelessWidget {
             corBotao: Colors.white,
             corTexto: const Color(0xFF5A81FA),
             onPressed: () {
-              print("aaaaaaaa");
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => LoginPage()),

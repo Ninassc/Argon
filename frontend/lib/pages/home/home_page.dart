@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../widgets/onboarding/onboarding_buttons.dart';
-import '../../widgets/onboarding/onboarding_indicator.dart';
-import '../../widgets/onboarding/onboarding_page_widget.dart';
+import 'package:frontend/widgets/buttons/action_button.dart';
+import 'package:frontend/widgets/textfields/pesquisar_input.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,69 +10,31 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final PageController controller = PageController();
-
-  int paginaAtual = 0;
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
+    TextEditingController controller = TextEditingController();
     return Scaffold(
-
       appBar: AppBar(
+        //automaticallyImplyLeading: false,
         centerTitle: true,
-        //title: Image.asset("assets/images/logo_argon.png", height: 50),
+        title: Image.asset("assets/images/ArgON.png", height: 42),
       ),
 
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: PageView(
-                controller: controller,
-                onPageChanged: (index) {
-                  setState(() {
-                    paginaAtual = index;
-                  });
-                },
-                children: const [
-                  OnboardingPageWidget(
-                    imagem: "assets/images/onboarding1.png",
-                    titulo: "Organize seus ativos minerários",
-                    descricao:
-                        "Organize seus processos minerários com mais clareze, segurança e controle",
-                  ),
-
-                  OnboardingPageWidget(
-                    imagem: "assets/images/onboarding2.png",
-                    titulo: "Compartilhe com segurança",
-                    descricao:
-                        "Controle quem pode acessar os documentos dos seus ativos.",
-                  ),
-
-                  OnboardingPageWidget(
-                    imagem: "assets/images/onboarding3.png",
-                    titulo: "Valide dados oficiais",
-                    descricao:
-                        "Utilize informações da ANM para apresentar ativos com mais confiança.",
-                  ),
+        child: Padding(
+          padding: EdgeInsetsGeometry.all(24),
+          child: Column(
+            children: [
+              Row(
+                spacing: 5,
+                children: [
+                  Expanded(child: PesquisarInput(controller: controller)),
+                  ActionButton(icone: Icons.remove_red_eye_outlined, onPressed: (){}),
+                  ActionButton(icone: Icons.tune, onPressed: (){})
                 ],
               ),
-            ),
-
-            OnboardingIndicator(paginaAtual: paginaAtual),
-
-            const SizedBox(height: 24),
-
-            OnboardingButtons(paginaAtual: paginaAtual, controller: controller),
-
-            const SizedBox(height: 24),
-          ],
+            ],
+          ),
         ),
       ),
     );

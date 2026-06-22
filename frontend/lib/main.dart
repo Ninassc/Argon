@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/home/home_page.dart';
+import 'package:frontend/pages/welcome/welcome_page.dart';
 import 'package:device_preview/device_preview.dart';
 
 void main() {
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.white,
         )
       ),
-      home: HomePage(),
+      home: WelcomePage(),
     );
   }
 }
