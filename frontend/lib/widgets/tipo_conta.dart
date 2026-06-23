@@ -1,5 +1,4 @@
 // tipo_conta.dart
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class TipoConta extends StatefulWidget {
@@ -21,7 +20,7 @@ class _TipoContaState extends State<TipoConta> {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 5,
       children: [
-        Text("Tipo de Usário"),
+        Text("Tipo de Usuário"),
         SizedBox(
           width: double.infinity,
           height: 48,

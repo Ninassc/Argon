@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/auth/login_page.dart';
-import 'package:frontend/widgets/buttons.dart';
-import 'package:frontend/widgets/campo_input.dart';
+import 'package:frontend/widgets/buttons/buttons.dart';
+import 'package:frontend/widgets/textfields/campo_input.dart';
 import 'package:frontend/widgets/tipo_conta.dart';
 
 enum TipoUsuario { titular, interessado }
@@ -37,7 +37,7 @@ class _CadastroPageState extends State<CadastroPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        //title: Image.asset("assets/images/logo_argon.png", height: 50),
+        title: Image.asset("assets/images/ArgON.png", height: 42),
       ),
 
       body: SafeArea(
@@ -81,7 +81,7 @@ class _CadastroPageState extends State<CadastroPage> {
               SizedBox(height: 10),
 
               Buttons(
-                texto: "Entrar",
+                texto: "Criar Conta",
                 corBotao: const Color(0xFF5A81FA),
                 corTexto: Colors.white,
                 onPressed: () {},
