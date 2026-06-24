@@ -4,7 +4,7 @@ CREATE TABLE
         nome VARCHAR(100) NOT NULL,
         email VARCHAR(150) NOT NULL UNIQUE,
         senha VARCHAR(255) NOT NULL,
-        telefone VARCHAR(20),
+        telefone VARCHAR(20) UNIQUE,
         dt_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
