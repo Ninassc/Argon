@@ -1,6 +1,6 @@
 from models.usuario import Usuario
 
-class ListarTodosService:
+class ListarUsuariosService:
     def executar(self):
         usuarios = Usuario.listar_todos()
 
