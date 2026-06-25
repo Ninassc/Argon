@@ -1,0 +1,89 @@
+from flask import Blueprint, request, jsonify
+from models import db
+from sqlalchemy.exc import SQLAlchemyError
+
+from services import CriarUsuarioService
+from services import ListarTodosService
+from services import BuscarUsuarioService
+from services import DeletarUsuarioService
+from services import AtualizarUsuarioService
+
+usuario_bp = Blueprint("usuario", __name__, url_prefix="/usuarios")
+
+@usuario_bp.post("/")
+def criar_usuario():
+    try:
+        dados = request.get_json()
+
+        service = CriarUsuarioService()
+
+        usuario = service.executar(dados)
+
+        return jsonify(usuario), 201
+
+    except ValueError as erro:
+        return jsonify({"erro": str(erro)}), 400
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"erro": "Erro ao salvar usuário no banco de dados."}), 500
+
+
+@usuario_bp.get("/")
+def listar_usuarios():
+    service = ListarTodosService()
+
+    usuarios = service.executar()
+
+    return jsonify(usuarios), 200
+
+
+@usuario_bp.get("/<int:usuario_id>")
+def buscar_usuario_id(usuario_id):
+    service = BuscarUsuarioService()
+
+    usuario = service.executar(usuario_id)
+
+    if usuario is None:
+        return jsonify({"erro": "Usuário não encontrado."}), 404
+
+    return jsonify(usuario), 200
+
+
+@usuario_bp.put("/<int:usuario_id>")
+def atualizar_usuario(usuario_id):
+    try:
+        dados = request.get_json() or {}
+
+        service = AtualizarUsuarioService()
+
+        usuario = service.executar(usuario_id, dados)
+
+        if usuario is None:
+            return jsonify({"erro": "Usuário não encontrado."}), 404
+
+        return jsonify(usuario), 200
+
+    except ValueError as erro:
+        return jsonify({"erro": str(erro)}), 400
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"erro": "Erro ao atualizar usuário."}), 500
+
+
+@usuario_bp.delete("/<int:usuario_id>")
+def deletar_usuario(usuario_id):
+    try:
+        service = DeletarUsuarioService()
+
+        resultado = service.executar(usuario_id)
+
+        if not resultado:
+            return jsonify({"erro": "Usuário não encontrado."}), 404
+
+        return jsonify({"mensagem": "Usuário excluído com sucesso."}), 200
+
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"erro": "Erro ao excluir usuário."}), 500

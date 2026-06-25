@@ -56,8 +56,8 @@ class Usuario(db.Model):
     @classmethod
     def buscar_por_email(cls, email):
         return cls.query.filter_by(email=email).first()
-    
-    @classmethod 
+
+    @classmethod
     def buscar_por_telefone(cls, telefone):
         return cls.query.filter_by(telefone=telefone).first()
 
@@ -68,7 +68,5 @@ class Usuario(db.Model):
             "nome": self.nome,
             "email": self.email,
             "telefone": self.telefone,
-            "dt_cadastro": (
-                self.dt_cadastro.isoformat() if self.dt_cadastro else None
-            ),
+            "dt_cadastro": (self.dt_cadastro.isoformat() if self.dt_cadastro else None),
         }
