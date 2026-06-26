@@ -1,7 +1,7 @@
 from models import ProcessoMinerario
 
 
-class BuscarProcessoService:
+class PesquisarProcessosService:
 
     def executar(self, termo):
         processos = ProcessoMinerario.pesquisar(termo)
