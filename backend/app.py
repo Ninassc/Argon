@@ -2,7 +2,7 @@ from flask import Flask
 
 from config import Config
 from models import db
-from controllers import usuario_bp
+from controllers import usuario_bp, processo_bp, ativo_bp
 
 def create_app():
     app = Flask(__name__)
@@ -12,6 +12,8 @@ def create_app():
     db.init_app(app)
 
     app.register_blueprint(usuario_bp)
+    app.register_blueprint(processo_bp)
+    app.register_blueprint(ativo_bp)
 
     with app.app_context():
         db.create_all()
