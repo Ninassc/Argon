@@ -2,36 +2,43 @@
 
 ## Plataforma de Organização e Compartilhamento de Direitos Minerários
 
-### Repositório
-
-https://github.com/Ninassc/Argon
-
-### Integrantes da Equipe
-
-* Nina Sepúlveda Soares Carvalho
-* Victor Emanuel Pancote
-* Antônio Franco Silva
-* André Yuri Moreira
-* Rafael Muniz de Holanda
-* Thomas Andrew Schafer de Souza
+O **Argon** é uma plataforma web desenvolvida para organizar, validar e compartilhar informações relacionadas a direitos minerários. A aplicação utiliza dados públicos da Agência Nacional de Mineração (ANM) para disponibilizar uma base confiável de consulta e permitir que usuários organizem seus ativos minerários em um ambiente seguro e estruturado.
 
 ---
 
-## Tecnologias Utilizadas
+## Repositório
 
-### Frontend
+https://github.com/Ninassc/Argon
 
-* Flutter Web
-* Dart
+---
 
-### Backend
+## Integrantes da Equipe
 
-* Python
-* Flask
+- Nina Sepúlveda Soares Carvalho
+- Victor Emanuel Pancote
+- Antônio Franco Silva
+- André Yuri Moreira
+- Rafael Muniz de Holanda
+- Thomas Andrew Schafer de Souza
 
-### Banco de Dados
+---
 
-* MySQL
+# Tecnologias Utilizadas
+
+## Frontend
+
+- Flutter
+- Dart
+
+## Backend
+
+- Python
+- Flask
+- SQLAlchemy
+
+## Banco de Dados
+
+- MySQL
 
 ---
 
@@ -45,115 +52,142 @@ A plataforma possibilita o cadastro de ativos minerários, gerenciamento de docu
 
 ---
 
-## Principais Funcionalidades
+# Funcionalidades
 
-* Cadastro e autenticação de usuários
-* Verificação de processos minerários
-* Cadastro de ativos minerários
-* Busca e filtragem de ativos
-* Sistema de favoritos
-* Upload e gerenciamento de documentos
-* Solicitação de acesso a documentos
-* Compartilhamento controlado de informações
-* Registro de acessos e interações
-* Visualização de perfis de usuários
-* Exportação de dados para planilhas
+## Implementadas
+
+- Cadastro de usuários
+- Consulta de processos minerários
+- Pesquisa de processos minerários
+- Cadastro de ativos minerários
+- Gerenciamento de ativos minerários
+- Estrutura para sincronização automática da base da ANM
+
+## Em desenvolvimento
+
+- Autenticação de usuários
+- Sistema de favoritos
+- Upload e gerenciamento de documentos
+- Solicitação de acesso a documentos
+- Compartilhamento controlado de informações
+- Registro de acessos
+- Exportação de dados
 
 ---
 
-## Estrutura do Projeto
+# Arquitetura
+
+O backend foi desenvolvido seguindo uma arquitetura em camadas, separando as responsabilidades da aplicação.
+
+- **Controllers:** recebem as requisições HTTP e retornam respostas da API.
+- **Services:** implementam as regras de negócio do sistema.
+- **Models:** representam as entidades e realizam operações de persistência utilizando SQLAlchemy.
+- **Scripts:** executam processos internos, como população do banco e sincronização da base da ANM.
+
+---
+
+# Estrutura do Projeto
 
 ```text
 Argon/
 │
 ├── frontend/
+│   ├── assets/
+│   │   └── images/
+│   │
 │   ├── lib/
+│   │   ├── data/
 │   │   ├── models/
 │   │   ├── pages/
-│   │   ├── services/
+│   │   │   ├── auth/
+│   │   │   ├── home/
+│   │   │   └── welcome/
 │   │   ├── widgets/
 │   │   └── main.dart
 │   │
-│   ├── web/
-│   ├── test/
 │   ├── android/
 │   ├── ios/
 │   ├── linux/
 │   ├── macos/
-│   └── windows/
+│   ├── web/
+│   ├── windows/
+│   └── test/
 │
 ├── backend/
 │   ├── controllers/
-│   │
-│   ├── models/
-│   │   ├── usuario.py
-│   │   ├── processo_minerario.py
-│   │   ├── ativo_minerario.py
-│   │   ├── documento.py
-│   │   ├── favorito.py
-│   │   └── acesso.py
-│   │
-│   ├── repositories/
-│   │   ├── usuario_repository.py
-│   │   └── ativo_repository.py
-│   │
-│   ├── services/
-│   │   ├── usuario_service.py
-│   │   └── ativo_service.py
+│   │   ├── usuario_controller.py
+│   │   ├── processo_minerario_controller.py
+│   │   └── ativo_minerario_controller.py
 │   │
 │   ├── database/
 │   │   └── create_database.sql
 │   │
+│   ├── models/
+│   │   ├── acesso.py
+│   │   ├── ativo_minerario.py
+│   │   ├── documento.py
+│   │   ├── favorito.py
+│   │   ├── processo_minerario.py
+│   │   ├── usuario.py
+│   │   └── __init__.py
+│   │
+│   ├── scripts/
+│   │   ├── seed.py
+│   │   └── sincronizar_anm.py
+│   │
+│   ├── services/
+│   │   ├── ativo_minerario/
+│   │   ├── processo_minerario/
+│   │   ├── sincronizacao/
+│   │   └── usuario/
+│   │
 │   ├── app.py
 │   ├── config.py
-│   └── requirements.txt
+│   ├── requirements.txt
+│   └── .env
 │
 ├── README.md
 └── .gitignore
 ```
 
-### Organização das Pastas
+---
 
-#### Frontend
+# Organização das Pastas
 
-Responsável pela interface gráfica da aplicação, desenvolvida em Flutter Web.
+## Frontend
 
-* **pages/**: telas da aplicação.
-* **widgets/**: componentes reutilizáveis da interface.
-* **models/**: modelos de dados utilizados no frontend.
-* **services/**: comunicação com a API.
+Responsável pela interface da aplicação desenvolvida em Flutter.
 
-#### Backend
+- **pages/**: telas da aplicação.
+- **widgets/**: componentes reutilizáveis da interface.
+- **models/**: modelos utilizados pelo frontend.
+- **data/**: dados temporários utilizados durante o desenvolvimento.
+- **assets/**: imagens e demais recursos gráficos.
 
-Responsável pelas regras de negócio e comunicação com o banco de dados.
+## Backend
 
-* **controllers/**: recebem as requisições da API e retornam respostas.
-* **services/**: implementam as regras de negócio da aplicação.
-* **models/**: representam as entidades do sistema.
-* **repositories/**: realizam consultas e operações específicas no banco de dados.
-* **database/**: scripts SQL de criação e manutenção do banco.
-* **app.py**: arquivo principal da API Flask.
-* **config.py**: configurações da aplicação.
-* **requirements.txt**: dependências do projeto.
+Responsável pela API e pelas regras de negócio.
 
-#### Banco de Dados
-
-O sistema utilizará MySQL para armazenamento das informações da plataforma.
+- **controllers/**: endpoints da API REST.
+- **services/**: implementação das regras de negócio.
+- **models/**: entidades e operações de acesso ao banco de dados.
+- **scripts/**: scripts auxiliares para desenvolvimento e sincronização da base da ANM.
+- **database/**: scripts SQL do projeto.
 
 ---
 
-## Como Executar o Projeto
+# Como Executar o Projeto
 
-### Pré-requisitos
+## Pré-requisitos
 
-* Flutter SDK
-* Python 3.11 ou superior
-* MySQL Server
-* Git
+- Flutter SDK
+- Python 3.11 ou superior
+- MySQL Server
+- Git
 
 ---
 
-### Clonar o Repositório
+## Clonar o Repositório
 
 ```bash
 git clone https://github.com/Ninassc/Argon.git
@@ -162,33 +196,57 @@ cd Argon
 
 ---
 
-### Executar o Backend
+# Executando o Backend
 
-Instalar dependências:
+Entre na pasta do backend.
+
+```bash
+cd backend
+```
+
+Instale as dependências.
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Configurar a conexão com o banco de dados MySQL.
+Configure a conexão com o banco de dados no arquivo `.env`.
 
-Executar o servidor:
+Crie o banco de dados executando o script:
+
+```text
+backend/database/create_database.sql
+```
+
+Execute a API.
 
 ```bash
 python app.py
 ```
 
+Caso queira popular o banco com dados fictícios para testes, execute:
+
+```bash
+python scripts/seed.py
+```
+
 ---
 
-### Executar o Frontend
+# Executando o Frontend
 
-Instalar dependências:
+Entre na pasta do frontend.
+
+```bash
+cd frontend
+```
+
+Instale as dependências.
 
 ```bash
 flutter pub get
 ```
 
-Executar aplicação:
+Execute a aplicação.
 
 ```bash
 flutter run -d chrome
@@ -196,18 +254,24 @@ flutter run -d chrome
 
 ---
 
-## Fonte dos Dados
+# Banco de Dados
 
-O sistema utiliza informações públicas disponibilizadas pela Agência Nacional de Mineração (ANM) para validação e consulta de processos minerários.
+O projeto utiliza o MySQL como sistema gerenciador de banco de dados.
 
----
-
-## Objetivo
-
-Centralizar informações sobre direitos minerários, reduzir retrabalho na organização de documentos e oferecer um ambiente estruturado para compartilhamento controlado de dados e arquivos relacionados a ativos minerários.
+As tabelas são criadas automaticamente pela aplicação utilizando SQLAlchemy, enquanto o script presente em `database/create_database.sql` é responsável pela criação inicial do banco.
 
 ---
 
-## Status do Projeto
+# Fonte dos Dados
+
+O Argon utiliza dados públicos disponibilizados pela **Agência Nacional de Mineração (ANM)**.
+
+A sincronização da base de processos minerários foi projetada para importar periodicamente os arquivos oficiais disponibilizados pela ANM, permitindo manter a base da plataforma sempre atualizada.
+
+---
+
+# Status do Projeto
 
 Projeto acadêmico desenvolvido para a disciplina de Projeto de Software.
+
+Atualmente encontra-se em desenvolvimento contínuo, com funcionalidades de gerenciamento de usuários, processos minerários e ativos minerários implementadas e novas funcionalidades sendo desenvolvidas.
