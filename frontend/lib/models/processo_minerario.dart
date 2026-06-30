@@ -1,9 +1,11 @@
 class ProcessoMinerario {
+  final int idProcesso;
+  final String idAnm;
+
   final String processo;
   final String numero;
   final String ano;
   final String areaHa;
-  final String id;
   final String fase;
   final String ultEvento;
   final String nome;
@@ -13,11 +15,12 @@ class ProcessoMinerario {
   final String dsProcesso;
 
   const ProcessoMinerario({
+    required this.idProcesso,
+    required this.idAnm,
     required this.processo,
     required this.numero,
     required this.ano,
     required this.areaHa,
-    required this.id,
     required this.fase,
     required this.ultEvento,
     required this.nome,
@@ -29,18 +32,20 @@ class ProcessoMinerario {
 
   factory ProcessoMinerario.fromJson(Map<String, dynamic> json) {
     return ProcessoMinerario(
-      processo: json["PROCESSO"].toString(),
-      numero: json["NUMERO"].toString(),
-      ano: json["ANO"].toString(),
-      areaHa: json["AREA_HA"].toString(),
-      id: json["ID"].toString(),
-      fase: json["FASE"].toString(),
-      ultEvento: json["ULT_EVENTO"].toString(),
-      nome: json["NOME"].toString(),
-      subs: json["SUBS"].toString(),
-      uso: json["USO"].toString(),
-      uf: json["UF"].toString(),
-      dsProcesso: json["DSProcesso"].toString(),
+      idProcesso: json["id_processo"],
+      idAnm: json["id_anm"].toString(),
+
+      processo: json["processo"].toString(),
+      numero: json["numero"].toString(),
+      ano: json["ano"].toString(),
+      areaHa: json["area_ha"].toString(),
+      fase: json["fase"].toString(),
+      ultEvento: json["ult_evento"].toString(),
+      nome: json["nome"].toString(),
+      subs: json["subs"].toString(),
+      uso: json["uso"].toString(),
+      uf: json["uf"].toString(),
+      dsProcesso: json["ds_processo"].toString(),
     );
   }
 }
