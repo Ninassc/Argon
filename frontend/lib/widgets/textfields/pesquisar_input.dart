@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class PesquisarInput extends StatelessWidget {
   final TextEditingController controller;
-  const PesquisarInput({super.key, required this.controller});
+  final ValueChanged<String> onChanged;
+  const PesquisarInput({super.key, required this.controller, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +24,7 @@ class PesquisarInput extends StatelessWidget {
             borderSide: BorderSide(color: Color(0xFFE0E0E0)),
           ),
         ),
+        onChanged: onChanged,
       ),
     );
   }

@@ -120,6 +120,7 @@ class ProcessoMinerario(db.Model):
                 (cls.processo.ilike(f"%{termo}%"))
                 | (cls.numero.ilike(f"%{termo}%"))
                 | (cls.nome.ilike(f"%{termo}%"))
+                | (cls.subs.ilike(f"%{termo}%"))
             )
             .order_by(cls.id_processo.asc())
             .all()
