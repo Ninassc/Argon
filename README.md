@@ -47,113 +47,228 @@ A plataforma possibilita o cadastro de ativos minerários, gerenciamento de docu
 
 ## Principais Funcionalidades
 
-* Cadastro e autenticação de usuários
-* Verificação de processos minerários
-* Cadastro de ativos minerários
-* Busca e filtragem de ativos
-* Sistema de favoritos
-* Upload e gerenciamento de documentos
-* Solicitação de acesso a documentos
-* Compartilhamento controlado de informações
-* Registro de acessos e interações
-* Visualização de perfis de usuários
-* Exportação de dados para planilhas
+### Funcionalidades Implementadas
+
+- Cadastro de usuários
+- Consulta de processos minerários
+- Pesquisa de processos minerários
+- Visualização de informações detalhadas de processos minerários
+- Cadastro de ativos minerários
+- Edição de ativos minerários
+- Edição de informações do perfil do usuário
+- Restrição da edição de ativos minerários aos seus respectivos proprietários
+- Integração entre Flutter Web e API REST desenvolvida em Flask
 
 ---
 
-## Estrutura do Projeto
+# Estrutura do Projeto
 
 ```text
 Argon/
 │
-├── frontend/
-│   ├── lib/
-│   │   ├── models/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   ├── widgets/
-│   │   └── main.dart
-│   │
-│   ├── web/
-│   ├── test/
-│   ├── android/
-│   ├── ios/
-│   ├── linux/
-│   ├── macos/
-│   └── windows/
-│
 ├── backend/
 │   ├── controllers/
-│   │
-│   ├── models/
-│   │   ├── usuario.py
-│   │   ├── processo_minerario.py
-│   │   ├── ativo_minerario.py
-│   │   ├── documento.py
-│   │   ├── favorito.py
-│   │   └── acesso.py
-│   │
-│   ├── repositories/
-│   │   ├── usuario_repository.py
-│   │   └── ativo_repository.py
-│   │
-│   ├── services/
-│   │   ├── usuario_service.py
-│   │   └── ativo_service.py
+│   │   ├── ativo_minerario_controller.py
+│   │   ├── processo_minerario_controller.py
+│   │   └── usuario_controller.py
 │   │
 │   ├── database/
 │   │   └── create_database.sql
+│   │
+│   ├── models/
+│   │   ├── acesso.py
+│   │   ├── ativo_minerario.py
+│   │   ├── documento.py
+│   │   ├── favorito.py
+│   │   ├── processo_minerario.py
+│   │   └── usuario.py
+│   │
+│   ├── repositories/
+│   │   ├── ativo_repository.py
+│   │   └── usuario_repository.py
+│   │
+│   ├── scripts/
+│   │   ├── seed.py
+│   │   └── sincronizar_anm.py
+│   │
+│   ├── services/
+│   │   ├── ativo_minerario/
+│   │   │   ├── atualizar_ativo_service.py
+│   │   │   ├── buscar_ativo_service.py
+│   │   │   ├── criar_ativo_service.py
+│   │   │   ├── deletar_ativo_service.py
+│   │   │   └── listar_ativos_usuario_service.py
+│   │   │
+│   │   ├── processo_minerario/
+│   │   │   ├── buscar_processo_id_service.py
+│   │   │   ├── importar_processos_anm_service.py
+│   │   │   ├── listar_processos_service.py
+│   │   │   └── pesquisar_processos_service.py
+│   │   │
+│   │   ├── sincronizacao/
+│   │   │   ├── baixar_dbf_service.py
+│   │   │   ├── ler_dbf_service.py
+│   │   │   └── sincronizar_base_anm.py
+│   │   │
+│   │   └── usuario/
+│   │       ├── atualizar_usuario_service.py
+│   │       ├── buscar_usuario_service.py
+│   │       ├── criar_usuario_service.py
+│   │       ├── deletar_usuario_service.py
+│   │       └── listar_usuarios_service.py
 │   │
 │   ├── app.py
 │   ├── config.py
 │   └── requirements.txt
 │
+├── frontend/
+│   ├── assets/
+│   │
+│   ├── lib/
+│   │   ├── data/
+│   │   │   └── processos_test.dart
+│   │   │
+│   │   ├── models/
+│   │   │   ├── ativo_minerario.dart
+│   │   │   ├── processo_minerario.dart
+│   │   │   └── usuario.dart
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── auth/
+│   │   │   │   ├── cadastro_page.dart
+│   │   │   │   └── login_page.dart
+│   │   │   │
+│   │   │   ├── home/
+│   │   │   │   └── home_page.dart
+│   │   │   │
+│   │   │   └── welcome/
+│   │   │       └── welcome_page.dart
+│   │   │
+│   │   ├── services/
+│   │   │   ├── api_service.dart
+│   │   │   ├── ativo_service.dart
+│   │   │   ├── processo_service.dart
+│   │   │   └── usuario_service.dart
+│   │   │
+│   │   ├── widgets/
+│   │   │   ├── buttons/
+│   │   │   ├── cards/
+│   │   │   │   └── card_processo_minerario.dart
+│   │   │   ├── onboarding/
+│   │   │   └── textfields/
+│   │   │       ├── campo_input.dart
+│   │   │       ├── pesquisar_input.dart
+│   │   │       └── tipo_conta.dart
+│   │   │
+│   │   └── main.dart
+│   │
+│   ├── android/
+│   ├── ios/
+│   ├── linux/
+│   ├── macos/
+│   ├── web/
+│   └── windows/
+│
 ├── README.md
 └── .gitignore
 ```
 
-### Organização das Pastas
+---
 
-#### Frontend
+# Organização das Pastas
 
-Responsável pela interface gráfica da aplicação, desenvolvida em Flutter Web.
+## Backend
 
-* **pages/**: telas da aplicação.
-* **widgets/**: componentes reutilizáveis da interface.
-* **models/**: modelos de dados utilizados no frontend.
-* **services/**: comunicação com a API.
+### controllers/
 
-#### Backend
+Responsáveis por receber as requisições HTTP, chamar os services e retornar as respostas da API.
 
-Responsável pelas regras de negócio e comunicação com o banco de dados.
+### services/
 
-* **controllers/**: recebem as requisições da API e retornam respostas.
-* **services/**: implementam as regras de negócio da aplicação.
-* **models/**: representam as entidades do sistema.
-* **repositories/**: realizam consultas e operações específicas no banco de dados.
-* **database/**: scripts SQL de criação e manutenção do banco.
-* **app.py**: arquivo principal da API Flask.
-* **config.py**: configurações da aplicação.
-* **requirements.txt**: dependências do projeto.
+Contêm toda a regra de negócio da aplicação.
 
-#### Banco de Dados
+Os serviços estão organizados por domínio:
 
-O sistema utilizará MySQL para armazenamento das informações da plataforma.
+- usuário
+- processo minerário
+- ativo minerário
+- sincronização
+
+### models/
+
+Representam as entidades do sistema e realizam operações de persistência no banco.
+
+### repositories/
+
+Responsáveis por consultas específicas ao banco de dados.
+
+### scripts/
+
+Scripts auxiliares utilizados durante o desenvolvimento, como população do banco e sincronização da base da ANM.
 
 ---
 
-## Como Executar o Projeto
+## Frontend
 
-### Pré-requisitos
+### pages/
 
-* Flutter SDK
-* Python 3.11 ou superior
-* MySQL Server
-* Git
+Telas da aplicação.
+
+### widgets/
+
+Componentes reutilizáveis da interface.
+
+### services/
+
+Responsáveis pela comunicação com a API Flask.
+
+### models/
+
+Representação das entidades consumidas pela API.
+
+### data/
+
+Arquivos auxiliares utilizados durante o desenvolvimento.
 
 ---
 
-### Clonar o Repositório
+# Comunicação da Aplicação
+
+```text
+Flutter
+        │
+        ▼
+ Services (Dart)
+        │
+      HTTP
+        │
+        ▼
+Controllers (Flask)
+        │
+        ▼
+Services (Python)
+        │
+        ▼
+Models
+        │
+        ▼
+MySQL
+```
+
+---
+
+# Como Executar o Projeto
+
+## Pré-requisitos
+
+- Flutter SDK
+- Python 3.11+
+- MySQL
+- Git
+
+---
+
+## Clonar o Repositório
 
 ```bash
 git clone https://github.com/Ninassc/Argon.git
@@ -162,7 +277,7 @@ cd Argon
 
 ---
 
-### Executar o Backend
+## Backend
 
 Instalar dependências:
 
@@ -170,17 +285,23 @@ Instalar dependências:
 pip install -r requirements.txt
 ```
 
-Configurar a conexão com o banco de dados MySQL.
+Configurar o arquivo `.env` com as credenciais do MySQL.
 
-Executar o servidor:
+Executar a API:
 
 ```bash
 python app.py
 ```
 
+Opcionalmente, popular o banco de dados para testes:
+
+```bash
+python scripts/seed.py
+```
+
 ---
 
-### Executar o Frontend
+## Frontend
 
 Instalar dependências:
 
@@ -188,7 +309,7 @@ Instalar dependências:
 flutter pub get
 ```
 
-Executar aplicação:
+Executar a aplicação:
 
 ```bash
 flutter run -d chrome
@@ -208,6 +329,8 @@ Centralizar informações sobre direitos minerários, reduzir retrabalho na orga
 
 ---
 
-## Status do Projeto
+# Status do Projeto
 
-Projeto acadêmico desenvolvido para a disciplina de Projeto de Software.
+Projeto acadêmico em desenvolvimento para a disciplina de Projeto de Software.
+
+Atualmente o sistema possui integração entre frontend e backend utilizando API REST, permitindo consulta e gerenciamento de usuários, processos minerários e ativos minerários.
