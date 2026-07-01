@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/processo_minerario.dart';
+import 'package:frontend/services/processo_service.dart';
 import 'package:frontend/widgets/buttons/action_button.dart';
 import 'package:frontend/widgets/buttons/button_speed_child.dart';
 import 'package:frontend/widgets/cards/card_processo_minerario.dart';
 import 'package:frontend/widgets/textfields/pesquisar_input.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import '../../data/processos_test.dart';
+//import '../../data/processos_test.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,9 +16,30 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late Future<List<ProcessoMinerario>> processosMinerarios;
+  TextEditingController controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    processosMinerarios = ProcessoService().listar();
+  }
+
+  void pesquisar() {
+    final termo = controller.text;
+
+    setState(() {
+      if (termo.isEmpty) {
+        processosMinerarios = ProcessoService().listar();
+      } else {
+        processosMinerarios = ProcessoService().pesquisar(termo);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         //automaticallyImplyLeading: false,
@@ -33,7 +55,12 @@ class _HomePageState extends State<HomePage> {
               Row(
                 spacing: 5,
                 children: [
-                  Expanded(child: PesquisarInput(controller: controller)),
+                  Expanded(
+                    child: PesquisarInput(
+                      controller: controller,
+                      onChanged: (_) => pesquisar(),
+                    ),
+                  ),
                   ActionButton(
                     icone: Icons.remove_red_eye_outlined,
                     onPressed: () {},
@@ -43,11 +70,27 @@ class _HomePageState extends State<HomePage> {
               ),
               SizedBox(height: 20),
               Expanded(
-                child: ListView.builder(
-                  itemCount: processos.length,
-                  itemBuilder: (context, index) {
-                    ProcessoMinerario processo = processos[index];
-                    return CardProcessoMinerario(processo: processo);
+                child: FutureBuilder<List<ProcessoMinerario>>(
+                  future: processosMinerarios,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (snapshot.hasError) {
+                      return Center(child: Text(snapshot.error.toString()));
+                    }
+
+                    final processos = snapshot.data!;
+
+                    return ListView.builder(
+                      itemCount: processos.length,
+                      itemBuilder: (context, index) {
+                        return CardProcessoMinerario(
+                          processo: processos[index],
+                        );
+                      },
+                    );
                   },
                 ),
               ),

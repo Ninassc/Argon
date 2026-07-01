@@ -54,35 +54,17 @@ A plataforma possibilita o cadastro de ativos minerários, gerenciamento de docu
 
 # Funcionalidades
 
-## Implementadas
+### Funcionalidades Implementadas
 
 - Cadastro de usuários
 - Consulta de processos minerários
 - Pesquisa de processos minerários
+- Visualização de informações detalhadas de processos minerários
 - Cadastro de ativos minerários
-- Gerenciamento de ativos minerários
-- Estrutura para sincronização automática da base da ANM
-
-## Em desenvolvimento
-
-- Autenticação de usuários
-- Sistema de favoritos
-- Upload e gerenciamento de documentos
-- Solicitação de acesso a documentos
-- Compartilhamento controlado de informações
-- Registro de acessos
-- Exportação de dados
-
----
-
-# Arquitetura
-
-O backend foi desenvolvido seguindo uma arquitetura em camadas, separando as responsabilidades da aplicação.
-
-- **Controllers:** recebem as requisições HTTP e retornam respostas da API.
-- **Services:** implementam as regras de negócio do sistema.
-- **Models:** representam as entidades e realizam operações de persistência utilizando SQLAlchemy.
-- **Scripts:** executam processos internos, como população do banco e sincronização da base da ANM.
+- Edição de ativos minerários
+- Edição de informações do perfil do usuário
+- Restrição da edição de ativos minerários aos seus respectivos proprietários
+- Integração entre Flutter Web e API REST desenvolvida em Flask
 
 ---
 
@@ -91,33 +73,11 @@ O backend foi desenvolvido seguindo uma arquitetura em camadas, separando as res
 ```text
 Argon/
 │
-├── frontend/
-│   ├── assets/
-│   │   └── images/
-│   │
-│   ├── lib/
-│   │   ├── data/
-│   │   ├── models/
-│   │   ├── pages/
-│   │   │   ├── auth/
-│   │   │   ├── home/
-│   │   │   └── welcome/
-│   │   ├── widgets/
-│   │   └── main.dart
-│   │
-│   ├── android/
-│   ├── ios/
-│   ├── linux/
-│   ├── macos/
-│   ├── web/
-│   ├── windows/
-│   └── test/
-│
 ├── backend/
 │   ├── controllers/
-│   │   ├── usuario_controller.py
+│   │   ├── ativo_minerario_controller.py
 │   │   ├── processo_minerario_controller.py
-│   │   └── ativo_minerario_controller.py
+│   │   └── usuario_controller.py
 │   │
 │   ├── database/
 │   │   └── create_database.sql
@@ -128,8 +88,11 @@ Argon/
 │   │   ├── documento.py
 │   │   ├── favorito.py
 │   │   ├── processo_minerario.py
-│   │   ├── usuario.py
-│   │   └── __init__.py
+│   │   └── usuario.py
+│   │
+│   ├── repositories/
+│   │   ├── ativo_repository.py
+│   │   └── usuario_repository.py
 │   │
 │   ├── scripts/
 │   │   ├── seed.py
@@ -137,14 +100,82 @@ Argon/
 │   │
 │   ├── services/
 │   │   ├── ativo_minerario/
+│   │   │   ├── atualizar_ativo_service.py
+│   │   │   ├── buscar_ativo_service.py
+│   │   │   ├── criar_ativo_service.py
+│   │   │   ├── deletar_ativo_service.py
+│   │   │   └── listar_ativos_usuario_service.py
+│   │   │
 │   │   ├── processo_minerario/
+│   │   │   ├── buscar_processo_id_service.py
+│   │   │   ├── importar_processos_anm_service.py
+│   │   │   ├── listar_processos_service.py
+│   │   │   └── pesquisar_processos_service.py
+│   │   │
 │   │   ├── sincronizacao/
+│   │   │   ├── baixar_dbf_service.py
+│   │   │   ├── ler_dbf_service.py
+│   │   │   └── sincronizar_base_anm.py
+│   │   │
 │   │   └── usuario/
+│   │       ├── atualizar_usuario_service.py
+│   │       ├── buscar_usuario_service.py
+│   │       ├── criar_usuario_service.py
+│   │       ├── deletar_usuario_service.py
+│   │       └── listar_usuarios_service.py
 │   │
 │   ├── app.py
 │   ├── config.py
 │   ├── requirements.txt
 │   └── .env
+│
+├── frontend/
+│   ├── assets/
+│   │
+│   ├── lib/
+│   │   ├── data/
+│   │   │   └── processos_test.dart
+│   │   │
+│   │   ├── models/
+│   │   │   ├── ativo_minerario.dart
+│   │   │   ├── processo_minerario.dart
+│   │   │   └── usuario.dart
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── auth/
+│   │   │   │   ├── cadastro_page.dart
+│   │   │   │   └── login_page.dart
+│   │   │   │
+│   │   │   ├── home/
+│   │   │   │   └── home_page.dart
+│   │   │   │
+│   │   │   └── welcome/
+│   │   │       └── welcome_page.dart
+│   │   │
+│   │   ├── services/
+│   │   │   ├── api_service.dart
+│   │   │   ├── ativo_service.dart
+│   │   │   ├── processo_service.dart
+│   │   │   └── usuario_service.dart
+│   │   │
+│   │   ├── widgets/
+│   │   │   ├── buttons/
+│   │   │   ├── cards/
+│   │   │   │   └── card_processo_minerario.dart
+│   │   │   ├── onboarding/
+│   │   │   └── textfields/
+│   │   │       ├── campo_input.dart
+│   │   │       ├── pesquisar_input.dart
+│   │   │       └── tipo_conta.dart
+│   │   │
+│   │   └── main.dart
+│   │
+│   ├── android/
+│   ├── ios/
+│   ├── linux/
+│   ├── macos/
+│   ├── web/
+│   └── windows/
 │
 ├── README.md
 └── .gitignore
@@ -154,25 +185,83 @@ Argon/
 
 # Organização das Pastas
 
-## Frontend
-
-Responsável pela interface da aplicação desenvolvida em Flutter.
-
-- **pages/**: telas da aplicação.
-- **widgets/**: componentes reutilizáveis da interface.
-- **models/**: modelos utilizados pelo frontend.
-- **data/**: dados temporários utilizados durante o desenvolvimento.
-- **assets/**: imagens e demais recursos gráficos.
-
 ## Backend
 
-Responsável pela API e pelas regras de negócio.
+### controllers/
 
-- **controllers/**: endpoints da API REST.
-- **services/**: implementação das regras de negócio.
-- **models/**: entidades e operações de acesso ao banco de dados.
-- **scripts/**: scripts auxiliares para desenvolvimento e sincronização da base da ANM.
-- **database/**: scripts SQL do projeto.
+Responsáveis por receber as requisições HTTP, chamar os services e retornar as respostas da API.
+
+### services/
+
+Contêm toda a regra de negócio da aplicação.
+
+Os serviços estão organizados por domínio:
+
+- usuário
+- processo minerário
+- ativo minerário
+- sincronização
+
+### models/
+
+Representam as entidades do sistema e realizam operações de persistência no banco.
+
+### repositories/
+
+Responsáveis por consultas específicas ao banco de dados.
+
+### scripts/
+
+Scripts auxiliares utilizados durante o desenvolvimento, como população do banco e sincronização da base da ANM.
+
+---
+
+## Frontend
+
+### pages/
+
+Telas da aplicação.
+
+### widgets/
+
+Componentes reutilizáveis da interface.
+
+### services/
+
+Responsáveis pela comunicação com a API Flask.
+
+### models/
+
+Representação das entidades consumidas pela API.
+
+### data/
+
+Arquivos auxiliares utilizados durante o desenvolvimento.
+
+---
+
+# Comunicação da Aplicação
+
+```text
+Flutter
+        │
+        ▼
+ Services (Dart)
+        │
+      HTTP
+        │
+        ▼
+Controllers (Flask)
+        │
+        ▼
+Services (Python)
+        │
+        ▼
+Models
+        │
+        ▼
+MySQL
+```
 
 ---
 
@@ -181,8 +270,8 @@ Responsável pela API e pelas regras de negócio.
 ## Pré-requisitos
 
 - Flutter SDK
-- Python 3.11 ou superior
-- MySQL Server
+- Python 3.11+
+- MySQL
 - Git
 
 ---
@@ -196,7 +285,7 @@ cd Argon
 
 ---
 
-# Executando o Backend
+## Backend
 
 Entre na pasta do backend.
 
@@ -210,21 +299,15 @@ Instale as dependências.
 pip install -r requirements.txt
 ```
 
-Configure a conexão com o banco de dados no arquivo `.env`.
+Configurar o arquivo `.env` com as credenciais do MySQL.
 
-Crie o banco de dados executando o script:
-
-```text
-backend/database/create_database.sql
-```
-
-Execute a API.
+Executar a API:
 
 ```bash
 python app.py
 ```
 
-Caso queira popular o banco com dados fictícios para testes, execute:
+Opcionalmente, popular o banco de dados para testes:
 
 ```bash
 python scripts/seed.py
@@ -232,7 +315,7 @@ python scripts/seed.py
 
 ---
 
-# Executando o Frontend
+## Frontend
 
 Entre na pasta do frontend.
 
@@ -246,7 +329,7 @@ Instale as dependências.
 flutter pub get
 ```
 
-Execute a aplicação.
+Executar a aplicação:
 
 ```bash
 flutter run -d chrome
@@ -272,6 +355,6 @@ A sincronização da base de processos minerários foi projetada para importar p
 
 # Status do Projeto
 
-Projeto acadêmico desenvolvido para a disciplina de Projeto de Software.
+Projeto acadêmico em desenvolvimento para a disciplina de Projeto de Software.
 
-Atualmente encontra-se em desenvolvimento contínuo, com funcionalidades de gerenciamento de usuários, processos minerários e ativos minerários implementadas e novas funcionalidades sendo desenvolvidas.
+Atualmente o sistema possui integração entre frontend e backend utilizando API REST, permitindo consulta e gerenciamento de usuários, processos minerários e ativos minerários.
