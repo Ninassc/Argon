@@ -14,6 +14,8 @@ class Usuario(db.Model):
 
     telefone = db.Column(db.String(20), unique=True)
 
+    tipo_conta = db.Column(db.Enum("Titular", "Interessado"), nullable=False)
+
     dt_cadastro = db.Column(db.DateTime, server_default=db.func.now())
 
     ativos = db.relationship("AtivoMinerario", back_populates="usuario")
@@ -24,7 +26,14 @@ class Usuario(db.Model):
         db.session.commit()
 
     # atualizar usuário
-    def atualizar(self, nome=None, email=None, senha=None, telefone=None):
+    def atualizar(
+        self,
+        nome=None,
+        email=None,
+        senha=None,
+        telefone=None,
+        tipo_conta=None,
+    ):
         if nome is not None:
             self.nome = nome
 
@@ -36,6 +45,9 @@ class Usuario(db.Model):
 
         if telefone is not None:
             self.telefone = telefone
+
+        if tipo_conta is not None:
+            self.tipo_conta = tipo_conta
 
         db.session.commit()
 
@@ -68,5 +80,6 @@ class Usuario(db.Model):
             "nome": self.nome,
             "email": self.email,
             "telefone": self.telefone,
+            "tipo_conta": self.tipo_conta,
             "dt_cadastro": (self.dt_cadastro.isoformat() if self.dt_cadastro else None),
         }

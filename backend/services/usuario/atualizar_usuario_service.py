@@ -10,10 +10,13 @@ class AtualizarUsuarioService:
 
         novo_email = dados.get("email")
         novo_telefone = dados.get("telefone")
+        tipo_conta = dados.get("tipo_conta")
 
         email_final = novo_email if novo_email is not None else usuario.email
 
-        telefone_final = novo_telefone if novo_telefone is not None else usuario.telefone
+        telefone_final = (
+            novo_telefone if novo_telefone is not None else usuario.telefone
+        )
 
         if not email_final and not telefone_final:
             raise ValueError("O usuário deve possuir e-mail ou telefone.")
@@ -35,6 +38,7 @@ class AtualizarUsuarioService:
             email=novo_email,
             telefone=novo_telefone,
             senha=dados.get("senha"),
+            tipo_conta=tipo_conta,
         )
 
         return usuario.to_dict()

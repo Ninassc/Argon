@@ -10,6 +10,7 @@ class CriarAtivoService:
         id_processo = dados.get("id_processo")
         descricao = dados.get("descricao", "")
 
+
         if not id_usuario:
             raise ValueError("O usuário é obrigatório.")
 
@@ -20,6 +21,11 @@ class CriarAtivoService:
 
         if usuario is None:
             raise ValueError("Usuário não encontrado.")
+        
+        if usuario.tipo_conta != "Titular":
+            raise ValueError(
+                "Somente titulares podem cadastrar ativos minerários."
+            )
 
         processo = ProcessoMinerario.buscar_por_id(id_processo)
 

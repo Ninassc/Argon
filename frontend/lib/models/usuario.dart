@@ -1,9 +1,12 @@
+enum TipoConta { titular, interessado }
+
 class Usuario {
   final int? idUsuario;
   final String nome;
   final String? email;
   final String? telefone;
   final String? senha;
+  final TipoConta tipoConta;
   final DateTime? dtCadastro;
 
   const Usuario({
@@ -12,6 +15,7 @@ class Usuario {
     this.email,
     this.telefone,
     this.senha,
+    required this.tipoConta,
     this.dtCadastro,
   });
 
@@ -21,6 +25,9 @@ class Usuario {
       nome: json["nome"],
       email: json["email"],
       telefone: json["telefone"],
+      tipoConta: json["tipo_conta"] == "Titular"
+          ? TipoConta.titular
+          : TipoConta.interessado,
       dtCadastro: json["dt_cadastro"] != null
           ? DateTime.parse(json["dt_cadastro"])
           : null,
@@ -28,6 +35,12 @@ class Usuario {
   }
 
   Map<String, dynamic> toJson() {
-    return {"nome": nome, "email": email, "telefone": telefone, "senha": senha};
+    return {
+      "nome": nome,
+      "email": email,
+      "telefone": telefone,
+      "senha": senha,
+      "tipo_conta": tipoConta == TipoConta.titular ? "Titular" : "Interessado",
+    };
   }
 }

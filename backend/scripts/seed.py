@@ -22,12 +22,14 @@ with app.app_context():
             email="clara@email.com",
             senha="123456",
             telefone="31999990001",
+            tipo_conta="Titular",
         ),
         Usuario(
             nome="Victor",
             email="victor@email.com",
             senha="123456",
             telefone="31999990002",
+            tipo_conta="Interessado",
         ),
     ]
 

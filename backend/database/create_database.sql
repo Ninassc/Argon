@@ -1,3 +1,7 @@
+create database argon;
+
+use argon;
+
 CREATE TABLE
     usuario (
         id_usuario INT AUTO_INCREMENT PRIMARY KEY,
@@ -5,6 +9,7 @@ CREATE TABLE
         email VARCHAR(150) NOT NULL UNIQUE,
         senha VARCHAR(255) NOT NULL,
         telefone VARCHAR(20) UNIQUE,
+        tipo_conta ENUM('Titular', 'Interessado') NOT NULL,
         dt_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
