@@ -10,13 +10,27 @@ from services import PesquisarProcessosService
 
 processo_bp = Blueprint('processos', __name__, url_prefix='/processos')
 
-@processo_bp.get('/')
+# @processo_bp.get('/')
+# def listar_processos():
+#     service = ListarProcessosService()
+
+#     processos = service.executar()
+
+#     return jsonify(processos), 200
+
+@processo_bp.get("/")
 def listar_processos():
+
+    pagina = request.args.get("page", 1, type=int)
+    limite = request.args.get("limit", 20, type=int)
+
+    limite = min(limite, 100)
+
     service = ListarProcessosService()
 
-    processos = service.executar()
+    resultado = service.executar(pagina, limite)
 
-    return jsonify(processos), 200
+    return jsonify(resultado), 200
 
 
 @processo_bp.get('/pesquisar')

@@ -1,8 +1,14 @@
 from models import ProcessoMinerario
 
+
 class ListarProcessosService:
 
-    def executar(self):
-        processos = ProcessoMinerario.listar_todos()
+    def executar(self, pagina, limite):
+        processos = ProcessoMinerario.listar_paginado(pagina, limite)
 
-        return [processo.to_dict() for processo in processos]
+        return {
+            "pagina": processos.page,
+            "total": processos.total,
+            "total_paginas": processos.pages,
+            "processos": [processo.to_dict() for processo in processos.items],
+        }

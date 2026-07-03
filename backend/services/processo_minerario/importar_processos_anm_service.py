@@ -9,6 +9,11 @@ class ImportarProcessosANMService:
         importados = 0
         atualizados = 0
 
+        existentes = {
+            processo.id_anm: processo
+            for processo in ProcessoMinerario.query.all()
+        }
+
         for dados in processos:
 
             id_anm = dados.get("id_anm")
@@ -16,9 +21,10 @@ class ImportarProcessosANMService:
             if not id_anm:
                 continue
 
-            processo = ProcessoMinerario.buscar_por_id_anm(id_anm)
+            processo = existentes.get(id_anm)
 
             if processo is None:
+
                 processo = ProcessoMinerario(
                     processo=dados.get("processo"),
                     numero=dados.get("numero"),
@@ -39,12 +45,13 @@ class ImportarProcessosANMService:
                 importados += 1
 
             else:
+
                 processo.atualizar(
                     processo=dados.get("processo"),
                     numero=dados.get("numero"),
                     ano=dados.get("ano"),
                     area_ha=dados.get("area_ha"),
-                    id_anm=dados.get("id_anm"),
+                    id_anm=id_anm,
                     fase=dados.get("fase"),
                     ult_evento=dados.get("ult_evento"),
                     nome=dados.get("nome"),
@@ -63,4 +70,7 @@ class ImportarProcessosANMService:
             db.session.rollback()
             raise
 
-        return {"importados": importados, "atualizados": atualizados}
+        return {
+            "importados": importados,
+            "atualizados": atualizados,
+        }

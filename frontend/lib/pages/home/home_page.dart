@@ -16,27 +16,70 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Future<List<ProcessoMinerario>> processosMinerarios;
   TextEditingController controller = TextEditingController();
+
+  List<ProcessoMinerario> processosMinerarios = [];
+
+  int pagina = 1;
+  final int limite = 20;
+
+  bool carregando = false;
+  bool temMais = true;
+
+  final ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
 
-    processosMinerarios = ProcessoService().listar();
-  }
+    carregarProcessos();
 
-  void pesquisar() {
-    final termo = controller.text;
-
-    setState(() {
-      if (termo.isEmpty) {
-        processosMinerarios = ProcessoService().listar();
-      } else {
-        processosMinerarios = ProcessoService().pesquisar(termo);
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent - 300) {
+        carregarProcessos();
       }
     });
   }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> carregarProcessos() async {
+    if (carregando || !temMais) return;
+
+    carregando = true;
+
+    final novos = await ProcessoService().listar(page: pagina, limit: limite);
+
+    setState(() {
+      processosMinerarios.addAll(novos);
+
+      pagina++;
+
+      carregando = false;
+
+      if (novos.length < limite) {
+        temMais = false;
+      }
+    });
+  }
+
+  // void pesquisar() {
+  //   final termo = controller.text;
+
+  //   setState(() {
+  //     if (termo.isEmpty) {
+  //       processosMinerarios = ProcessoService().listar();
+  //     } else {
+  //       processosMinerarios = ProcessoService().pesquisar(termo);
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +101,7 @@ class _HomePageState extends State<HomePage> {
                   Expanded(
                     child: PesquisarInput(
                       controller: controller,
-                      onChanged: (_) => pesquisar(),
+                      onChanged: (_) => {}//(_) => pesquisar(),
                     ),
                   ),
                   ActionButton(
@@ -70,26 +113,19 @@ class _HomePageState extends State<HomePage> {
               ),
               SizedBox(height: 20),
               Expanded(
-                child: FutureBuilder<List<ProcessoMinerario>>(
-                  future: processosMinerarios,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
+                child: ListView.builder(
+                  controller: scrollController,
+                  itemCount: processosMinerarios.length + (temMais ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == processosMinerarios.length) {
+                      return const Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Center(child: CircularProgressIndicator()),
+                      );
                     }
 
-                    if (snapshot.hasError) {
-                      return Center(child: Text(snapshot.error.toString()));
-                    }
-
-                    final processos = snapshot.data!;
-
-                    return ListView.builder(
-                      itemCount: processos.length,
-                      itemBuilder: (context, index) {
-                        return CardProcessoMinerario(
-                          processo: processos[index],
-                        );
-                      },
+                    return CardProcessoMinerario(
+                      processo: processosMinerarios[index],
                     );
                   },
                 ),

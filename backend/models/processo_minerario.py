@@ -37,7 +37,6 @@ class ProcessoMinerario(db.Model):
     # CREATE
     def salvar(self):
         db.session.add(self)
-       
 
     # UPDATE
     def atualizar(
@@ -93,8 +92,6 @@ class ProcessoMinerario(db.Model):
 
         self.ultima_atualizacao = db.func.now()
 
-        
-
     # DELETE
     def deletar(self):
         db.session.delete(self)
@@ -104,6 +101,13 @@ class ProcessoMinerario(db.Model):
     @classmethod
     def listar_todos(cls):
         return cls.query.order_by(cls.id_processo.asc()).all()
+
+    @classmethod
+    def listar_paginado(cls, pagina, limite):
+
+        return cls.query.order_by(cls.id_processo.desc()).paginate(
+            page=pagina, per_page=limite
+        )
 
     @classmethod
     def buscar_por_id(cls, id_processo):
@@ -122,7 +126,7 @@ class ProcessoMinerario(db.Model):
                 | (cls.nome.ilike(f"%{termo}%"))
                 | (cls.subs.ilike(f"%{termo}%"))
             )
-            .order_by(cls.id_processo.asc())
+            .order_by(cls.id_processo.desc())
             .all()
         )
 
