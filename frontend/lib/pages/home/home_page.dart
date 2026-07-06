@@ -26,6 +26,8 @@ class _HomePageState extends State<HomePage> {
   bool carregando = false;
   bool temMais = true;
 
+  String termoPesquisa = "";
+
   final ScrollController scrollController = ScrollController();
 
   @override
@@ -54,7 +56,13 @@ class _HomePageState extends State<HomePage> {
 
     carregando = true;
 
-    final novos = await ProcessoService().listar(page: pagina, limit: limite);
+    final novos = termoPesquisa.isEmpty
+        ? await ProcessoService().listar(page: pagina, limit: limite)
+        : await ProcessoService().pesquisar(
+            termo: termoPesquisa,
+            page: pagina,
+            limit: limite,
+          );
 
     setState(() {
       processosMinerarios.addAll(novos);
@@ -69,17 +77,17 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // void pesquisar() {
-  //   final termo = controller.text;
+  Future<void> pesquisar(String texto) async {
+    termoPesquisa = texto;
 
-  //   setState(() {
-  //     if (termo.isEmpty) {
-  //       processosMinerarios = ProcessoService().listar();
-  //     } else {
-  //       processosMinerarios = ProcessoService().pesquisar(termo);
-  //     }
-  //   });
-  // }
+    pagina = 1;
+
+    temMais = true;
+
+    processosMinerarios.clear();
+
+    await carregarProcessos();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                   Expanded(
                     child: PesquisarInput(
                       controller: controller,
-                      onChanged: (_) => {}//(_) => pesquisar(),
+                      onChanged: pesquisar, //(_) => pesquisar(),
                     ),
                   ),
                   ActionButton(

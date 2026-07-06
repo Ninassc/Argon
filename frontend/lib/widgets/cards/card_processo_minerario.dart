@@ -46,11 +46,11 @@ class CardProcessoMinerario extends StatelessWidget {
                 ),
               ],
             ),
-            GestureDetector(
-              onTap: () {
-                
-              },
-              child: Icon(Icons.open_in_new, color: Color(0xFF5A81FA), size: 28,)),
+
+            IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.open_in_new, color: Color(0xFF5A81FA), size: 28),
+            ),
           ],
         ),
       ),

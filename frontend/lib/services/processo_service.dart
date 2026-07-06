@@ -40,21 +40,26 @@ class ProcessoService {
     return ProcessoMinerario.fromJson(json);
   }
 
-  Future<List<ProcessoMinerario>> pesquisar(String termo) async {
-    final uri = Uri.parse(
-      "${ApiService.baseUrl}/processos/pesquisar",
-    ).replace(queryParameters: {"termo": termo});
+  Future<List<ProcessoMinerario>> pesquisar({
+    required String termo,
+    int page = 1,
+    int limit = 20,
+  }) async {
+    final response = await http.get(
+      Uri.parse(
+        "${ApiService.baseUrl}/processos/pesquisar"
+        "?termo=$termo&page=$page&limit=$limit",
+      ),
+    );
 
-    final response = await http.get(uri);
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
 
-    if (response.statusCode != 200) {
-      throw Exception("Erro ao pesquisar processos.");
+      final List processos = json["processos"];
+
+      return processos.map((e) => ProcessoMinerario.fromJson(e)).toList();
     }
 
-    final List<dynamic> json = jsonDecode(response.body);
-
-    return json
-        .map((processo) => ProcessoMinerario.fromJson(processo))
-        .toList();
+    throw Exception("Erro ao pesquisar.");
   }
 }
