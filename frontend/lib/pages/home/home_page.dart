@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/processo_minerario.dart';
+import 'package:frontend/pages/processo/detalhe_processo_page.dart';
 import 'package:frontend/services/processo_service.dart';
 import 'package:frontend/widgets/buttons/action_button.dart';
 import 'package:frontend/widgets/buttons/button_speed_child.dart';
@@ -64,6 +65,12 @@ class _HomePageState extends State<HomePage> {
             limit: limite,
           );
 
+    print("========== Página $pagina ==========");
+
+    for (var processo in novos) {
+      print(processo.processo);
+    }
+
     setState(() {
       processosMinerarios.addAll(novos);
 
@@ -80,11 +87,11 @@ class _HomePageState extends State<HomePage> {
   Future<void> pesquisar(String texto) async {
     termoPesquisa = texto;
 
-    pagina = 1;
-
-    temMais = true;
-
-    processosMinerarios.clear();
+    setState(() {
+      pagina = 1;
+      temMais = true;
+      processosMinerarios.clear();
+    });
 
     await carregarProcessos();
   }
@@ -134,6 +141,16 @@ class _HomePageState extends State<HomePage> {
 
                     return CardProcessoMinerario(
                       processo: processosMinerarios[index],
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => DetalheProcessoPage(
+                              idProcesso: processosMinerarios[index].idProcesso,
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
                 ),

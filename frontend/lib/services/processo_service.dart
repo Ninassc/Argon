@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../models/processo_minerario.dart';
+import '../models/ativo_minerario.dart';
 import 'api_service.dart';
 
 class ProcessoService {
@@ -20,24 +21,6 @@ class ProcessoService {
     }
 
     throw Exception("Erro ao carregar processos.");
-  }
-
-  Future<ProcessoMinerario> buscarPorId(int idProcesso) async {
-    final response = await http.get(
-      Uri.parse("${ApiService.baseUrl}/processos/$idProcesso"),
-    );
-
-    if (response.statusCode == 404) {
-      throw Exception("Processo minerário não encontrado.");
-    }
-
-    if (response.statusCode != 200) {
-      throw Exception("Erro ao buscar processo minerário.");
-    }
-
-    final json = jsonDecode(response.body);
-
-    return ProcessoMinerario.fromJson(json);
   }
 
   Future<List<ProcessoMinerario>> pesquisar({
@@ -61,5 +44,24 @@ class ProcessoService {
     }
 
     throw Exception("Erro ao pesquisar.");
+  }
+
+  Future<Map<String, dynamic>> buscarDetalhes(int idProcesso) async {
+    final response = await http.get(
+      Uri.parse("${ApiService.baseUrl}/processos/$idProcesso/detalhes"),
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+
+      return {
+        "processo": ProcessoMinerario.fromJson(json["processo"]),
+        "ativo": json["ativo"] != null
+            ? AtivoMinerario.fromJson(json["ativo"])
+            : null,
+      };
+    }
+
+    throw Exception("Erro ao buscar detalhes do processo.");
   }
 }

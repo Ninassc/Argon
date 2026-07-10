@@ -1,9 +1,12 @@
+import 'usuario.dart';
+
 class AtivoMinerario {
   final int? idAtivo;
   final int idUsuario;
   final int idProcesso;
   final String descricao;
   final DateTime? dtCadastro;
+  final Usuario? usuario;
 
   const AtivoMinerario({
     this.idAtivo,
@@ -11,6 +14,7 @@ class AtivoMinerario {
     required this.idProcesso,
     required this.descricao,
     this.dtCadastro,
+    this.usuario,
   });
 
   factory AtivoMinerario.fromJson(Map<String, dynamic> json) {
@@ -21,6 +25,9 @@ class AtivoMinerario {
       descricao: json["descricao"] ?? "",
       dtCadastro: json["dt_cadastro"] != null
           ? DateTime.parse(json["dt_cadastro"])
+          : null,
+      usuario: json["usuario"] != null
+          ? Usuario.fromJson(json["usuario"])
           : null,
     );
   }

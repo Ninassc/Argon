@@ -21,9 +21,8 @@ class BuscarDadosANMService:
         return dados.get("objectIds", [])
 
     def executar(self):
-        url = "https://geo.anm.gov.br/arcgis/rest/services/SIGMINE/dados_anm/MapServer/0/query"
 
-        processos = []
+        url = "https://geo.anm.gov.br/arcgis/rest/services/SIGMINE/dados_anm/MapServer/0/query"
 
         ids = self.buscar_ids()
 
@@ -31,13 +30,14 @@ class BuscarDadosANMService:
 
         tamanho_bloco = 1000
 
+        # Guarda apenas um registro para cada PROCESSO
+        processos_unicos = {}
+
         for i in range(0, len(ids), tamanho_bloco):
 
             bloco = ids[i:i + tamanho_bloco]
 
-            print(
-                f"Buscando registros {i + 1} até {i + len(bloco)}..."
-            )
+            print(f"Buscando registros {i + 1} até {i + len(bloco)}...")
 
             params = {
                 "objectIds": ",".join(map(str, bloco)),
@@ -59,9 +59,15 @@ class BuscarDadosANMService:
 
                 atributos = feature.get("attributes", {})
 
-                processos.append({
+                processo = atributos.get("PROCESSO")
+
+                # Se já existe, ignora
+                if processo in processos_unicos:
+                    continue
+
+                processos_unicos[processo] = {
                     "id_anm": atributos.get("ID"),
-                    "processo": atributos.get("PROCESSO"),
+                    "processo": processo,
                     "numero": atributos.get("NUMERO"),
                     "ano": atributos.get("ANO"),
                     "area_ha": atributos.get("AREA_HA"),
@@ -72,8 +78,8 @@ class BuscarDadosANMService:
                     "uso": atributos.get("USO"),
                     "uf": atributos.get("UF"),
                     "ds_processo": atributos.get("DSProcesso"),
-                })
+                }
 
-        print(f"\nTotal de processos recebidos: {len(processos)}")
+        print(f"\nTotal de processos únicos: {len(processos_unicos)}")
 
-        return processos
+        return list(processos_unicos.values())

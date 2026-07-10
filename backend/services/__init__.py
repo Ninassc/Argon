@@ -7,8 +7,13 @@ from .usuario.listar_usuarios_service import ListarUsuariosService
 from .processo_minerario.pesquisar_processos_service import PesquisarProcessosService
 from .processo_minerario.deletar_processo_service import DeletarProcessoService
 from .processo_minerario.listar_processos_service import ListarProcessosService
-from .processo_minerario.importar_processos_anm_service import ImportarProcessosANMService
-from .processo_minerario.buscar_processo_id_service import BuscarProcessoPorIdService
+from .processo_minerario.importar_processos_anm_service import (
+    ImportarProcessosANMService,
+)
+
+from .processo_minerario.buscar_detalhes_processo_service import (
+    BuscarDetalhesProcessoService,
+)
 
 from .ativo_minerario.atualizar_ativo_service import AtualizarAtivoService
 from .ativo_minerario.buscar_ativo_service import BuscarAtivoService
@@ -30,6 +35,7 @@ __all__ = [
     "ListarProcessosService",
     "ImportarProcessosANMService",
     "BuscarProcessoPorIdService",
+    "BuscarDetalhesProcessoService",
     "AtualizarAtivoService",
     "BuscarAtivoService",
     "CriarAtivoService",

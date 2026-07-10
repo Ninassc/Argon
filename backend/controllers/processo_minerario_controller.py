@@ -3,9 +3,9 @@ from flask import Blueprint, request, jsonify
 from models import db
 
 from services import ListarProcessosService
-from services import BuscarProcessoPorIdService
 from services import DeletarProcessoService
 from services import PesquisarProcessosService
+from services import BuscarDetalhesProcessoService
 
 processo_bp = Blueprint("processos", __name__, url_prefix="/processos")
 
@@ -65,26 +65,27 @@ def pesquisar_processo():
     return jsonify(resultado), 200
 
 
-@processo_bp.get("/<int:id_processo>")
-def buscar_processo(id_processo):
-    service = BuscarProcessoPorIdService()
+@processo_bp.get("/<int:id_processo>/detalhes")
+def buscar_detalhes(id_processo):
 
-    processo = service.executar(id_processo)
-
-    if processo is None:
-        return jsonify({"erro": "Processo não encontrado."}), 404
-
-    return jsonify(processo), 200
-
-
-# Apenas para teste (os processos minerários não poderão ser deletados)
-@processo_bp.delete("/<int:id_processo>")
-def deletar_processo(id_processo):
-    service = DeletarProcessoService()
+    service = BuscarDetalhesProcessoService()
 
     resultado = service.executar(id_processo)
 
-    if not resultado:
+    if resultado is None:
         return jsonify({"erro": "Processo não encontrado."}), 404
 
-    return jsonify({"mensagem": "Processo excluído com sucesso."}), 200
+    return jsonify(resultado), 200
+
+
+# Apenas para teste (os processos minerários não poderão ser deletados)
+# @processo_bp.delete("/<int:id_processo>")
+# def deletar_processo(id_processo):
+#     service = DeletarProcessoService()
+
+#     resultado = service.executar(id_processo)
+
+#     if not resultado:
+#         return jsonify({"erro": "Processo não encontrado."}), 404
+
+#     return jsonify({"mensagem": "Processo excluído com sucesso."}), 200

@@ -66,6 +66,10 @@ class AtivoMinerario(db.Model):
     def buscar_por_usuario_ativo(cls, id_usuario, id_ativo):
         return cls.query.filter_by(id_usuario=id_usuario, id_ativo=id_ativo).first()
 
+    @classmethod
+    def buscar_por_processo(cls, id_processo):
+        return cls.query.filter_by(id_processo=id_processo).first()
+
     # JSON
     def to_dict(self):
         return {
@@ -74,4 +78,8 @@ class AtivoMinerario(db.Model):
             "id_processo": self.id_processo,
             "descricao": self.descricao,
             "dt_cadastro": (self.dt_cadastro.isoformat() if self.dt_cadastro else None),
+            "usuario": {
+                "id_usuario": self.usuario.id_usuario,
+                "nome": self.usuario.nome,
+            },
         }
