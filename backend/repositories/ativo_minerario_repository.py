@@ -1,15 +1,36 @@
-from models import AtivoMinerario
+from sqlalchemy import text
+
+from models import db, AtivoMinerario
 
 
 class AtivoMinerarioRepository:
 
     @staticmethod
-    def buscar_por_usuario(id_usuario):
-        return (
+    def listar_ativos_usuario(id_usuario):
+
+        banco = db.session.get_bind().dialect.name
+
+        if banco == "mysql":
+
+            resultado = db.session.execute(
+                text("CALL sp_listar_ativos_usuario(:id_usuario)"),
+                {
+                    "id_usuario": id_usuario,
+                },
+            )
+
+            linhas = resultado.mappings().all()
+            resultado.close()
+
+            return [dict(linha) for linha in linhas]
+
+        ativos = (
             AtivoMinerario.query.filter_by(id_usuario=id_usuario)
             .order_by(AtivoMinerario.dt_cadastro.desc())
             .all()
         )
+
+        return ativos
 
     @staticmethod
     def buscar_por_usuario_processo(id_usuario, id_processo):
