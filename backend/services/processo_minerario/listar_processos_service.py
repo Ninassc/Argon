@@ -5,14 +5,14 @@ class ListarProcessosService:
 
     def executar(self, pagina, limite):
 
-        processos = ProcessoMinerarioRepository.listar_paginado(
+        resultado = ProcessoMinerarioRepository.listar_paginado(
             pagina,
             limite,
         )
 
         return {
-            "pagina": processos.page,
-            "total": processos.total,
-            "total_paginas": processos.pages,
-            "processos": [processo.to_dict() for processo in processos.items],
+            "pagina": resultado["pagina"],
+            "total": resultado["total"],
+            "total_paginas": resultado["total_paginas"],
+            "processos": [processo.to_dict() for processo in resultado["processos"]],
         }

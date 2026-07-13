@@ -5,15 +5,15 @@ class PesquisarProcessosService:
 
     def executar(self, termo, pagina, limite):
 
-        processos = ProcessoMinerarioRepository.pesquisar(
+        resultado = ProcessoMinerarioRepository.pesquisar(
             termo,
             pagina,
             limite,
         )
 
         return {
-            "pagina": processos.page,
-            "total": processos.total,
-            "total_paginas": processos.pages,
-            "processos": [processo.to_dict() for processo in processos.items],
+            "pagina": resultado["pagina"],
+            "total": resultado["total"],
+            "total_paginas": resultado["total_paginas"],
+            "processos": [processo.to_dict() for processo in resultado["processos"]],
         }
