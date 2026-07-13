@@ -1,6 +1,7 @@
 from models import AtivoMinerario
 from models import Usuario
 from models import ProcessoMinerario
+from repositories import AtivoMinerarioRepository
 
 
 class CriarAtivoService:
@@ -32,7 +33,7 @@ class CriarAtivoService:
         if processo is None:
             raise ValueError("Processo minerário não encontrado.")
 
-        ativo_existente = AtivoMinerario.buscar_por_usuario_processo(
+        ativo_existente = AtivoMinerarioRepository.buscar_por_usuario_processo(
             id_usuario, id_processo
         )
 

@@ -1,19 +1,16 @@
-from models import AtivoMinerario
-from models import ProcessoMinerario
+from repositories import ProcessoMinerarioRepository
 
 
 class BuscarDetalhesProcessoService:
 
     def executar(self, id_processo):
 
-        processo = ProcessoMinerario.buscar_por_id(id_processo)
+        resultado = ProcessoMinerarioRepository.buscar_detalhes(id_processo)
 
-        if processo is None:
+        if resultado is None:
             return None
 
-        ativo = AtivoMinerario.buscar_por_processo(id_processo)
-
         return {
-            "processo": processo.to_dict(),
-            "ativo": (ativo.to_dict() if ativo else None),
+            "processo": resultado["processo"].to_dict(),
+            "ativo": (resultado["ativo"].to_dict() if resultado["ativo"] else None),
         }

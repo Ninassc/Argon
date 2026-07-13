@@ -1,4 +1,5 @@
-from models.usuario import Usuario
+from models import Usuario
+from repositories import UsuarioRepository
 
 
 class CriarUsuarioService:
@@ -17,10 +18,10 @@ class CriarUsuarioService:
         if not email and not telefone:
             raise ValueError("É necessário informar e-mail ou telefone.")
 
-        if email and Usuario.buscar_por_email(email):
+        if email and UsuarioRepository.buscar_por_email(email):
             raise ValueError("Já existe um usuário cadastrado com este e-mail.")
 
-        if telefone and Usuario.buscar_por_telefone(telefone):
+        if telefone and UsuarioRepository.buscar_por_telefone(telefone):
             raise ValueError("Já existe um usuário cadastrado com este telefone.")
         
         usuario = Usuario(

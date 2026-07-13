@@ -61,18 +61,6 @@ class Usuario(db.Model):
     def listar_todos(cls):
         return cls.query.order_by(cls.id_usuario.asc()).all()
 
-    @classmethod
-    def buscar_por_id(cls, id_usuario):
-        return cls.query.get(id_usuario)
-
-    @classmethod
-    def buscar_por_email(cls, email):
-        return cls.query.filter_by(email=email).first()
-
-    @classmethod
-    def buscar_por_telefone(cls, telefone):
-        return cls.query.filter_by(telefone=telefone).first()
-
     # Json
     def to_dict(self):
         return {

@@ -1,11 +1,11 @@
-from models import ProcessoMinerario
+from repositories import ProcessoMinerarioRepository
 
 
 class PesquisarProcessosService:
 
     def executar(self, termo, pagina, limite):
 
-        processos = ProcessoMinerario.pesquisar(
+        processos = ProcessoMinerarioRepository.pesquisar(
             termo,
             pagina,
             limite,

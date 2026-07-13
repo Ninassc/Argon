@@ -101,39 +101,10 @@ class ProcessoMinerario(db.Model):
     @classmethod
     def listar_todos(cls):
         return cls.query.order_by(cls.id_processo.asc()).all()
-
-    @classmethod
-    def listar_paginado(cls, pagina, limite):
-
-        return cls.query.order_by(cls.ult_evento.desc()).paginate(
-            page=pagina, per_page=limite
-        )
-
-    @classmethod
-    def buscar_por_id(cls, id_processo):
-        return cls.query.get(id_processo)
-
+    
     @classmethod
     def buscar_por_id_anm(cls, id_anm):
         return cls.query.filter_by(id_anm=id_anm).first()
-
-    @classmethod
-    def pesquisar(cls, termo, pagina, limite):
-
-        return (
-            cls.query.filter(
-                db.or_(
-                    cls.processo.ilike(f"%{termo}%"),
-                    cls.nome.ilike(f"%{termo}%"),
-                    cls.subs.ilike(f"%{termo}%"),
-                )
-            )
-            .order_by(cls.id_processo.desc())
-            .paginate(
-                page=pagina,
-                per_page=limite,
-            )
-        )
 
     # JSON
     def to_dict(self):

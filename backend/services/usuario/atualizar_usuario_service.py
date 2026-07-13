@@ -1,9 +1,9 @@
-from models.usuario import Usuario
-
+from models import Usuario
+from repositories import UsuarioRepository
 
 class AtualizarUsuarioService:
     def executar(self, usuario_id, dados):
-        usuario = Usuario.buscar_por_id(usuario_id)
+        usuario = UsuarioRepository.buscar_por_id(usuario_id)
 
         if usuario is None:
             return None
@@ -22,13 +22,13 @@ class AtualizarUsuarioService:
             raise ValueError("O usuário deve possuir e-mail ou telefone.")
 
         if novo_email:
-            usuario_email = Usuario.buscar_por_email(novo_email)
+            usuario_email = UsuarioRepository.buscar_por_email(novo_email)
 
             if usuario_email and usuario_email.id_usuario != usuario.id_usuario:
                 raise ValueError("Já existe um usuário cadastrado com este e-mail.")
 
         if novo_telefone:
-            usuario_telefone = Usuario.buscar_por_telefone(novo_telefone)
+            usuario_telefone = UsuarioRepository.buscar_por_telefone(novo_telefone)
 
             if usuario_telefone and usuario_telefone.id_usuario != usuario.id_usuario:
                 raise ValueError("Já existe um usuário cadastrado com este telefone.")

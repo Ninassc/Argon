@@ -48,28 +48,6 @@ class AtivoMinerario(db.Model):
     def buscar_por_id(cls, id_ativo):
         return cls.query.get(id_ativo)
 
-    @classmethod
-    def buscar_por_usuario(cls, id_usuario):
-        return (
-            cls.query.filter_by(id_usuario=id_usuario)
-            .order_by(cls.dt_cadastro.desc())
-            .all()
-        )
-
-    @classmethod
-    def buscar_por_usuario_processo(cls, id_usuario, id_processo):
-        return cls.query.filter_by(
-            id_usuario=id_usuario, id_processo=id_processo
-        ).first()
-
-    @classmethod
-    def buscar_por_usuario_ativo(cls, id_usuario, id_ativo):
-        return cls.query.filter_by(id_usuario=id_usuario, id_ativo=id_ativo).first()
-
-    @classmethod
-    def buscar_por_processo(cls, id_processo):
-        return cls.query.filter_by(id_processo=id_processo).first()
-
     # JSON
     def to_dict(self):
         return {
