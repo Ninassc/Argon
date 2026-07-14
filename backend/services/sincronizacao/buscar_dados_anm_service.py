@@ -1,4 +1,6 @@
 import requests
+import re
+from datetime import datetime
 
 
 class BuscarDadosANMService:
@@ -35,7 +37,7 @@ class BuscarDadosANMService:
 
         for i in range(0, len(ids), tamanho_bloco):
 
-            bloco = ids[i:i + tamanho_bloco]
+            bloco = ids[i : i + tamanho_bloco]
 
             print(f"Buscando registros {i + 1} até {i + len(bloco)}...")
 
@@ -65,6 +67,18 @@ class BuscarDadosANMService:
                 if processo in processos_unicos:
                     continue
 
+                texto_ult_evento = atributos.get("ULT_EVENTO")
+
+                dt_ult_evento = None
+
+                if texto_ult_evento:
+                    encontrado = re.search(r"\d{2}/\d{2}/\d{4}", texto_ult_evento)
+
+                    if encontrado:
+                        dt_ult_evento = datetime.strptime(
+                            encontrado.group(), "%d/%m/%Y"
+                        ).date()
+
                 processos_unicos[processo] = {
                     "id_anm": atributos.get("ID"),
                     "processo": processo,
@@ -73,6 +87,7 @@ class BuscarDadosANMService:
                     "area_ha": atributos.get("AREA_HA"),
                     "fase": atributos.get("FASE"),
                     "ult_evento": atributos.get("ULT_EVENTO"),
+                    "dt_ult_evento": dt_ult_evento,
                     "nome": atributos.get("NOME"),
                     "subs": atributos.get("SUBS"),
                     "uso": atributos.get("USO"),

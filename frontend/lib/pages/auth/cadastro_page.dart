@@ -3,6 +3,8 @@ import 'package:frontend/pages/auth/login_page.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
 import 'package:frontend/widgets/textfields/campo_input.dart';
 import 'package:frontend/widgets/tipo_conta.dart';
+import 'package:frontend/models/usuario.dart';
+import 'package:frontend/services/usuario_service.dart';
 
 enum TipoUsuario { titular, interessado }
 
@@ -23,6 +25,8 @@ class _CadastroPageState extends State<CadastroPage> {
   TipoUsuario _selecionado = TipoUsuario.titular;
   final _opcoes = ['Titular', 'Interessado'];
 
+  final UsuarioService usuarioService = UsuarioService();
+
   @override
   void dispose() {
     controllerNome.dispose();
@@ -30,6 +34,48 @@ class _CadastroPageState extends State<CadastroPage> {
     controllerSenha.dispose();
     controllerConfirmarSenha.dispose();
     super.dispose();
+  }
+
+  Future<void> cadastrar() async {
+    if (controllerSenha.text != controllerConfirmarSenha.text) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("As senhas não coincidem.")));
+
+      return;
+    }
+
+    final texto = controllerEmailTelefone.text.trim();
+
+    final usuario = Usuario(
+      nome: controllerNome.text.trim(),
+      email: texto.contains("@") ? texto : null,
+      telefone: texto.contains("@") ? null : texto,
+      senha: controllerSenha.text,
+      tipoConta: _selecionado == TipoUsuario.titular
+          ? TipoConta.titular
+          : TipoConta.interessado,
+    );
+
+    try {
+      await usuarioService.criar(usuario);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Usuário cadastrado com sucesso!")),
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+      
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
   }
 
   @override
@@ -58,7 +104,7 @@ class _CadastroPageState extends State<CadastroPage> {
                 obscureText: false,
               ),
 
-              TipoConta(
+              TipoContaUsuario(
                 opcoes: _opcoes,
                 onChanged: (i) {
                   setState(() {
@@ -84,7 +130,7 @@ class _CadastroPageState extends State<CadastroPage> {
                 texto: "Criar Conta",
                 corBotao: const Color(0xFF5A81FA),
                 corTexto: Colors.white,
-                onPressed: () {},
+                onPressed: cadastrar,
               ),
               Buttons(
                 texto: "Já Possuo uma Conta",

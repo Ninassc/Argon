@@ -1,7 +1,7 @@
 from models import AtivoMinerario
-from models import Usuario
 from models import ProcessoMinerario
 from repositories import AtivoMinerarioRepository
+from repositories import UsuarioRepository
 
 
 class CriarAtivoService:
@@ -18,7 +18,7 @@ class CriarAtivoService:
         if not id_processo:
             raise ValueError("O processo minerário é obrigatório.")
 
-        usuario = Usuario.buscar_por_id(id_usuario)
+        usuario = UsuarioRepository.buscar_por_id(id_usuario)
 
         if usuario is None:
             raise ValueError("Usuário não encontrado.")

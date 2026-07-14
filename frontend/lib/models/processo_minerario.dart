@@ -8,6 +8,7 @@ class ProcessoMinerario {
   final String areaHa;
   final String fase;
   final String ultEvento;
+  final String dt_ult_evento;
   final String nome;
   final String subs;
   final String uso;
@@ -23,6 +24,7 @@ class ProcessoMinerario {
     required this.areaHa,
     required this.fase,
     required this.ultEvento,
+    required this.dt_ult_evento,
     required this.nome,
     required this.subs,
     required this.uso,
@@ -41,6 +43,7 @@ class ProcessoMinerario {
       areaHa: json["area_ha"].toString(),
       fase: json["fase"].toString(),
       ultEvento: json["ult_evento"].toString(),
+      dt_ult_evento: json['dt_ult_evento'].toString(),
       nome: json["nome"].toString(),
       subs: json["subs"].toString(),
       uso: json["uso"].toString(),

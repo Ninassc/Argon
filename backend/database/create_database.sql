@@ -13,23 +13,23 @@ CREATE TABLE
         dt_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
-CREATE TABLE
-    processo_minerario (
-        id_processo INT AUTO_INCREMENT PRIMARY KEY,
-        processo VARCHAR(20),
-        numero VARCHAR(20),
-        ano VARCHAR(10),
-        area_ha VARCHAR(30),
-        id_anm VARCHAR(50),
-        fase VARCHAR(100),
-        ult_evento TEXT,
-        nome VARCHAR(150),
-        subs VARCHAR(100),
-        uso VARCHAR(100),
-        uf VARCHAR(5),
-        ds_processo VARCHAR(20),
-        ultima_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP
-    );
+CREATE TABLE processo_minerario (
+    id_processo INT AUTO_INCREMENT PRIMARY KEY,
+    processo VARCHAR(20),
+    numero VARCHAR(20),
+    ano VARCHAR(10),
+    area_ha VARCHAR(30),
+    id_anm VARCHAR(50),
+    fase VARCHAR(100),
+    ult_evento TEXT,
+    dt_ult_evento DATE,
+    nome VARCHAR(150),
+    subs VARCHAR(100),
+    uso VARCHAR(100),
+    uf VARCHAR(5),
+    ds_processo VARCHAR(20),
+    ultima_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE TABLE
     ativo_minerario (

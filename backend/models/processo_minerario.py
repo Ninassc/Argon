@@ -20,6 +20,8 @@ class ProcessoMinerario(db.Model):
 
     ult_evento = db.Column(db.Text)
 
+    dt_ult_evento = db.Column(db.Date)
+
     nome = db.Column(db.String(150))
 
     subs = db.Column(db.String(100))
@@ -48,6 +50,7 @@ class ProcessoMinerario(db.Model):
         id_anm=None,
         fase=None,
         ult_evento=None,
+        dt_ult_evento=None,
         nome=None,
         subs=None,
         uso=None,
@@ -74,6 +77,9 @@ class ProcessoMinerario(db.Model):
 
         if ult_evento is not None:
             self.ult_evento = ult_evento
+
+        if dt_ult_evento is not None:
+            self.dt_ult_evento = dt_ult_evento
 
         if nome is not None:
             self.nome = nome
@@ -103,6 +109,10 @@ class ProcessoMinerario(db.Model):
         return cls.query.order_by(cls.id_processo.asc()).all()
     
     @classmethod
+    def buscar_por_id(cls, id_processo):
+        return cls.query.get(id_processo)
+
+    @classmethod
     def buscar_por_id_anm(cls, id_anm):
         return cls.query.filter_by(id_anm=id_anm).first()
 
@@ -117,6 +127,9 @@ class ProcessoMinerario(db.Model):
             "id_anm": self.id_anm,
             "fase": self.fase,
             "ult_evento": self.ult_evento,
+            "dt_ult_evento": (
+                self.dt_ult_evento.isoformat() if self.dt_ult_evento else None
+            ),
             "nome": self.nome,
             "subs": self.subs,
             "uso": self.uso,

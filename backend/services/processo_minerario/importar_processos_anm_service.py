@@ -33,6 +33,7 @@ class ImportarProcessosANMService:
                     id_anm=id_anm,
                     fase=dados.get("fase"),
                     ult_evento=dados.get("ult_evento"),
+                    dt_ult_evento=dados["dt_ult_evento"],
                     nome=dados.get("nome"),
                     subs=dados.get("subs"),
                     uso=dados.get("uso"),

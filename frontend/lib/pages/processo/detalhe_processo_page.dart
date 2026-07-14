@@ -7,17 +7,13 @@ import '../../services/processo_service.dart';
 class DetalheProcessoPage extends StatefulWidget {
   final int idProcesso;
 
-  const DetalheProcessoPage({
-    super.key,
-    required this.idProcesso,
-  });
+  const DetalheProcessoPage({super.key, required this.idProcesso});
 
   @override
   State<DetalheProcessoPage> createState() => _DetalheProcessoPageState();
 }
 
 class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
-
   ProcessoMinerario? processo;
   AtivoMinerario? ativo;
 
@@ -31,10 +27,7 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
   }
 
   Future<void> carregarDetalhes() async {
-
-    final resultado = await ProcessoService().buscarDetalhes(
-      widget.idProcesso,
-    );
+    final resultado = await ProcessoService().buscarDetalhes(widget.idProcesso);
 
     setState(() {
       processo = resultado["processo"];
@@ -46,71 +39,105 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
 
   @override
   Widget build(BuildContext context) {
-
     if (carregando) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Detalhes"),
+        //automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: Image.asset("assets/images/ArgON.png", height: 42),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: InkWell(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Color(0xFFE0E0E0), width: 2),
+              ),
+              child: Icon(
+                Icons.chevron_left,
+                size: 30,
+                color: Color(0xFF848484),
+              ),
+            ),
+          ),
+        ),
       ),
 
       body: Padding(
         padding: const EdgeInsets.all(24),
 
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Processo", style: TextStyle(color: Color(0xFF848484))),
+              Text(processo!.processo),
 
-          children: [
+              const SizedBox(height: 12),
+              Text("Substância", style: TextStyle(color: Color(0xFF848484))),
+              Text(processo!.subs),
 
-            Text(
-              processo!.processo,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+              const SizedBox(height: 12),
+              Text("Ano", style: TextStyle(color: Color(0xFF848484))),
+              Text(processo!.ano),
 
-            const SizedBox(height: 12),
+              const SizedBox(height: 12),
+              Text("Área", style: TextStyle(color: Color(0xFF848484))),
+              Text("${processo!.areaHa} ha"),
 
-            Text("Substância: ${processo!.subs}"),
-            Text("Fase: ${processo!.fase}"),
-            Text("Área: ${processo!.areaHa} ha"),
+              const SizedBox(height: 12),
+              Text("Fase", style: TextStyle(color: Color(0xFF848484))),
+              Text(processo!.fase),
 
-            const SizedBox(height: 30),
+              const SizedBox(height: 12),
+              Text("Último Evento", style: TextStyle(color: Color(0xFF848484))),
+              Text(processo!.ultEvento),
 
-            if (ativo != null) ...[
+              const SizedBox(height: 12),
+              Text("Nome", style: TextStyle(color: Color(0xFF848484))),
+              Text(processo!.nome),
 
-              const Divider(),
+              const SizedBox(height: 12),
+              Text("Uso", style: TextStyle(color: Color(0xFF848484))),
+              Text(processo!.uso),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
+              Text("DSProcesso", style: TextStyle(color: Color(0xFF848484))),
+              Text(processo!.dsProcesso),
 
-              const Text(
-                "Ativo Minerário",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
+              const SizedBox(height: 12),
+              Text("ID Processo", style: TextStyle(color: Color(0xFF848484))),
+              Text(processo!.idAnm),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
+              Text("ID", style: TextStyle(color: Color(0xFF848484))),
+              Text(processo!.idProcesso.toString()),
 
-              Text(
-                "Descrição:\n${ativo!.descricao}",
-              ),
+              const SizedBox(height: 12),
 
-              const SizedBox(height: 20),
+              if (ativo != null) ...[
+                const Divider(),
 
-              Text(
-                "Titular: ${ativo!.usuario?.nome}",
-              ),
-            ]
-          ],
+                const SizedBox(height: 12),
+                Text("Descrição", style: TextStyle(color: Color(0xFF848484))),
+                Text(ativo!.descricao),
+
+                const SizedBox(height: 12),
+                Text("Titular", style: TextStyle(color: Color(0xFF848484))),
+                Text(ativo!.usuario!.nome),
+
+                const SizedBox(height: 12),
+                Text("Data de Cadastro", style: TextStyle(color: Color(0xFF848484))),
+                Text(ativo!.dtCadastro.toString()),
+
+                const SizedBox(height: 30),
+              ],
+            ],
+          ),
         ),
       ),
     );

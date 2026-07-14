@@ -1,17 +1,17 @@
 // tipo_conta.dart
 import 'package:flutter/material.dart';
 
-class TipoConta extends StatefulWidget {
+class TipoContaUsuario extends StatefulWidget {
   final List<String> opcoes;
   final Function(int) onChanged;
 
-  const TipoConta({super.key, required this.opcoes, required this.onChanged});
+  const TipoContaUsuario({super.key, required this.opcoes, required this.onChanged});
 
   @override
-  State<TipoConta> createState() => _TipoContaState();
+  State<TipoContaUsuario> createState() => _TipoContaUsuarioState();
 }
 
-class _TipoContaState extends State<TipoConta> {
+class _TipoContaUsuarioState extends State<TipoContaUsuario> {
   int _selecionado = 0;
 
   @override

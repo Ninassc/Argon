@@ -21,7 +21,7 @@ SELECT
 FROM
     processo_minerario
 ORDER BY
-    id_processo DESC
+    dt_ult_evento DESC
 LIMIT
     p_limite
 OFFSET

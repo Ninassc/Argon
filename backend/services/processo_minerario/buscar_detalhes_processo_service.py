@@ -19,6 +19,7 @@ class BuscarDetalhesProcessoService:
             "id_anm": resultado["id_anm"],
             "fase": resultado["fase"],
             "ult_evento": resultado["ult_evento"],
+            "dt_ult_evento" : resultado['dt_ult_evento'],
             "nome": resultado["nome"],
             "subs": resultado["subs"],
             "uso": resultado["uso"],

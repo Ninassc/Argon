@@ -8,6 +8,7 @@ class CriarUsuarioService:
         email = dados.get("email")
         telefone = dados.get("telefone")
         senha = dados.get("senha")
+        tipo_conta = dados.get("tipo_conta")
 
         if not nome:
             raise ValueError("O nome é obrigatório")
@@ -24,11 +25,15 @@ class CriarUsuarioService:
         if telefone and UsuarioRepository.buscar_por_telefone(telefone):
             raise ValueError("Já existe um usuário cadastrado com este telefone.")
         
+        if not tipo_conta:
+            raise ValueError("O tipo da conta é obrigatório.")
+                
         usuario = Usuario(
             nome=nome,
             email=email,
             senha=senha,
-            telefone=telefone
+            telefone=telefone,
+            tipo_conta = tipo_conta
         )
 
         usuario.salvar()

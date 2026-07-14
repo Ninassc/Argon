@@ -26,10 +26,15 @@ def criar_usuario():
 
     except ValueError as erro:
         return jsonify({"erro": str(erro)}), 400
-
-    except SQLAlchemyError:
+    
+    except Exception as e:
         db.session.rollback()
-        return jsonify({"erro": "Erro ao salvar usuário no banco de dados."}), 500
+        print(e)
+        raise
+
+    # except SQLAlchemyError:
+    #     db.session.rollback()
+    #     return jsonify({"erro": "Erro ao salvar usuário no banco de dados."}), 500
 
 
 @usuario_bp.get("/")
