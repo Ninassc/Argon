@@ -67,6 +67,7 @@ class Usuario(db.Model):
             "id_usuario": self.id_usuario,
             "nome": self.nome,
             "email": self.email,
+            "senha" : self.senha,
             "telefone": self.telefone,
             "tipo_conta": self.tipo_conta,
             "dt_cadastro": (self.dt_cadastro.isoformat() if self.dt_cadastro else None),

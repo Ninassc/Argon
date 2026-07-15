@@ -1,5 +1,9 @@
 from flask import Blueprint, request, jsonify
 from sqlalchemy.exc import SQLAlchemyError
+from flask_jwt_extended import (
+    jwt_required,
+    get_jwt_identity,
+)
 
 from models import db
 
@@ -17,14 +21,20 @@ ativo_bp = Blueprint(
 
 
 @ativo_bp.post("/")
+@jwt_required()
 def criar_ativo():
 
     try:
         dados = request.get_json()
 
+        id_usuario = int(get_jwt_identity())
+
         service = CriarAtivoService()
 
-        ativo = service.executar(dados)
+        ativo = service.executar(
+            dados,
+            id_usuario,
+        )
 
         return jsonify(ativo), 201
 
@@ -37,19 +47,28 @@ def criar_ativo():
 
 
 @ativo_bp.put("/<int:id_ativo>")
+@jwt_required()
 def atualizar_ativo(id_ativo):
 
     try:
-        dados = request.get_json() or {}
 
-        id_usuario = dados.get("id_usuario")
+        dados = request.get_json()
+
+        id_usuario = int(get_jwt_identity())
 
         service = AtualizarAtivoService()
 
-        ativo = service.executar(id_usuario, id_ativo, dados)
+        ativo = service.executar(
+            id_ativo,
+            id_usuario,
+            dados,
+        )
 
         if ativo is None:
-            return jsonify({"erro": "Ativo não encontrado."}), 404
+            return (
+                jsonify({"erro": "Ativo não encontrado ou você não possui permissão."}),
+                404,
+            )
 
         return jsonify(ativo), 200
 
@@ -62,19 +81,22 @@ def atualizar_ativo(id_ativo):
 
 
 @ativo_bp.delete("/<int:id_ativo>")
+@jwt_required()
 def deletar_ativo(id_ativo):
 
     try:
-        dados = request.get_json() or {}
 
-        id_usuario = dados.get("id_usuario")
+        id_usuario = int(get_jwt_identity())
 
         service = DeletarAtivoService()
 
-        resultado = service.executar(id_usuario, id_ativo)
+        resultado = service.executar(id_ativo, id_usuario)
 
         if not resultado:
-            return jsonify({"erro": "Ativo não encontrado."}), 404
+            return (
+                jsonify({"erro": "Ativo não encontrado ou você não possui permissão."}),
+                404,
+            )
 
         return jsonify({"mensagem": "Ativo excluído com sucesso."}), 200
 

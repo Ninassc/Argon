@@ -5,9 +5,8 @@ from repositories import UsuarioRepository
 
 
 class CriarAtivoService:
-    def executar(self, dados):
+    def executar(self, dados, id_usuario):
 
-        id_usuario = dados.get("id_usuario")
         id_processo = dados.get("id_processo")
         descricao = dados.get("descricao", "")
 

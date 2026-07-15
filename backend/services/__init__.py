@@ -24,6 +24,8 @@ from .ativo_minerario.listar_ativos_usuario_service import ListarAtivosUsuarioSe
 from .sincronizacao.buscar_dados_anm_service import BuscarDadosANMService
 from .sincronizacao.sincronizar_base_anm import SincronizarBaseANMService
 
+from .auth.login_service import LoginService
+
 __all__ = [
     "AtualizarUsuarioService",
     "BuscarUsuarioService",
@@ -43,4 +45,5 @@ __all__ = [
     "ListarAtivosUsuarioService",
     "BuscarDadosANMService",
     "SincronizarBaseANMService",
+    "LoginService"
 ]

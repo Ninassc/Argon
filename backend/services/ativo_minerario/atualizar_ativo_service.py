@@ -1,11 +1,12 @@
 from models import AtivoMinerario
+from repositories import AtivoMinerarioRepository
 
 
 class AtualizarAtivoService:
 
-    def executar(self, id_usuario, id_ativo, dados):
+    def executar(self, id_ativo, id_usuario, dados):
 
-        ativo = AtivoMinerario.buscar_por_usuario_ativo(id_usuario, id_ativo)
+        ativo = AtivoMinerarioRepository.buscar_por_usuario_ativo(id_usuario, id_ativo)
 
         if ativo is None:
             return None
