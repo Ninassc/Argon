@@ -3,6 +3,7 @@ import 'package:frontend/pages/auth/cadastro_page.dart';
 import 'package:frontend/pages/home/home_page.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
 import 'package:frontend/widgets/textfields/campo_input.dart';
+import 'package:frontend/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
