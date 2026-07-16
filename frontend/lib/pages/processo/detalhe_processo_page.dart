@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/buttons/buttons.dart';
 
 import '../../models/ativo_minerario.dart';
 import '../../models/processo_minerario.dart';
@@ -6,8 +7,13 @@ import '../../services/processo_service.dart';
 
 class DetalheProcessoPage extends StatefulWidget {
   final int idProcesso;
+  final bool modoCadastro;
 
-  const DetalheProcessoPage({super.key, required this.idProcesso});
+  const DetalheProcessoPage({
+    super.key,
+    required this.idProcesso,
+    this.modoCadastro = false,
+  });
 
   @override
   State<DetalheProcessoPage> createState() => _DetalheProcessoPageState();
@@ -131,10 +137,26 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                 Text(ativo!.usuario!.nome),
 
                 const SizedBox(height: 12),
-                Text("Data de Cadastro", style: TextStyle(color: Color(0xFF848484))),
+                Text(
+                  "Data de Cadastro",
+                  style: TextStyle(color: Color(0xFF848484)),
+                ),
                 Text(ativo!.dtCadastro.toString()),
 
                 const SizedBox(height: 30),
+              ],
+
+              if (widget.modoCadastro && ativo == null) ...[
+                const SizedBox(height: 30),
+
+                Buttons(
+                  texto: "Cadastrar Ativo",
+                  corBotao: const Color(0xFF5A81FA),
+                  corTexto: Colors.white,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
               ],
             ],
           ),

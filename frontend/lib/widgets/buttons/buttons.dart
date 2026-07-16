@@ -26,7 +26,13 @@ class Buttons extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
             side: BorderSide(
-              color: texto == "Entrar" || texto == "Criar Conta" ? corBotao : corTexto,
+              color:
+                  texto == "Entrar" ||
+                      texto == "Criar Conta" ||
+                      texto == "Pesquisar" ||
+                      texto == "Cadastrar Ativo"
+                  ? corBotao
+                  : corTexto,
               width: 2,
             ),
           ),
