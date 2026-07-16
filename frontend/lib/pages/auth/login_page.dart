@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/auth/cadastro_page.dart';
 import 'package:frontend/pages/home/home_page.dart';
+import 'package:frontend/storage/auth_storage.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
 import 'package:frontend/widgets/textfields/campo_input.dart';
 import 'package:frontend/services/auth_service.dart';
@@ -15,6 +16,32 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController controllerEmailTelefone = TextEditingController();
   final TextEditingController controllerSenha = TextEditingController();
+
+  final AuthService authService = AuthService();
+
+  Future<void> fazerLogin() async {
+    try {
+      final resultado = await authService.login(
+        identificador: controllerEmailTelefone.text.trim(),
+        senha: controllerSenha.text,
+      );
+
+      await AuthStorage().salvarToken(resultado["token"]);
+
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomePage()),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,12 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                 texto: "Entrar",
                 corBotao: const Color(0xFF5A81FA),
                 corTexto: Colors.white,
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                  );
-                },
+                onPressed: fazerLogin,
               ),
               Buttons(
                 texto: "Não Possuo uma Conta",

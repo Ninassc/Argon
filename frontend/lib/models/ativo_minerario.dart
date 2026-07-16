@@ -34,7 +34,6 @@ class AtivoMinerario {
 
   Map<String, dynamic> toJson() {
     return {
-      "id_usuario": idUsuario,
       "id_processo": idProcesso,
       "descricao": descricao,
     };

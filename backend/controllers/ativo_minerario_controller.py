@@ -11,6 +11,8 @@ from services import (
     CriarAtivoService,
     AtualizarAtivoService,
     DeletarAtivoService,
+    BuscarAtivoService, 
+    ListarAtivosUsuarioService
 )
 
 ativo_bp = Blueprint(
@@ -103,3 +105,34 @@ def deletar_ativo(id_ativo):
     except SQLAlchemyError:
         db.session.rollback()
         return jsonify({"erro": "Erro ao excluir ativo."}), 500
+
+
+@ativo_bp.get("/<int:id_ativo>")
+@jwt_required()
+def buscar_ativo(id_ativo):
+
+    id_usuario = int(get_jwt_identity())
+
+    service = BuscarAtivoService()
+
+    ativo = service.executar(id_usuario, id_ativo)
+
+    if ativo is None:
+        return jsonify({
+            "erro": "Ativo não encontrado ou você não possui permissão."
+        }), 404
+
+    return jsonify(ativo), 200
+
+
+@ativo_bp.get("/meus")
+@jwt_required()
+def listar_meus_ativos():
+
+    id_usuario = int(get_jwt_identity())
+
+    service = ListarAtivosUsuarioService()
+
+    ativos = service.executar(id_usuario)
+
+    return jsonify(ativos), 200
