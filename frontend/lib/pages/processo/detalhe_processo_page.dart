@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
 
 import '../../models/ativo_minerario.dart';
+import '../../services/ativo_service.dart';
 import '../../models/processo_minerario.dart';
 import '../../services/processo_service.dart';
 
@@ -23,6 +24,8 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
   ProcessoMinerario? processo;
   AtivoMinerario? ativo;
 
+  final AtivoService ativoService = AtivoService();
+
   bool carregando = true;
 
   @override
@@ -41,6 +44,31 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
 
       carregando = false;
     });
+  }
+
+  Future<void> cadastrarAtivo() async {
+    try {
+      final novoAtivo = AtivoMinerario(
+        idProcesso: processo!.idProcesso,
+        descricao: "Novo ativo cadastrado.",
+      );
+
+      await ativoService.criar(novoAtivo);
+
+      await carregarDetalhes();
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Ativo cadastrado com sucesso!")),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
+      );
+    }
   }
 
   @override
@@ -153,9 +181,7 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                   texto: "Cadastrar Ativo",
                   corBotao: const Color(0xFF5A81FA),
                   corTexto: Colors.white,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+                  onPressed: cadastrarAtivo
                 ),
               ],
             ],

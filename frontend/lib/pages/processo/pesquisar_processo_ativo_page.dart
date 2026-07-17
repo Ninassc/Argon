@@ -64,12 +64,7 @@ class _PesquisarProcessoAtivoPageState
 
       debugPrint("Processo encontrado: ${processoEncontrado.processo}");
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Processo ${processoEncontrado.processo} encontrado."),
-        ),
-      );
-
+     
       Navigator.push(
         context,
         MaterialPageRoute(

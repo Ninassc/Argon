@@ -2,7 +2,7 @@ import 'usuario.dart';
 
 class AtivoMinerario {
   final int? idAtivo;
-  final int idUsuario;
+  final int? idUsuario;
   final int idProcesso;
   final String descricao;
   final DateTime? dtCadastro;
@@ -10,7 +10,7 @@ class AtivoMinerario {
 
   const AtivoMinerario({
     this.idAtivo,
-    required this.idUsuario,
+    this.idUsuario,
     required this.idProcesso,
     required this.descricao,
     this.dtCadastro,
@@ -33,9 +33,6 @@ class AtivoMinerario {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      "id_processo": idProcesso,
-      "descricao": descricao,
-    };
+    return {"id_processo": idProcesso, "descricao": descricao};
   }
 }
