@@ -27,6 +27,7 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       await AuthStorage().salvarToken(resultado["token"]);
+      await AuthStorage().salvarUsuario(resultado["usuario"]);
 
       if (!mounted) return;
 

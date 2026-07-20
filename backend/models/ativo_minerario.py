@@ -39,10 +39,10 @@ class AtivoMinerario(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    # READ
-    # @classmethod
-    # def listar_todos(cls):
-    #     return cls.query.order_by(cls.id_ativo.asc()).all()
+    #READ
+    @classmethod
+    def listar_todos(cls):
+        return cls.query.order_by(cls.id_ativo.asc()).all()
 
     @classmethod
     def buscar_por_id(cls, id_ativo):

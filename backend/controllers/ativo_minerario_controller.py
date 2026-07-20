@@ -5,7 +5,7 @@ from flask_jwt_extended import (
     get_jwt_identity,
 )
 
-from models import db
+from models import db, AtivoMinerario
 
 from services import (
     CriarAtivoService,
@@ -20,6 +20,14 @@ ativo_bp = Blueprint(
     __name__,
     url_prefix="/ativos",
 )
+
+@ativo_bp.get('/todos')
+def listar_todos():
+    ativos = AtivoMinerario.listar_todos()
+    
+    ativos = list(ativo.to_dict() for ativo in ativos)
+
+    return jsonify(ativos), 200
 
 
 @ativo_bp.post("/")
