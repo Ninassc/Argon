@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/models/processo_minerario.dart';
 import 'package:frontend/pages/processo/detalhe_processo_page.dart';
 import 'package:frontend/pages/processo/pesquisar_processo_ativo_page.dart';
+import 'package:frontend/pages/usuario/perfil_page.dart';
 import 'package:frontend/services/processo_service.dart';
 import 'package:frontend/widgets/buttons/action_button.dart';
 import 'package:frontend/widgets/buttons/button_speed_child.dart';
@@ -66,10 +67,10 @@ class _HomePageState extends State<HomePage> {
             limit: limite,
           );
 
-    print("========== Página $pagina ==========");
+    debugPrint("========== Página $pagina ==========");
 
     for (var processo in novos) {
-      print(processo.processo);
+      debugPrint(processo.processo);
     }
 
     setState(() {
@@ -189,7 +190,12 @@ class _HomePageState extends State<HomePage> {
                     buttonSpeedChild(
                       icone: Icons.person_outline,
                       label: 'Perfil',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => PerfilPage()),
+                        );
+                      },
                     ),
                   ],
                 ),

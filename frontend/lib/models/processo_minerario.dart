@@ -8,6 +8,7 @@ class ProcessoMinerario {
   final String areaHa;
   final String fase;
   final String ultEvento;
+  // ignore: non_constant_identifier_names
   final String dt_ult_evento;
   final String nome;
   final String subs;
@@ -24,6 +25,7 @@ class ProcessoMinerario {
     required this.areaHa,
     required this.fase,
     required this.ultEvento,
+    // ignore: non_constant_identifier_names
     required this.dt_ult_evento,
     required this.nome,
     required this.subs,

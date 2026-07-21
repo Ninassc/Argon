@@ -1,6 +1,10 @@
 from flask import Blueprint, request, jsonify
 from models import db
 from sqlalchemy.exc import SQLAlchemyError
+from flask_jwt_extended import (
+    jwt_required,
+    get_jwt_identity,
+)
 
 from services import CriarUsuarioService
 from services import ListarUsuariosService
@@ -12,6 +16,7 @@ from services import BuscarAtivoService
 from services import ListarAtivosUsuarioService
 
 usuario_bp = Blueprint("usuario", __name__, url_prefix="/usuarios")
+
 
 @usuario_bp.post("/")
 def criar_usuario():
@@ -26,7 +31,7 @@ def criar_usuario():
 
     except ValueError as erro:
         return jsonify({"erro": str(erro)}), 400
-    
+
     except Exception as e:
         db.session.rollback()
         print(e)
@@ -95,3 +100,13 @@ def deletar_usuario(usuario_id):
     except SQLAlchemyError:
         db.session.rollback()
         return jsonify({"erro": "Erro ao excluir usuário."}), 500
+
+
+@usuario_bp.get("/me")
+@jwt_required()
+def buscar_me():
+    id_usuario = int(get_jwt_identity())
+
+    usuario = BuscarUsuarioService().executar(id_usuario)
+
+    return jsonify(usuario), 200

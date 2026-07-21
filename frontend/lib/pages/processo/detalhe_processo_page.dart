@@ -244,8 +244,8 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                         if (podeEditar) ...[
                           ButtonsDetalheProcesso(
                             icone: Icons.edit_outlined,
-                            onTap: () {
-                              Navigator.push(
+                            onTap: () async {
+                              final alterou = await Navigator.push<bool>(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => EditarAtivoPage(
@@ -254,6 +254,10 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                                   ),
                                 ),
                               );
+
+                              if (alterou == true) {
+                                await carregarDetalhes();
+                              }
                             },
                           ),
 
@@ -263,7 +267,7 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                         ButtonsDetalheProcesso(
                           icone: Icons.share_outlined,
                           onTap: () {
-                            print("Compartilhar");
+                            
                           },
                         ),
 
@@ -272,7 +276,7 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                         ButtonsDetalheProcesso(
                           icone: Icons.bookmark_border,
                           onTap: () {
-                            print("Favoritar");
+                           
                           },
                         ),
                       ],

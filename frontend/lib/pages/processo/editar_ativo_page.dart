@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/ativo_minerario.dart';
 import 'package:frontend/models/processo_minerario.dart';
+import 'package:frontend/services/ativo_service.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
 
 class EditarAtivoPage extends StatefulWidget {
@@ -19,11 +20,66 @@ class EditarAtivoPage extends StatefulWidget {
 class _EditarAtivoPageState extends State<EditarAtivoPage> {
   final TextEditingController controllerDescricao = TextEditingController();
 
+  final AtivoService ativoService = AtivoService();
+
+  bool salvando = false;
+
   @override
   void initState() {
     super.initState();
 
     controllerDescricao.text = widget.ativo.descricao;
+  }
+
+  @override
+  void dispose() {
+    controllerDescricao.dispose();
+    super.dispose();
+  }
+
+  Future<void> salvarAlteracoes() async {
+    final descricao = controllerDescricao.text.trim();
+
+    if (descricao.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Digite uma descrição para o ativo.")),
+      );
+
+      return;
+    }
+
+    setState(() {
+      salvando = true;
+    });
+
+    try {
+      final ativoAtualizado = AtivoMinerario(
+        idAtivo: widget.ativo.idAtivo,
+        idProcesso: widget.ativo.idProcesso,
+        descricao: descricao,
+      );
+
+      await ativoService.atualizar(widget.ativo.idAtivo!, ativoAtualizado);
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Ativo atualizado com sucesso!")),
+      );
+
+      Navigator.pop(context, true);
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          salvando = false;
+        });
+      }
+    }
   }
 
   @override
@@ -125,10 +181,14 @@ class _EditarAtivoPageState extends State<EditarAtivoPage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Buttons(
-                    texto: "Salvar e Sair",
+                    texto: salvando ? "Salvando..." : "Salvar e Sair",
                     corBotao: const Color(0xFF5A81FA),
                     corTexto: Colors.white,
-                    onPressed: () {},
+                    onPressed: () {
+                      if (!salvando) {
+                        salvarAlteracoes();
+                      }
+                    },
                   ),
                 ],
               ),

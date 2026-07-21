@@ -2,9 +2,13 @@ from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
+import os
+
 from config import Config
 from models import db
 from controllers import usuario_bp, processo_bp, ativo_bp, auth_bp
+
+from scheduler import iniciar_scheduler
 
 
 def create_app():
@@ -32,4 +36,7 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
+    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+        iniciar_scheduler(app)
+
     app.run(debug=True)

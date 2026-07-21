@@ -22,7 +22,34 @@ class AtivoMinerarioRepository:
             linhas = resultado.mappings().all()
             resultado.close()
 
-            return [dict(linha) for linha in linhas]
+            ativos = []
+
+            for linha in linhas:
+                ativos.append({
+                    "id_ativo": linha["id_ativo"],
+                    "id_usuario": linha["id_usuario"],
+                    "descricao": linha["descricao"],
+                    "dt_cadastro": linha["dt_cadastro"],
+
+                    "processo": {
+                        "id_processo": linha["id_processo"],
+                        "id_anm": linha["id_anm"],
+                        "processo": linha["processo"],
+                        "numero": linha["numero"],
+                        "ano": linha["ano"],
+                        "area_ha": linha["area_ha"],
+                        "fase": linha["fase"],
+                        "ult_evento": linha["ult_evento"],
+                        "dt_ult_evento": linha["dt_ult_evento"],
+                        "nome": linha["nome"],
+                        "subs": linha["subs"],
+                        "uso": linha["uso"],
+                        "uf": linha["uf"],
+                        "ds_processo": linha["ds_processo"],
+                    }
+                })
+
+            return ativos
 
         ativos = (
             AtivoMinerario.query.filter_by(id_usuario=id_usuario)

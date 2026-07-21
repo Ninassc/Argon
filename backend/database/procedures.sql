@@ -133,11 +133,19 @@ SELECT
     a.id_processo,
     a.descricao,
     a.dt_cadastro,
+    p.id_anm,
     p.processo,
+    p.numero,
+    p.ano,
+    p.area_ha,
+    p.fase,
+    p.ult_evento,
+    p.dt_ult_evento,
     p.nome,
     p.subs,
-    p.fase,
-    p.uf
+    p.uso,
+    p.uf,
+    p.ds_processo
 FROM
     ativo_minerario a
     INNER JOIN processo_minerario p ON p.id_processo = a.id_processo
