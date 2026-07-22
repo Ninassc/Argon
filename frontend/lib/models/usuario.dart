@@ -1,4 +1,16 @@
-enum TipoConta { titular, interessado }
+enum TipoConta {
+  titular,
+  interessado;
+
+  String get descricao {
+    switch (this) {
+      case TipoConta.titular:
+        return "Titular";
+      case TipoConta.interessado:
+        return "Interessado";
+    }
+  }
+}
 
 class Usuario {
   final int? idUsuario;

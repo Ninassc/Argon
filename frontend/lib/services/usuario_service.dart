@@ -54,20 +54,50 @@ class UsuarioService {
     return Usuario.fromJson(json);
   }
 
-  Future<Usuario> atualizar(int idUsuario, Usuario usuario) async {
+  Future<Usuario> atualizarPerfil({
+    required String nome,
+    String? email,
+    String? telefone,
+    required TipoConta tipoConta,
+  }) async {
     final response = await http.put(
-      Uri.parse("${ApiService.baseUrl}/usuarios/$idUsuario"),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(usuario.toJson()),
+      Uri.parse("${ApiService.baseUrl}/usuarios/me"),
+      headers: await ApiService.authHeaders(),
+      body: jsonEncode({
+        "nome": nome,
+        "email": email?.trim().isEmpty ?? true ? null : email,
+        "telefone": telefone?.trim().isEmpty ?? true ? null : telefone,
+        "tipo_conta": tipoConta.name,
+      }),
     );
 
     if (response.statusCode != 200) {
-      throw Exception("Erro ao atualizar usuário.");
+      final erro = jsonDecode(response.body);
+      throw Exception(erro["erro"]);
     }
 
-    final json = jsonDecode(response.body);
+    return Usuario.fromJson(jsonDecode(response.body));
+  }
 
-    return Usuario.fromJson(json);
+  Future<void> alterarSenha({
+    required String senhaAtual,
+    required String novaSenha,
+    required String confirmarSenha,
+  }) async {
+    final response = await http.put(
+      Uri.parse("${ApiService.baseUrl}/usuarios/me/senha"),
+      headers: await ApiService.authHeaders(),
+      body: jsonEncode({
+        "senha_atual": senhaAtual,
+        "nova_senha": novaSenha,
+        "confirmar_senha": confirmarSenha,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      final mensagem = jsonDecode(response.body)["erro"];
+      throw Exception(mensagem);
+    }
   }
 
   Future<void> deletar(int idUsuario) async {

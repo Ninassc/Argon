@@ -3,6 +3,7 @@ from .usuario.buscar_usuario_service import BuscarUsuarioService
 from .usuario.criar_usuario_service import CriarUsuarioService
 from .usuario.deletar_usuario_service import DeletarUsuarioService
 from .usuario.listar_usuarios_service import ListarUsuariosService
+from .usuario.alterar_senha_service import AlterarSenhaService
 
 from .processo_minerario.pesquisar_processos_service import PesquisarProcessosService
 from .processo_minerario.deletar_processo_service import DeletarProcessoService
@@ -32,6 +33,7 @@ __all__ = [
     "CriarUsuarioService",
     "DeletarUsuarioService",
     "ListarUsuariosService",
+    "AlterarSenhaService",
     "PesquisarProcessosService",
     "DeletarProcessoService",
     "ListarProcessosService",

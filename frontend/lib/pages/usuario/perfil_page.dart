@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/models/ativo_minerario.dart';
 import 'package:frontend/models/usuario.dart';
 import 'package:frontend/pages/processo/detalhe_processo_page.dart';
+import 'package:frontend/pages/usuario/editar_perfil_page.dart';
 import 'package:frontend/services/ativo_service.dart';
 import 'package:frontend/services/usuario_service.dart';
 import 'package:frontend/widgets/cards/card_processo_minerario.dart';
@@ -106,10 +107,28 @@ class _PerfilPageState extends State<PerfilPage> {
 
                   const SizedBox(height: 20),
 
-                  OutlinedButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.edit),
-                    label: const Text("Editar perfil"),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 10,
+                    children: [
+                      OutlinedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditarPerfilPage(usuario: usuario,),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.edit),
+                        label: const Text("Editar perfil"),
+                      ),
+                      OutlinedButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(Icons.logout),
+                        label: const Text("Sair"),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 25),
 

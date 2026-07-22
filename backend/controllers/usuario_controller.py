@@ -11,9 +11,8 @@ from services import ListarUsuariosService
 from services import BuscarUsuarioService
 from services import DeletarUsuarioService
 from services import AtualizarUsuarioService
+from services import AlterarSenhaService
 
-from services import BuscarAtivoService
-from services import ListarAtivosUsuarioService
 
 usuario_bp = Blueprint("usuario", __name__, url_prefix="/usuarios")
 
@@ -110,3 +109,27 @@ def buscar_me():
     usuario = BuscarUsuarioService().executar(id_usuario)
 
     return jsonify(usuario), 200
+
+
+@usuario_bp.put("/me")
+@jwt_required()
+def atualizar_me():
+    id_usuario = int(get_jwt_identity())
+
+    usuario = AtualizarUsuarioService().executar(id_usuario, request.get_json())
+
+    return jsonify(usuario), 200
+
+
+@usuario_bp.put("/me/senha")
+@jwt_required()
+def alterar_senha():
+    id_usuario = int(get_jwt_identity())
+
+    dados = request.get_json()
+
+    service = AlterarSenhaService()
+
+    service.executar(id_usuario, dados)
+
+    return jsonify({"mensagem": "Senha alterada com sucesso."}), 200

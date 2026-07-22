@@ -1,6 +1,7 @@
 from models import Usuario
 from repositories import UsuarioRepository
 
+
 class AtualizarUsuarioService:
     def executar(self, usuario_id, dados):
         usuario = UsuarioRepository.buscar_por_id(usuario_id)
@@ -8,8 +9,8 @@ class AtualizarUsuarioService:
         if usuario is None:
             return None
 
-        novo_email = dados.get("email")
-        novo_telefone = dados.get("telefone")
+        novo_email = (dados.get("email") or "").strip() or None
+        novo_telefone = (dados.get("telefone") or "").strip() or None
         tipo_conta = dados.get("tipo_conta")
 
         email_final = novo_email if novo_email is not None else usuario.email
@@ -34,10 +35,9 @@ class AtualizarUsuarioService:
                 raise ValueError("Já existe um usuário cadastrado com este telefone.")
 
         usuario.atualizar(
-            nome=dados.get("nome"),
+            nome = dados.get("nome", usuario.nome),
             email=novo_email,
             telefone=novo_telefone,
-            senha=dados.get("senha"),
             tipo_conta=tipo_conta,
         )
 

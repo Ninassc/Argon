@@ -33,7 +33,8 @@ class Buttons extends StatelessWidget {
                       texto == "Cadastrar Ativo" ||
                       texto == "Pesquisando..." ||
                       texto == "Salvar e Sair" ||
-                      texto == "Salvando..."
+                      texto == "Salvando..." ||
+                      texto == "Salvar Alterações"
                   ? corBotao
                   : corTexto,
               width: 2,
