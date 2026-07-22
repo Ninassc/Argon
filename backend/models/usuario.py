@@ -8,11 +8,11 @@ class Usuario(db.Model):
 
     nome = db.Column(db.String(100), nullable=False)
 
-    email = db.Column(db.String(150), unique=True)
+    email = db.Column(db.String(150), unique=True, nullable=True)
 
     senha = db.Column(db.String(255), nullable=False)
 
-    telefone = db.Column(db.String(20), unique=True)
+    telefone = db.Column(db.String(20), unique=True, nullable=True)
 
     tipo_conta = db.Column(db.Enum("Titular", "Interessado"), nullable=False)
 
@@ -67,7 +67,7 @@ class Usuario(db.Model):
             "id_usuario": self.id_usuario,
             "nome": self.nome,
             "email": self.email,
-            "senha" : self.senha,
+            "senha": self.senha,
             "telefone": self.telefone,
             "tipo_conta": self.tipo_conta,
             "dt_cadastro": (self.dt_cadastro.isoformat() if self.dt_cadastro else None),

@@ -8,7 +8,7 @@ CREATE TABLE
     usuario (
         id_usuario INT AUTO_INCREMENT PRIMARY KEY,
         nome VARCHAR(100) NOT NULL,
-        email VARCHAR(150) NOT NULL UNIQUE,
+        email VARCHAR(50) UNIQUE,
         senha VARCHAR(255) NOT NULL,
         telefone VARCHAR(20) UNIQUE,
         tipo_conta ENUM('Titular', 'Interessado') NOT NULL,
