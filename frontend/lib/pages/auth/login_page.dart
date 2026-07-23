@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/auth/cadastro_page.dart';
 import 'package:frontend/pages/home/home_page.dart';
+import 'package:frontend/pages/welcome/welcome_page.dart';
 import 'package:frontend/storage/auth_storage.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
 import 'package:frontend/widgets/textfields/campo_input.dart';
@@ -48,9 +49,31 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        //automaticallyImplyLeading: false,
         centerTitle: true,
         title: Image.asset("assets/images/ArgON.png", height: 42),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: InkWell(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => WelcomePage()),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Color(0xFFE0E0E0), width: 2),
+              ),
+              child: Icon(
+                Icons.chevron_left,
+                size: 30,
+                color: Color(0xFF848484),
+              ),
+            ),
+          ),
+        ),
       ),
+
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),

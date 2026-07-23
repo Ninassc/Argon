@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/ativo_minerario.dart';
 import 'package:frontend/models/usuario.dart';
+import 'package:frontend/pages/auth/login_page.dart';
 import 'package:frontend/pages/processo/detalhe_processo_page.dart';
 import 'package:frontend/pages/usuario/editar_perfil_page.dart';
 import 'package:frontend/services/ativo_service.dart';
 import 'package:frontend/services/usuario_service.dart';
+import 'package:frontend/storage/auth_storage.dart';
 import 'package:frontend/widgets/cards/card_processo_minerario.dart';
 import 'package:frontend/widgets/textfields/pesquisar_input.dart';
 
@@ -29,6 +31,44 @@ class _PerfilPageState extends State<PerfilPage> {
 
     _usuarioFuture = UsuarioService().buscarPerfil();
     _ativosFuture = AtivoService().listar();
+  }
+
+  Future<void> sair() async {
+    final confirmar = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          "Sair da conta",
+          style: TextStyle(
+            color: Color(0xFF5A81FA),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        content: const Text("Deseja realmente sair da sua conta?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("Cancelar"),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text("Sair"),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmar != true) return;
+
+    await AuthStorage().removerToken();
+
+    if (!mounted) return;
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+      (route) => false,
+    );
   }
 
   @override
@@ -116,7 +156,8 @@ class _PerfilPageState extends State<PerfilPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => EditarPerfilPage(usuario: usuario,),
+                              builder: (context) =>
+                                  EditarPerfilPage(usuario: usuario),
                             ),
                           );
                         },
@@ -124,7 +165,7 @@ class _PerfilPageState extends State<PerfilPage> {
                         label: const Text("Editar perfil"),
                       ),
                       OutlinedButton.icon(
-                        onPressed: () {},
+                        onPressed: sair,
                         icon: const Icon(Icons.logout),
                         label: const Text("Sair"),
                       ),

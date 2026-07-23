@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/auth/login_page.dart';
+import 'package:frontend/pages/welcome/welcome_page.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
 import 'package:frontend/widgets/textfields/campo_input.dart';
 import 'package:frontend/widgets/tipo_conta.dart';
@@ -70,7 +71,6 @@ class _CadastroPageState extends State<CadastroPage> {
         context,
         MaterialPageRoute(builder: (context) => LoginPage()),
       );
-      
     } catch (e) {
       ScaffoldMessenger.of(
         context,
@@ -82,8 +82,29 @@ class _CadastroPageState extends State<CadastroPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        //automaticallyImplyLeading: false,
         centerTitle: true,
         title: Image.asset("assets/images/ArgON.png", height: 42),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: InkWell(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => WelcomePage()),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Color(0xFFE0E0E0), width: 2),
+              ),
+              child: Icon(
+                Icons.chevron_left,
+                size: 30,
+                color: Color(0xFF848484),
+              ),
+            ),
+          ),
+        ),
       ),
 
       body: SafeArea(

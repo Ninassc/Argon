@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/usuario.dart';
+import 'package:frontend/pages/usuario/perfil_page.dart';
 import 'package:frontend/services/usuario_service.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
 import 'package:frontend/widgets/textfields/campo_input.dart';
@@ -65,7 +66,10 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         const SnackBar(content: Text("Perfil atualizado com sucesso!")),
       );
 
-      Navigator.pop(context, true);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => PerfilPage()),
+      );
     } catch (e) {
       if (!mounted) return;
 

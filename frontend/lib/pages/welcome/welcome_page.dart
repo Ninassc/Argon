@@ -27,6 +27,7 @@ class _WelcomePageState extends State<WelcomePage> {
       appBar: AppBar(
         centerTitle: true,
         title: Image.asset("assets/images/ArgON.png", height: 42),
+        automaticallyImplyLeading: false,
       ),
 
       body: SafeArea(
