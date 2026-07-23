@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Argon',
       theme: ThemeData(
+        useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF5A81FA)),
         scaffoldBackgroundColor: Colors.white,
         appBarTheme: AppBarTheme(

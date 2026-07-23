@@ -2,7 +2,11 @@ USE argon;
 
 DROP PROCEDURE IF EXISTS sp_listar_processos;
 
-DELIMITER / / CREATE PROCEDURE sp_listar_processos (IN p_limite INT, IN p_offset INT) BEGIN
+DELIMITER / / CREATE PROCEDURE sp_listar_processos (
+    IN p_limite INT,
+    IN p_offset INT,
+    IN p_fase VARCHAR(100)
+) BEGIN
 SELECT
     id_processo,
     processo,
@@ -21,6 +25,9 @@ SELECT
     ultima_atualizacao
 FROM
     processo_minerario
+WHERE
+    p_fase IS NULL
+    OR fase = p_fase
 ORDER BY
     dt_ult_evento DESC
 LIMIT
@@ -32,11 +39,14 @@ END / / DELIMITER;
 
 DROP PROCEDURE IF EXISTS sp_total_processos;
 
-DELIMITER / / CREATE PROCEDURE sp_total_processos () BEGIN
+DELIMITER / / CREATE PROCEDURE sp_total_processos (IN p_fase VARCHAR(100)) BEGIN
 SELECT
     COUNT(*) AS total
 FROM
-    processo_minerario;
+    processo_minerario
+WHERE
+    p_fase IS NULL
+    OR fase = p_fase;
 
 END / / DELIMITER;
 
@@ -45,7 +55,8 @@ DROP PROCEDURE IF EXISTS sp_pesquisar_processos;
 DELIMITER / / CREATE PROCEDURE sp_pesquisar_processos (
     IN p_termo VARCHAR(150),
     IN p_limite INT,
-    IN p_offset INT
+    IN p_offset INT,
+    IN p_fase VARCHAR(100)
 ) BEGIN
 SELECT
     id_processo,
@@ -65,9 +76,15 @@ SELECT
 FROM
     processo_minerario
 WHERE
-    processo LIKE CONCAT ('%', p_termo, '%')
-    OR nome LIKE CONCAT ('%', p_termo, '%')
-    OR subs LIKE CONCAT ('%', p_termo, '%')
+    (
+        processo LIKE CONCAT ('%', p_termo, '%')
+        OR nome LIKE CONCAT ('%', p_termo, '%')
+        OR subs LIKE CONCAT ('%', p_termo, '%')
+    )
+    AND (
+        p_fase IS NULL
+        OR fase = p_fase
+    )
 ORDER BY
     id_processo DESC
 LIMIT
@@ -79,15 +96,21 @@ END / / DELIMITER;
 
 DROP PROCEDURE IF EXISTS sp_total_pesquisa_processos;
 
-DELIMITER / / CREATE PROCEDURE sp_total_pesquisa_processos (IN p_termo VARCHAR(150)) BEGIN
+DELIMITER / / CREATE PROCEDURE sp_total_pesquisa_processos (IN p_termo VARCHAR(150), IN p_fase VARCHAR(100)) BEGIN
 SELECT
     COUNT(*) AS total
 FROM
     processo_minerario
 WHERE
-    processo LIKE CONCAT ('%', p_termo, '%')
-    OR nome LIKE CONCAT ('%', p_termo, '%')
-    OR subs LIKE CONCAT ('%', p_termo, '%');
+    (
+        processo LIKE CONCAT ('%', p_termo, '%')
+        OR nome LIKE CONCAT ('%', p_termo, '%')
+        OR subs LIKE CONCAT ('%', p_termo, '%')
+    )
+    AND (
+        p_fase IS NULL
+        OR fase = p_fase
+    );
 
 END / / DELIMITER;
 

@@ -6,6 +6,7 @@ import 'package:frontend/pages/usuario/perfil_page.dart';
 import 'package:frontend/services/processo_service.dart';
 import 'package:frontend/widgets/buttons/action_button.dart';
 import 'package:frontend/widgets/buttons/button_speed_child.dart';
+import 'package:frontend/widgets/buttons/filtro_bottom_sheet.dart';
 import 'package:frontend/widgets/cards/card_processo_minerario.dart';
 import 'package:frontend/widgets/textfields/pesquisar_input.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -54,32 +55,44 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+  String faseFiltro = "Todas";
+
+  Future<void> aplicarFiltro(String fase) async {
+    faseFiltro = fase;
+
+    setState(() {
+      pagina = 1;
+      temMais = true;
+      processosMinerarios.clear();
+    });
+
+    await carregarProcessos();
+  }
+
   Future<void> carregarProcessos() async {
     if (carregando || !temMais) return;
 
     carregando = true;
 
+    final fase = faseFiltro == "Todas" ? null : faseFiltro;
+
     final novos = termoPesquisa.isEmpty
-        ? await ProcessoService().listar(page: pagina, limit: limite)
+        ? await ProcessoService().listar(
+            page: pagina,
+            limit: limite,
+            fase: fase,
+          )
         : await ProcessoService().pesquisar(
             termo: termoPesquisa,
             page: pagina,
             limit: limite,
+            fase: fase,
           );
-
-    debugPrint("========== Página $pagina ==========");
-
-    for (var processo in novos) {
-      debugPrint(processo.processo);
-    }
 
     setState(() {
       processosMinerarios.addAll(novos);
-
       pagina++;
-
       carregando = false;
-
       if (novos.length < limite) {
         temMais = false;
       }
@@ -102,7 +115,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        //automaticallyImplyLeading: false,
+        automaticallyImplyLeading: false,
         centerTitle: true,
         title: Image.asset("assets/images/ArgON.png", height: 42),
       ),
@@ -125,7 +138,25 @@ class _HomePageState extends State<HomePage> {
                     icone: Icons.remove_red_eye_outlined,
                     onPressed: () {},
                   ),
-                  ActionButton(icone: Icons.tune, onPressed: () {}),
+                  ActionButton(
+                    icone: Icons.tune,
+                    onPressed: () async {
+                      final resultado = await showModalBottomSheet<String>(
+                        context: context,
+                        isScrollControlled: true,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(24),
+                          ),
+                        ),
+                        builder: (_) => const FiltroBottomSheet(),
+                      );
+
+                      if (resultado != null) {
+                        aplicarFiltro(resultado);
+                      }
+                    },
+                  ),
                 ],
               ),
               SizedBox(height: 20),

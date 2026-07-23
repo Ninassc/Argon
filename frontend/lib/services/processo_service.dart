@@ -7,10 +7,23 @@ import '../models/ativo_minerario.dart';
 import 'api_service.dart';
 
 class ProcessoService {
-  Future<List<ProcessoMinerario>> listar({int page = 1, int limit = 20}) async {
-    final response = await http.get(
-      Uri.parse("${ApiService.baseUrl}/processos?page=$page&limit=$limit"),
-    );
+  
+  Future<List<ProcessoMinerario>> listar({
+    int page = 1,
+    int limit = 20,
+    String? fase,
+  }) async {
+    final queryParams = {
+      "page": page.toString(),
+      "limit": limit.toString(),
+      if (fase != null && fase.isNotEmpty) "fase": fase,
+    };
+
+    final uri = Uri.parse(
+      "${ApiService.baseUrl}/processos",
+    ).replace(queryParameters: queryParams);
+
+    final response = await http.get(uri);
 
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
@@ -27,13 +40,20 @@ class ProcessoService {
     required String termo,
     int page = 1,
     int limit = 20,
+    String? fase,
   }) async {
-    final response = await http.get(
-      Uri.parse(
-        "${ApiService.baseUrl}/processos/pesquisar"
-        "?termo=$termo&page=$page&limit=$limit",
-      ),
-    );
+    final queryParams = {
+      "termo": termo,
+      "page": page.toString(),
+      "limit": limit.toString(),
+      if (fase != null && fase.isNotEmpty) "fase": fase,
+    };
+
+    final uri = Uri.parse(
+      "${ApiService.baseUrl}/processos/pesquisar",
+    ).replace(queryParameters: queryParams);
+
+    final response = await http.get(uri);
 
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
@@ -63,5 +83,17 @@ class ProcessoService {
     }
 
     throw Exception("Erro ao buscar detalhes do processo.");
+  }
+
+  Future<List<String>> listarFases() async {
+    final response = await http.get(
+      Uri.parse("${ApiService.baseUrl}/processos/fases"),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Erro ao carregar as fases.");
+    }
+
+    return List<String>.from(jsonDecode(response.body));
   }
 }
