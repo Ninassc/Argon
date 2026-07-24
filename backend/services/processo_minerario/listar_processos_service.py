@@ -2,9 +2,14 @@ from repositories import ProcessoMinerarioRepository
 
 
 class ListarProcessosService:
-    def executar(self, pagina, limite, fase=None):
+    def executar(self, pagina, limite, fase=None, substancia=None):
 
-        resultado = ProcessoMinerarioRepository.listar_paginado(pagina, limite, fase)
+        resultado = ProcessoMinerarioRepository.listar_paginado(
+            pagina,
+            limite,
+            fase,
+            substancia,
+        )
 
         return {
             "pagina": resultado["pagina"],

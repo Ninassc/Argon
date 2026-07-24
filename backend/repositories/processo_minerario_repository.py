@@ -1,4 +1,5 @@
 from sqlalchemy import text
+from sqlalchemy import func
 
 from models import db, ProcessoMinerario, AtivoMinerario
 
@@ -6,7 +7,7 @@ from models import db, ProcessoMinerario, AtivoMinerario
 class ProcessoMinerarioRepository:
 
     @staticmethod
-    def listar_paginado(pagina, limite, fase=None):
+    def listar_paginado(pagina, limite, fase=None, substancia=None):
 
         banco = db.session.get_bind().dialect.name
 
@@ -15,16 +16,24 @@ class ProcessoMinerarioRepository:
             offset = (pagina - 1) * limite
 
             resultado = db.session.execute(
-                text("CALL sp_listar_processos(:limite, :offset, :fase)"),
-                {"limite": limite, "offset": offset, "fase": fase},
+                text("CALL sp_listar_processos(:limite, :offset, :fase, :substancia)"),
+                {
+                    "limite": limite,
+                    "offset": offset,
+                    "fase": fase,
+                    "substancia": substancia,
+                },
             )
 
             linhas = resultado.mappings().all()
             resultado.close()
 
             resultado = db.session.execute(
-                text("CALL sp_total_processos(:fase)"),
-                {"fase": fase},
+                text("CALL sp_total_processos(:fase, :substancia)"),
+                {
+                    "fase": fase,
+                    "substancia": substancia,
+                },
             )
 
             total = resultado.mappings().first()["total"]
@@ -56,7 +65,7 @@ class ProcessoMinerarioRepository:
         }
 
     @staticmethod
-    def pesquisar(termo, pagina, limite, fase=None):
+    def pesquisar(termo, pagina, limite, fase=None, substancia=None):
 
         banco = db.session.get_bind().dialect.name
 
@@ -65,16 +74,28 @@ class ProcessoMinerarioRepository:
             offset = (pagina - 1) * limite
 
             resultado = db.session.execute(
-                text("CALL sp_pesquisar_processos(:termo, :limite, :offset, :fase)"),
-                {"termo": termo, "limite": limite, "offset": offset, "fase": fase},
+                text(
+                    "CALL sp_pesquisar_processos(:termo, :limite, :offset, :fase, :substancia)"
+                ),
+                {
+                    "termo": termo,
+                    "limite": limite,
+                    "offset": offset,
+                    "fase": fase,
+                    "substancia": substancia,
+                },
             )
 
             linhas = resultado.mappings().all()
             resultado.close()
 
             resultado_total = db.session.execute(
-                text("CALL sp_total_pesquisa_processos(:termo, :fase)"),
-                {"termo": termo, "fase": fase},
+                text("CALL sp_total_pesquisa_processos(:termo, :fase, :substancia)"),
+                {
+                    "termo": termo,
+                    "fase": fase,
+                    "substancia": substancia,
+                },
             )
 
             linha_total = resultado_total.mappings().first()
@@ -149,3 +170,17 @@ class ProcessoMinerarioRepository:
         )
 
         return [fase[0] for fase in resultados]
+
+    @staticmethod
+    def listar_substancias():
+        resultados = (
+            db.session.query(ProcessoMinerario.subs)
+            .filter(ProcessoMinerario.subs.isnot(None))
+            .filter(func.trim(ProcessoMinerario.subs) != "")
+            .filter(ProcessoMinerario.subs != "DADO NÃO CADASTRADO")
+            .distinct()
+            .order_by(ProcessoMinerario.subs)
+            .all()
+        )
+
+        return [subs[0] for subs in resultados]

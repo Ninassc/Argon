@@ -7,16 +7,17 @@ import '../models/ativo_minerario.dart';
 import 'api_service.dart';
 
 class ProcessoService {
-  
   Future<List<ProcessoMinerario>> listar({
     int page = 1,
     int limit = 20,
     String? fase,
+    String? substancia,
   }) async {
     final queryParams = {
       "page": page.toString(),
       "limit": limit.toString(),
       if (fase != null && fase.isNotEmpty) "fase": fase,
+      if (substancia != null) "substancia": substancia,
     };
 
     final uri = Uri.parse(
@@ -41,12 +42,14 @@ class ProcessoService {
     int page = 1,
     int limit = 20,
     String? fase,
+    String? substancia,
   }) async {
     final queryParams = {
       "termo": termo,
       "page": page.toString(),
       "limit": limit.toString(),
       if (fase != null && fase.isNotEmpty) "fase": fase,
+      if (substancia != null) "substancia": substancia,
     };
 
     final uri = Uri.parse(
@@ -92,6 +95,18 @@ class ProcessoService {
 
     if (response.statusCode != 200) {
       throw Exception("Erro ao carregar as fases.");
+    }
+
+    return List<String>.from(jsonDecode(response.body));
+  }
+
+  Future<List<String>> listarSubstancias() async {
+    final response = await http.get(
+      Uri.parse("${ApiService.baseUrl}/processos/substancias"),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Erro ao carregar as substâncias.");
     }
 
     return List<String>.from(jsonDecode(response.body));

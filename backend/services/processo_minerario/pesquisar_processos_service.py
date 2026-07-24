@@ -3,8 +3,8 @@ from repositories import ProcessoMinerarioRepository
 
 class PesquisarProcessosService:
 
-    def executar(self, termo, pagina, limite, fase=None):
-        resultado = ProcessoMinerarioRepository.pesquisar(termo, pagina, limite, fase)
+    def executar(self, termo, pagina, limite, fase=None, substancia=None):
+        resultado = ProcessoMinerarioRepository.pesquisar(termo, pagina, limite, fase, substancia)
 
         return {
             "pagina": resultado["pagina"],

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/filtro_processo.dart';
 import 'package:frontend/services/processo_service.dart';
+import 'package:frontend/widgets/bottom_sheets/selecionar_substancia_bottom_sheet.dart';
 
 class FiltroBottomSheet extends StatefulWidget {
   const FiltroBottomSheet({super.key});
@@ -10,6 +12,9 @@ class FiltroBottomSheet extends StatefulWidget {
 
 class _FiltroBottomSheetState extends State<FiltroBottomSheet> {
   late Future<List<String>> futureFases;
+  late Future<List<String>> futureSubstancias;
+
+  String substanciaSelecionada = "Todas";
 
   String faseSelecionada = "Todas";
 
@@ -18,6 +23,7 @@ class _FiltroBottomSheetState extends State<FiltroBottomSheet> {
     super.initState();
 
     futureFases = ProcessoService().listarFases();
+    futureSubstancias = ProcessoService().listarSubstancias();
   }
 
   @override
@@ -42,7 +48,10 @@ class _FiltroBottomSheetState extends State<FiltroBottomSheet> {
 
             const SizedBox(height: 24),
 
-            const Text("Fase", style: TextStyle(fontWeight: FontWeight.w600)),
+            const Text(
+              "Fase",
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+            ),
 
             const SizedBox(height: 8),
 
@@ -86,6 +95,30 @@ class _FiltroBottomSheetState extends State<FiltroBottomSheet> {
                 );
               },
             ),
+            const SizedBox(height: 10),
+
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text(
+                "Substância",
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              ),
+              subtitle: Text(substanciaSelecionada),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () async {
+                final substancia = await showModalBottomSheet<String>(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (_) => const SelecionarSubstanciaBottomSheet(),
+                );
+
+                if (substancia != null) {
+                  setState(() {
+                    substanciaSelecionada = substancia;
+                  });
+                }
+              },
+            ),
 
             const SizedBox(height: 32),
 
@@ -94,7 +127,7 @@ class _FiltroBottomSheetState extends State<FiltroBottomSheet> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      Navigator.pop(context, "Todas"); // limpar = sem filtro
+                      
                     },
                     child: const Text("Limpar"),
                   ),
@@ -110,8 +143,15 @@ class _FiltroBottomSheetState extends State<FiltroBottomSheet> {
                     onPressed: () {
                       Navigator.pop(
                         context,
-                        faseSelecionada,
-                      ); // devolve a fase escolhida
+                        FiltroProcesso(
+                          fase: faseSelecionada == "Todas"
+                              ? null
+                              : faseSelecionada,
+                          substancia: substanciaSelecionada == "Todas"
+                              ? null
+                              : substanciaSelecionada,
+                        ),
+                      );
                     },
                     child: const Text("Aplicar"),
                   ),

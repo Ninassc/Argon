@@ -11,6 +11,7 @@ from .processo_minerario.listar_processos_service import ListarProcessosService
 from .processo_minerario.importar_processos_anm_service import ImportarProcessosANMService
 from .processo_minerario.listar_fases_service import ListarFasesService
 from .processo_minerario.buscar_detalhes_processo_service import BuscarDetalhesProcessoService
+from .processo_minerario.listar_substancias_service import ListarSubstanciasService
 
 from .ativo_minerario.atualizar_ativo_service import AtualizarAtivoService
 from .ativo_minerario.buscar_ativo_service import BuscarAtivoService
@@ -35,6 +36,7 @@ __all__ = [
     "ListarProcessosService",
     "ImportarProcessosANMService",
     "ListarFasesService",
+    "ListarSubstanciasService",
     "BuscarDetalhesProcessoService",
     "AtualizarAtivoService",
     "BuscarAtivoService",

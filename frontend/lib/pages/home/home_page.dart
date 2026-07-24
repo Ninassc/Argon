@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/filtro_processo.dart';
 import 'package:frontend/models/processo_minerario.dart';
 import 'package:frontend/pages/processo/detalhe_processo_page.dart';
 import 'package:frontend/pages/processo/pesquisar_processo_ativo_page.dart';
@@ -6,11 +7,12 @@ import 'package:frontend/pages/usuario/perfil_page.dart';
 import 'package:frontend/services/processo_service.dart';
 import 'package:frontend/widgets/buttons/action_button.dart';
 import 'package:frontend/widgets/buttons/button_speed_child.dart';
-import 'package:frontend/widgets/buttons/filtro_bottom_sheet.dart';
+import 'package:frontend/widgets/bottom_sheets/filtro_bottom_sheet.dart';
 import 'package:frontend/widgets/cards/card_processo_minerario.dart';
 import 'package:frontend/widgets/textfields/pesquisar_input.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 //import '../../data/processos_test.dart';
+import 'package:frontend/models/filtro_processo.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,6 +25,8 @@ class _HomePageState extends State<HomePage> {
   TextEditingController controller = TextEditingController();
 
   List<ProcessoMinerario> processosMinerarios = [];
+
+  FiltroProcesso filtro = const FiltroProcesso();
 
   int pagina = 1;
   final int limite = 20;
@@ -56,9 +60,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   String faseFiltro = "Todas";
+  String substanciaFiltro = "Todas";
 
-  Future<void> aplicarFiltro(String fase) async {
-    faseFiltro = fase;
+  Future<void> aplicarFiltro(FiltroProcesso novoFiltro) async {
+    filtro = novoFiltro;
 
     setState(() {
       pagina = 1;
@@ -74,19 +79,19 @@ class _HomePageState extends State<HomePage> {
 
     carregando = true;
 
-    final fase = faseFiltro == "Todas" ? null : faseFiltro;
-
     final novos = termoPesquisa.isEmpty
         ? await ProcessoService().listar(
             page: pagina,
             limit: limite,
-            fase: fase,
+            fase: filtro.fase,
+            substancia: filtro.substancia,
           )
         : await ProcessoService().pesquisar(
             termo: termoPesquisa,
             page: pagina,
             limit: limite,
-            fase: fase,
+            fase: filtro.fase,
+            substancia: filtro.substancia,
           );
 
     setState(() {
@@ -141,16 +146,17 @@ class _HomePageState extends State<HomePage> {
                   ActionButton(
                     icone: Icons.tune,
                     onPressed: () async {
-                      final resultado = await showModalBottomSheet<String>(
-                        context: context,
-                        isScrollControlled: true,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(24),
-                          ),
-                        ),
-                        builder: (_) => const FiltroBottomSheet(),
-                      );
+                      final resultado =
+                          await showModalBottomSheet<FiltroProcesso>(
+                            context: context,
+                            isScrollControlled: true,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(24),
+                              ),
+                            ),
+                            builder: (_) => const FiltroBottomSheet(),
+                          );
 
                       if (resultado != null) {
                         aplicarFiltro(resultado);

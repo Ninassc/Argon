@@ -5,7 +5,8 @@ DROP PROCEDURE IF EXISTS sp_listar_processos;
 DELIMITER / / CREATE PROCEDURE sp_listar_processos (
     IN p_limite INT,
     IN p_offset INT,
-    IN p_fase VARCHAR(100)
+    IN p_fase VARCHAR(100),
+    IN p_substancia VARCHAR(255)
 ) BEGIN
 SELECT
     id_processo,
@@ -26,8 +27,14 @@ SELECT
 FROM
     processo_minerario
 WHERE
-    p_fase IS NULL
-    OR fase = p_fase
+    (
+        p_fase IS NULL
+        OR fase = p_fase
+    )
+    AND (
+        p_substancia IS NULL
+        OR subs = p_substancia
+    )
 ORDER BY
     dt_ult_evento DESC
 LIMIT
@@ -39,14 +46,23 @@ END / / DELIMITER;
 
 DROP PROCEDURE IF EXISTS sp_total_processos;
 
-DELIMITER / / CREATE PROCEDURE sp_total_processos (IN p_fase VARCHAR(100)) BEGIN
+DELIMITER / / CREATE PROCEDURE sp_total_processos (
+    IN p_fase VARCHAR(100),
+    IN p_substancia VARCHAR(255)
+) BEGIN
 SELECT
     COUNT(*) AS total
 FROM
     processo_minerario
 WHERE
-    p_fase IS NULL
-    OR fase = p_fase;
+    (
+        p_fase IS NULL
+        OR fase = p_fase
+    )
+    AND (
+        p_substancia IS NULL
+        OR subs = p_substancia
+    );
 
 END / / DELIMITER;
 
@@ -56,7 +72,8 @@ DELIMITER / / CREATE PROCEDURE sp_pesquisar_processos (
     IN p_termo VARCHAR(150),
     IN p_limite INT,
     IN p_offset INT,
-    IN p_fase VARCHAR(100)
+    IN p_fase VARCHAR(100),
+    IN p_substancia VARCHAR(255)
 ) BEGIN
 SELECT
     id_processo,
@@ -85,6 +102,10 @@ WHERE
         p_fase IS NULL
         OR fase = p_fase
     )
+    AND (
+        p_substancia IS NULL
+        OR subs = p_substancia
+    )
 ORDER BY
     id_processo DESC
 LIMIT
@@ -96,7 +117,11 @@ END / / DELIMITER;
 
 DROP PROCEDURE IF EXISTS sp_total_pesquisa_processos;
 
-DELIMITER / / CREATE PROCEDURE sp_total_pesquisa_processos (IN p_termo VARCHAR(150), IN p_fase VARCHAR(100)) BEGIN
+DELIMITER / / CREATE PROCEDURE sp_total_pesquisa_processos (
+    IN p_termo VARCHAR(150),
+    IN p_fase VARCHAR(100),
+    IN p_substancia VARCHAR(255)
+) BEGIN
 SELECT
     COUNT(*) AS total
 FROM
@@ -110,6 +135,10 @@ WHERE
     AND (
         p_fase IS NULL
         OR fase = p_fase
+    )
+    AND (
+        p_substancia IS NULL
+        OR subs = p_substancia
     );
 
 END / / DELIMITER;
