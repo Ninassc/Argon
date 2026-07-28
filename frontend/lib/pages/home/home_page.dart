@@ -4,6 +4,7 @@ import 'package:frontend/models/processo_minerario.dart';
 import 'package:frontend/pages/processo/detalhe_processo_page.dart';
 import 'package:frontend/pages/processo/pesquisar_processo_ativo_page.dart';
 import 'package:frontend/pages/usuario/perfil_page.dart';
+import 'package:frontend/pages/usuario/processos_salvos_page.dart';
 import 'package:frontend/services/processo_service.dart';
 import 'package:frontend/widgets/buttons/action_button.dart';
 import 'package:frontend/widgets/buttons/button_speed_child.dart';
@@ -222,7 +223,14 @@ class _HomePageState extends State<HomePage> {
                     buttonSpeedChild(
                       icone: Icons.bookmark_border,
                       label: 'Salvos',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProcessosSalvosPage(),
+                          ),
+                        );
+                      },
                     ),
                     buttonSpeedChild(
                       icone: Icons.person_outline,

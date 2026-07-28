@@ -1,6 +1,8 @@
 create database argon;
-CHARACTER SET utf8mb4
-COLLATE utf8mb4_unicode_ci;
+
+CHARACTER
+SET
+    utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 use argon;
 
@@ -11,27 +13,28 @@ CREATE TABLE
         email VARCHAR(50) UNIQUE,
         senha VARCHAR(255) NOT NULL,
         telefone VARCHAR(20) UNIQUE,
-        tipo_conta ENUM('Titular', 'Interessado') NOT NULL,
+        tipo_conta ENUM ('Titular', 'Interessado') NOT NULL,
         dt_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
-CREATE TABLE processo_minerario (
-    id_processo INT AUTO_INCREMENT PRIMARY KEY,
-    processo VARCHAR(20),
-    numero VARCHAR(20),
-    ano VARCHAR(10),
-    area_ha VARCHAR(30),
-    id_anm VARCHAR(50),
-    fase VARCHAR(100),
-    ult_evento TEXT,
-    dt_ult_evento DATE,
-    nome VARCHAR(150),
-    subs VARCHAR(100),
-    uso VARCHAR(100),
-    uf VARCHAR(5),
-    ds_processo VARCHAR(20),
-    ultima_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+CREATE TABLE
+    processo_minerario (
+        id_processo INT AUTO_INCREMENT PRIMARY KEY,
+        processo VARCHAR(20),
+        numero VARCHAR(20),
+        ano VARCHAR(10),
+        area_ha VARCHAR(30),
+        id_anm VARCHAR(50),
+        fase VARCHAR(100),
+        ult_evento TEXT,
+        dt_ult_evento DATE,
+        nome VARCHAR(150),
+        subs VARCHAR(100),
+        uso VARCHAR(100),
+        uf VARCHAR(5),
+        ds_processo VARCHAR(20),
+        ultima_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
 
 CREATE TABLE
     ativo_minerario (
@@ -68,12 +71,12 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    favoritamento (
+    favorito (
         id_favorito INT AUTO_INCREMENT PRIMARY KEY,
         id_usuario INT NOT NULL,
-        id_ativo INT NOT NULL,
+        id_processo INT NOT NULL,
         dt_favorito DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (id_usuario) REFERENCES usuario (id_usuario),
-        FOREIGN KEY (id_ativo) REFERENCES ativo_minerario (id_ativo),
-        UNIQUE (id_usuario, id_ativo)
+        FOREIGN KEY (id_processo) REFERENCES processo_minerario (id_processo),
+        UNIQUE (id_usuario, id_processo)
     );

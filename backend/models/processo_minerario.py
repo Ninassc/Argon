@@ -36,6 +36,10 @@ class ProcessoMinerario(db.Model):
 
     ativos = db.relationship("AtivoMinerario", back_populates="processo")
 
+    favoritos = db.relationship(
+        "Favorito", back_populates="processo", cascade="all, delete-orphan"
+    )
+
     # CREATE
     def salvar(self):
         db.session.add(self)
@@ -107,7 +111,7 @@ class ProcessoMinerario(db.Model):
     @classmethod
     def listar_todos(cls):
         return cls.query.order_by(cls.id_processo.asc()).all()
-    
+
     @classmethod
     def buscar_por_id(cls, id_processo):
         return cls.query.get(id_processo)
