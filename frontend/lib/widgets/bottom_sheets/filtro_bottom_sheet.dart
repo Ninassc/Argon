@@ -127,7 +127,10 @@ class _FiltroBottomSheetState extends State<FiltroBottomSheet> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      
+                      setState(() {
+                        faseSelecionada = "Todas";
+                        substanciaSelecionada = "Todas";
+                      });
                     },
                     child: const Text("Limpar"),
                   ),

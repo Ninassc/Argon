@@ -19,6 +19,11 @@ from .ativo_minerario.criar_ativo_service import CriarAtivoService
 from .ativo_minerario.deletar_ativo_service import DeletarAtivoService
 from .ativo_minerario.listar_ativos_usuario_service import ListarAtivosUsuarioService
 
+from .favorito.criar_favorito_service import CriarFavoritoService
+from .favorito.deletar_favorito_service import DeletarFavoritoService
+from .favorito.listar_favoritos_service import ListarFavoritosService
+from .favorito.verificar_favorito_service import VerificarFavoritoService
+
 from .sincronizacao.buscar_dados_anm_service import BuscarDadosANMService
 from .sincronizacao.sincronizar_base_anm import SincronizarBaseANMService
 
@@ -45,5 +50,9 @@ __all__ = [
     "ListarAtivosUsuarioService",
     "BuscarDadosANMService",
     "SincronizarBaseANMService",
-    "LoginService"
+    "LoginService",
+    "CriarFavoritoService",
+    "DeletarFavoritoService",
+    "ListarFavoritosService",
+    "VerificarFavoritoService"
 ]

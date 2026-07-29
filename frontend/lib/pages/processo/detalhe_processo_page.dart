@@ -9,6 +9,7 @@ import '../../services/ativo_service.dart';
 import '../../models/processo_minerario.dart';
 import '../../services/processo_service.dart';
 import '../../models/usuario.dart';
+import '../../services/favorito_service.dart';
 
 class DetalheProcessoPage extends StatefulWidget {
   final int idProcesso;
@@ -33,6 +34,8 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
 
   bool carregando = true;
 
+  bool salvo = false;
+
   @override
   void initState() {
     super.initState();
@@ -42,7 +45,11 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
 
   Future<void> carregarDetalhes() async {
     final resultado = await ProcessoService().buscarDetalhes(widget.idProcesso);
+
     final usuario = await AuthStorage().buscarUsuario();
+
+    final processoSalvo = await FavoritoService().verificar(widget.idProcesso);
+
 
     if (!mounted) return;
 
@@ -50,6 +57,8 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
       processo = resultado["processo"];
       ativo = resultado["ativo"];
       usuarioLogado = usuario;
+
+      salvo = processoSalvo;
 
       carregando = false;
     });
@@ -71,6 +80,45 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Ativo cadastrado com sucesso!")),
       );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
+      );
+    }
+  }
+
+  Future<void> alterarFavorito() async {
+    try {
+      if (salvo) {
+        await FavoritoService().remover(processo!.idProcesso);
+
+        if (!mounted) return;
+
+   
+
+        setState(() {
+          salvo = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Processo removido dos salvos.")),
+        );
+      } else {
+        await FavoritoService().criar(processo!.idProcesso);
+
+        if (!mounted) return;
+
+      
+        setState(() {
+          salvo = true;
+        });
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("Processo salvo.")));
+      }
     } catch (e) {
       if (!mounted) return;
 
@@ -266,18 +314,14 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
 
                         ButtonsDetalheProcesso(
                           icone: Icons.share_outlined,
-                          onTap: () {
-                            
-                          },
+                          onTap: () {},
                         ),
 
                         const SizedBox(height: 12),
 
                         ButtonsDetalheProcesso(
-                          icone: Icons.bookmark_border,
-                          onTap: () {
-                           
-                          },
+                          icone: salvo ? Icons.bookmark : Icons.bookmark_border,
+                          onTap: alterarFavorito,
                         ),
                       ],
                     ),
