@@ -27,10 +27,6 @@ class Favorito(db.Model):
             id_processo=id_processo
         ).first()
 
-        print("USUARIO:", id_usuario)
-        print("PROCESSO:", id_processo)
-        print("FAVORITO ENCONTRADO:", favorito)
-
         return favorito
 
     @staticmethod

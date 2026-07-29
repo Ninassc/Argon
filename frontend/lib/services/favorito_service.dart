@@ -61,8 +61,6 @@ class FavoritoService {
 
     final json = jsonDecode(response.body);
 
-    print("RESPOSTA FAVORITO: $json");
-
     return json["salvo"];
   }
 }

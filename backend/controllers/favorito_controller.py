@@ -86,8 +86,6 @@ def verificar_favorito(id_processo):
         id_processo
     )
 
-    print("CONTROLLER SALVO:", salvo)
-
     return jsonify({
         "salvo": salvo
     }), 200

@@ -50,8 +50,6 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
 
     final processoSalvo = await FavoritoService().verificar(widget.idProcesso);
 
-    print("PROCESSO: ${widget.idProcesso}");
-    print("FAVORITO RETORNOU: $processoSalvo");
 
     if (!mounted) return;
 
@@ -98,8 +96,7 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
 
         if (!mounted) return;
 
-        print("PROCESSO: ${widget.idProcesso}");
-        print("FAVORITO RETORNOU: $salvo");
+   
 
         setState(() {
           salvo = false;
@@ -113,9 +110,7 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
 
         if (!mounted) return;
 
-        print("PROCESSO: ${widget.idProcesso}");
-        print("FAVORITO RETORNOU: $salvo");
-
+      
         setState(() {
           salvo = true;
         });

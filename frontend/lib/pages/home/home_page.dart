@@ -12,8 +12,6 @@ import 'package:frontend/widgets/bottom_sheets/filtro_bottom_sheet.dart';
 import 'package:frontend/widgets/cards/card_processo_minerario.dart';
 import 'package:frontend/widgets/textfields/pesquisar_input.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-//import '../../data/processos_test.dart';
-import 'package:frontend/models/filtro_processo.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

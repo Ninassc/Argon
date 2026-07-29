@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/widgets/textfields/pesquisar_input.dart';
 
 import '../../models/favorito.dart';
 import '../../services/favorito_service.dart';
@@ -14,6 +15,8 @@ class ProcessosSalvosPage extends StatefulWidget {
 
 class _ProcessosSalvosPageState extends State<ProcessosSalvosPage> {
   List<Favorito> favoritos = [];
+  TextEditingController controllerPesquisar = TextEditingController();
+  String pesquisa = "";
 
   bool carregando = true;
 
@@ -37,6 +40,16 @@ class _ProcessosSalvosPageState extends State<ProcessosSalvosPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final favoritosFiltrados = favoritos.where((favorito) {
+      final processo = favorito.processo;
+
+      return processo.processo.toLowerCase().contains(pesquisa) ||
+          processo.nome.toLowerCase().contains(pesquisa) ||
+          processo.subs.toLowerCase().contains(pesquisa) ||
+          processo.fase.toLowerCase().contains(pesquisa);
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(
         //automaticallyImplyLeading: false,
@@ -81,12 +94,22 @@ class _ProcessosSalvosPageState extends State<ProcessosSalvosPage> {
                     ),
                   ),
                   const SizedBox(height: 10),
+                  PesquisarInput(
+                    controller: controllerPesquisar,
+                    onChanged: (valor) {
+                      setState(() {
+                        pesquisa = valor.toLowerCase();
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 10),
+
                   Expanded(
                     child: ListView.builder(
-                      itemCount: favoritos.length,
+                      itemCount: favoritosFiltrados.length,
 
                       itemBuilder: (context, index) {
-                        final favorito = favoritos[index];
+                        final favorito = favoritosFiltrados[index];
 
                         return CardProcessoMinerario(
                           processo: favorito.processo,
