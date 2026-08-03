@@ -29,6 +29,8 @@ from .sincronizacao.sincronizar_base_anm import SincronizarBaseANMService
 
 from .auth.login_service import LoginService
 
+from .ia.analisar_processo_ia_service import AnalisarProcessoIAService
+
 __all__ = [
     "AtualizarUsuarioService",
     "BuscarUsuarioService",
@@ -54,5 +56,6 @@ __all__ = [
     "CriarFavoritoService",
     "DeletarFavoritoService",
     "ListarFavoritosService",
-    "VerificarFavoritoService"
+    "VerificarFavoritoService",
+    "AnalisarProcessoIAService"
 ]

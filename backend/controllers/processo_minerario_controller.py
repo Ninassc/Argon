@@ -3,6 +3,7 @@ from flask_jwt_extended import (
     jwt_required,
     get_jwt_identity,
 )
+from sqlalchemy.exc import SQLAlchemyError
 
 from models import db
 
@@ -12,6 +13,8 @@ from services import PesquisarProcessosService
 from services import BuscarDetalhesProcessoService
 from services import ListarFasesService
 from services import ListarSubstanciasService
+
+from services import AnalisarProcessoIAService
 
 processo_bp = Blueprint("processos", __name__, url_prefix="/processos")
 
@@ -95,6 +98,25 @@ def listar_substancias():
 
     except Exception as erro:
         return jsonify({"erro": str(erro)}), 500
+
+
+@processo_bp.post("/<int:id_processo>/analisar-ia")
+def analisar_processo_ia(id_processo):
+    try:
+        resultado = AnalisarProcessoIAService().executar(id_processo)
+
+        return jsonify(resultado), 200
+
+    except ValueError as erro:
+        return jsonify({"erro": str(erro)}), 404
+
+    except SQLAlchemyError:
+        db.session.rollback()
+
+        return jsonify({"erro": "Erro ao buscar os dados do processo."}), 500
+
+    except Exception:
+        return jsonify({"erro": "Não foi possível gerar a análise com IA."}), 500
 
 
 # Apenas para teste (os processos minerários não poderão ser deletados)
