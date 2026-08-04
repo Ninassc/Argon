@@ -111,22 +111,18 @@ class ProcessoService {
 
     return List<String>.from(jsonDecode(response.body));
   }
-}
 
-Future<Map<String, dynamic>> analisarComIa(int idProcesso) async {
-  final response = await http.post(
-    Uri.parse(
-      "${ApiService.baseUrl}/processos/$idProcesso/analisar-ia",
-    )
-  );
-
-  if (response.statusCode != 200) {
-    final erro = jsonDecode(response.body);
-
-    throw Exception(
-      erro["erro"] ?? "Não foi possível gerar a análise.",
+  Future<Map<String, dynamic>> analisarComIa(int idProcesso) async {
+    final response = await http.post(
+      Uri.parse("${ApiService.baseUrl}/processos/$idProcesso/analisar-ia"),
     );
-  }
 
-  return jsonDecode(response.body);
+    if (response.statusCode != 200) {
+      final erro = jsonDecode(response.body);
+
+      throw Exception(erro["erro"] ?? "Não foi possível gerar a análise.");
+    }
+
+    return jsonDecode(response.body);
+  }
 }

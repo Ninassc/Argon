@@ -50,7 +50,6 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
 
     final processoSalvo = await FavoritoService().verificar(widget.idProcesso);
 
-
     if (!mounted) return;
 
     setState(() {
@@ -96,8 +95,6 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
 
         if (!mounted) return;
 
-   
-
         setState(() {
           salvo = false;
         });
@@ -110,7 +107,6 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
 
         if (!mounted) return;
 
-      
         setState(() {
           salvo = true;
         });
@@ -126,6 +122,120 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
         SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
       );
     }
+  }
+
+  Future<void> analisarComIa() async {
+    try {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(child: CircularProgressIndicator()),
+      );
+
+      final resultado = await ProcessoService().analisarComIa(
+        processo!.idProcesso,
+      );
+
+      if (!mounted) return;
+
+      Navigator.pop(context);
+
+      mostrarAnaliseIa(resultado);
+    } catch (e) {
+      if (!mounted) return;
+
+      Navigator.pop(context);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
+      );
+    }
+  }
+
+  void mostrarAnaliseIa(Map<String, dynamic> analise) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) {
+        final pontos = List<String>.from(analise["pontos_atencao"] ?? []);
+
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.85,
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Análise com IA",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF5A81FA),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  const Text(
+                    "Resumo",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(analise["resumo"] ?? ""),
+
+                  const SizedBox(height: 20),
+
+                  const Text(
+                    "Situação atual",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(analise["situacao_atual"] ?? ""),
+
+                  const SizedBox(height: 20),
+
+                  const Text(
+                    "Pontos de atenção",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+
+                  ...pontos.map(
+                    (ponto) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text("• "),
+                          Expanded(child: Text(ponto)),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  const Text(
+                    "Observação",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    analise["observacao"] ?? "",
+                    style: const TextStyle(color: Color(0xFF848484)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -328,6 +438,15 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                   ),
                 ],
               ),
+              Buttons(
+                texto: "Analisar com IA",
+                corBotao: const Color(0xFF5A81FA),
+                corTexto: Colors.white,
+                onPressed: analisarComIa,
+              ),
+
+              const SizedBox(height: 12),
+
               if (widget.modoCadastro && ativo == null) ...[
                 const SizedBox(height: 10),
                 Buttons(
