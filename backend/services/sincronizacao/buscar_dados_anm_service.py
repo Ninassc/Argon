@@ -15,6 +15,10 @@ class BuscarDadosANMService:
         "SIGMINE/dados_anm/MapServer/0/query"
     )
 
+    URL_SHAPEFILE = (
+        "https://dadosabertos.anm.gov.br/" "SIGMINE/PROCESSOS_MINERARIOS/MG.zip"
+    )
+
     def executar(self):
         try:
             print("Tentando consultar a API da ANM...")
@@ -177,15 +181,53 @@ class BuscarDadosANMService:
 
         return valor
 
+    def baixar_shapefile(self):
+        pasta = (
+            Path(__file__).resolve().parents[2]
+            / "temp"
+            / "anm_mg"
+        )
+
+        if pasta.exists():
+            shutil.rmtree(pasta)
+
+        pasta.mkdir(parents=True)
+
+        arquivo_zip = pasta / "anm.zip"
+
+        print("Baixando Shapefile da ANM...")
+
+        resposta = requests.get(
+            self.URL_SHAPEFILE,
+            timeout=300,
+            stream=True,
+        )
+
+        resposta.raise_for_status()
+
+        with open(arquivo_zip, "wb") as arquivo:
+            for bloco in resposta.iter_content(8192):
+                if bloco:
+                    arquivo.write(bloco)
+
+        print("Download concluído.")
+
+        with zipfile.ZipFile(arquivo_zip, "r") as zip_ref:
+            zip_ref.extractall(pasta)
+
+        arquivo_zip.unlink()
+
+        print("Shapefile extraído.")
+
+        return pasta
 
     def buscar_pelo_shapefile(self):
-        pasta_temporaria = Path(__file__).resolve().parents[2] / "temp" / "anm_mg"
+        pasta_temporaria = self.baixar_shapefile()
+
         caminho_shp = pasta_temporaria / "MG.shp"
 
         if not caminho_shp.exists():
-            raise FileNotFoundError(
-                f"Shapefile não encontrado em: {caminho_shp}"
-            )
+            raise FileNotFoundError(f"Shapefile não encontrado em: {caminho_shp}")
 
         print(f"Lendo Shapefile: {caminho_shp}")
 
@@ -199,9 +241,7 @@ class BuscarDadosANMService:
         processos_unicos = {}
 
         for _, linha in dados.iterrows():
-            processo = self.normalizar_valor(
-                linha.get("PROCESSO")
-            )
+            processo = self.normalizar_valor(linha.get("PROCESSO"))
 
             if not processo:
                 continue
@@ -209,48 +249,24 @@ class BuscarDadosANMService:
             if processo in processos_unicos:
                 continue
 
-            texto_ult_evento = self.normalizar_valor(
-                linha.get("ULT_EVENTO")
-            )
+            texto_ult_evento = self.normalizar_valor(linha.get("ULT_EVENTO"))
 
-            dt_ult_evento = self.extrair_data_ultimo_evento(
-                texto_ult_evento
-            )
+            dt_ult_evento = self.extrair_data_ultimo_evento(texto_ult_evento)
 
             processos_unicos[processo] = {
-                "id_anm": self.normalizar_valor(
-                    linha.get("ID")
-                ),
+                "id_anm": self.normalizar_valor(linha.get("ID")),
                 "processo": processo,
-                "numero": self.normalizar_valor(
-                    linha.get("NUMERO")
-                ),
-                "ano": self.normalizar_valor(
-                    linha.get("ANO")
-                ),
-                "area_ha": self.normalizar_valor(
-                    linha.get("AREA_HA")
-                ),
-                "fase": self.normalizar_valor(
-                    linha.get("FASE")
-                ),
+                "numero": self.normalizar_valor(linha.get("NUMERO")),
+                "ano": self.normalizar_valor(linha.get("ANO")),
+                "area_ha": self.normalizar_valor(linha.get("AREA_HA")),
+                "fase": self.normalizar_valor(linha.get("FASE")),
                 "ult_evento": texto_ult_evento,
                 "dt_ult_evento": dt_ult_evento,
-                "nome": self.normalizar_valor(
-                    linha.get("NOME")
-                ),
-                "subs": self.normalizar_valor(
-                    linha.get("SUBS")
-                ),
-                "uso": self.normalizar_valor(
-                    linha.get("USO")
-                ),
-                "uf": self.normalizar_valor(
-                    linha.get("UF")
-                ),
-                "ds_processo": self.normalizar_valor(
-                    linha.get("DSProcesso")
-                ),
+                "nome": self.normalizar_valor(linha.get("NOME")),
+                "subs": self.normalizar_valor(linha.get("SUBS")),
+                "uso": self.normalizar_valor(linha.get("USO")),
+                "uf": self.normalizar_valor(linha.get("UF")),
+                "ds_processo": self.normalizar_valor(linha.get("DSProcesso")),
             }
 
         print(
@@ -258,4 +274,8 @@ class BuscarDadosANMService:
             f"{len(processos_unicos)}"
         )
 
-        return list(processos_unicos.values())
+        resultado = list(processos_unicos.values())
+
+        shutil.rmtree(pasta_temporaria)
+
+        return resultado
