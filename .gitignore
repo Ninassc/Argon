@@ -1,5 +1,15 @@
+# Ambiente virtual
+.venv/
+
+# Variáveis de ambiente
 backend/.env
 
-# Python
+# Cache do Python
 __pycache__/
 *.py[cod]
+
+# Arquivos temporários
+backend/temp/
+
+# VS Code (opcional)
+.vscode/
