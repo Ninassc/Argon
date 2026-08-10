@@ -24,6 +24,10 @@ class Usuario(db.Model):
         "Favorito", back_populates="usuario", cascade="all, delete-orphan"
     )
 
+    acessos = db.relationship(
+        "Acesso", back_populates="usuario", cascade="all, delete-orphan"
+    )
+
     # criar usuário
     def salvar(self):
         db.session.add(self)

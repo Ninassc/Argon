@@ -57,17 +57,23 @@ CREATE TABLE
         FOREIGN KEY (id_ativo) REFERENCES ativo_minerario (id_ativo)
     );
 
-CREATE TABLE
-    acesso (
-        id_acesso INT AUTO_INCREMENT PRIMARY KEY,
-        id_usuario INT NOT NULL,
-        id_ativo INT NOT NULL,
-        status VARCHAR(50) DEFAULT 'pendente',
-        dt_solicitacao DATETIME DEFAULT CURRENT_TIMESTAMP,
-        dt_acesso DATETIME NULL,
-        FOREIGN KEY (id_usuario) REFERENCES usuario (id_usuario),
-        FOREIGN KEY (id_ativo) REFERENCES ativo_minerario (id_ativo)
-    );
+CREATE TABLE acesso (
+    id_acesso INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    id_ativo INT NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'pendente',
+    origem VARCHAR(20) NOT NULL DEFAULT 'solicitacao',
+    dt_solicitacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    dt_acesso DATETIME NULL,
+
+    FOREIGN KEY (id_usuario)
+        REFERENCES usuario(id_usuario),
+
+    FOREIGN KEY (id_ativo)
+        REFERENCES ativo_minerario(id_ativo),
+
+    UNIQUE (id_usuario, id_ativo)
+);
 
 CREATE TABLE
     favorito (

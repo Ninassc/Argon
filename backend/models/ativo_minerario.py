@@ -22,6 +22,10 @@ class AtivoMinerario(db.Model):
 
     processo = db.relationship("ProcessoMinerario", back_populates="ativos")
 
+    acessos = db.relationship(
+        "Acesso", back_populates="ativo", cascade="all, delete-orphan"
+    )
+
     # CREATE
     def salvar(self):
         db.session.add(self)
@@ -39,7 +43,7 @@ class AtivoMinerario(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    #READ
+    # READ
     @classmethod
     def listar_todos(cls):
         return cls.query.order_by(cls.id_ativo.asc()).all()
