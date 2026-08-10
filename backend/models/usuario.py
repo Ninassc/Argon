@@ -28,6 +28,21 @@ class Usuario(db.Model):
         "Acesso", back_populates="usuario", cascade="all, delete-orphan"
     )
 
+    processos_compartilhados = db.relationship(
+        "CompartilhamentoProcesso",
+        foreign_keys="CompartilhamentoProcesso.id_usuario_origem",
+        back_populates="usuario_origem",
+        cascade="all, delete-orphan",
+    )
+
+    processos_recebidos = db.relationship(
+        "CompartilhamentoProcesso",
+        foreign_keys="CompartilhamentoProcesso.id_usuario_destino",
+        back_populates="usuario_destino",
+        cascade="all, delete-orphan",
+    )
+    
+
     # criar usuário
     def salvar(self):
         db.session.add(self)

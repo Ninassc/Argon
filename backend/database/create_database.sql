@@ -75,6 +75,25 @@ CREATE TABLE acesso (
     UNIQUE (id_usuario, id_ativo)
 );
 
+CREATE TABLE compartilhamento_processo (
+    id_compartilhamento INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario_origem INT NOT NULL,
+    id_usuario_destino INT NOT NULL,
+    id_processo INT NOT NULL,
+    dt_compartilhamento DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (id_usuario_origem)
+        REFERENCES usuario(id_usuario),
+
+    FOREIGN KEY (id_usuario_destino)
+        REFERENCES usuario(id_usuario),
+
+    FOREIGN KEY (id_processo)
+        REFERENCES processo_minerario(id_processo),
+
+    UNIQUE (id_usuario_origem, id_usuario_destino, id_processo)
+);
+
 CREATE TABLE
     favorito (
         id_favorito INT AUTO_INCREMENT PRIMARY KEY,

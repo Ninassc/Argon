@@ -40,6 +40,12 @@ class ProcessoMinerario(db.Model):
         "Favorito", back_populates="processo", cascade="all, delete-orphan"
     )
 
+    compartilhamentos = db.relationship(
+        "CompartilhamentoProcesso",
+        back_populates="processo",
+        cascade="all, delete-orphan",
+    )
+
     # CREATE
     def salvar(self):
         db.session.add(self)
