@@ -2,7 +2,8 @@ USE argon;
 
 DROP PROCEDURE IF EXISTS sp_listar_processos;
 
-DELIMITER / / CREATE PROCEDURE sp_listar_processos (
+DELIMITER / / 
+CREATE PROCEDURE sp_listar_processos (
     IN p_limite INT,
     IN p_offset INT,
     IN p_fase VARCHAR(100),
@@ -46,7 +47,8 @@ END / / DELIMITER;
 
 DROP PROCEDURE IF EXISTS sp_total_processos;
 
-DELIMITER / / CREATE PROCEDURE sp_total_processos (
+DELIMITER / / 
+CREATE PROCEDURE sp_total_processos (
     IN p_fase VARCHAR(100),
     IN p_substancia VARCHAR(255)
 ) BEGIN
@@ -68,7 +70,8 @@ END / / DELIMITER;
 
 DROP PROCEDURE IF EXISTS sp_pesquisar_processos;
 
-DELIMITER / / CREATE PROCEDURE sp_pesquisar_processos (
+DELIMITER / / 
+CREATE PROCEDURE sp_pesquisar_processos (
     IN p_termo VARCHAR(150),
     IN p_limite INT,
     IN p_offset INT,
@@ -117,7 +120,8 @@ END / / DELIMITER;
 
 DROP PROCEDURE IF EXISTS sp_total_pesquisa_processos;
 
-DELIMITER / / CREATE PROCEDURE sp_total_pesquisa_processos (
+DELIMITER / / 
+CREATE PROCEDURE sp_total_pesquisa_processos (
     IN p_termo VARCHAR(150),
     IN p_fase VARCHAR(100),
     IN p_substancia VARCHAR(255)
@@ -145,7 +149,8 @@ END / / DELIMITER;
 
 DROP PROCEDURE IF EXISTS sp_buscar_detalhes_processo;
 
-DELIMITER / / CREATE PROCEDURE sp_buscar_detalhes_processo (IN p_id_processo INT) BEGIN
+DELIMITER / / 
+CREATE PROCEDURE sp_buscar_detalhes_processo (IN p_id_processo INT) BEGIN
 SELECT
     p.id_processo,
     p.id_anm,
@@ -178,7 +183,8 @@ END / / DELIMITER;
 
 DROP PROCEDURE IF EXISTS sp_listar_ativos_usuario;
 
-DELIMITER / / CREATE PROCEDURE sp_listar_ativos_usuario (IN p_id_usuario INT) BEGIN
+DELIMITER / / 
+CREATE PROCEDURE sp_listar_ativos_usuario (IN p_id_usuario INT) BEGIN
 SELECT
     a.id_ativo,
     a.id_usuario,
@@ -206,4 +212,4 @@ WHERE
 ORDER BY
     a.dt_cadastro DESC;
 
-END / / DELIMITER;
+END;

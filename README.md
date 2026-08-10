@@ -812,7 +812,7 @@ A sincronização foi projetada para importar periodicamente os arquivos oficiai
 
 # Como Executar
 
-## Clonar o projeto
+## 1. Clonar o projeto
 
 ```bash
 git clone https://github.com/Ninassc/Argon.git
@@ -822,35 +822,97 @@ cd Argon
 
 ---
 
-## Backend
+## 2. Configurar o Backend
+
+Acesse a pasta do backend:
 
 ```bash
 cd backend
+```
 
+### Criar o arquivo `.env`
+
+Utilize o arquivo de exemplo como base:
+
+**Windows (PowerShell):**
+
+```powershell
+Copy-Item .env.example .env
+```
+
+**Linux/macOS:**
+
+```bash
+cp .env.example .env
+```
+
+Abra o arquivo `.env` e preencha as variáveis necessárias:
+
+```env
+DATABASE_URL=mysql+pymysql://usuario:senha@localhost:3306/argon
+GEMINI_API_KEY=sua_chave_do_gemini
+JWT_SECRET_KEY=chave_secreta
+```
+
+> **Importante:** antes de iniciar o projeto, certifique-se de que o MySQL esteja em execução e que o banco de dados `argon` já tenha sido criado.
+
+### Instalar as dependências
+
+```bash
 pip install -r requirements.txt
+```
 
+### Iniciar o backend
+
+```bash
 python app.py
 ```
 
-Caso deseje sincronizar a base da ANM manualmente:
+---
+
+## 3. Sincronizar a base da ANM (opcional)
+
+Caso deseje atualizar os processos minerários manualmente:
 
 ```bash
 python scripts/sincronizar_anm.py
 ```
 
+> A sincronização utiliza a API da ANM e, caso ela esteja indisponível, utiliza automaticamente o arquivo Shapefile como alternativa.
+
 ---
 
-## Frontend
+## 4. Configurar o Frontend
+
+Em outro terminal:
 
 ```bash
 cd frontend
+```
 
+Instale as dependências:
+
+```bash
 flutter pub get
+```
 
+Execute a aplicação:
+
+```bash
 flutter run -d chrome
 ```
 
 ---
+
+## Requisitos
+
+Antes de executar o projeto, é necessário possuir:
+
+- Python 3.11 ou superior;
+- Flutter SDK instalado e configurado;
+- MySQL Server em execução;
+- Banco de dados `argon` criado;
+- Chave da API do Google Gemini.
 
 # Status do Projeto
 
