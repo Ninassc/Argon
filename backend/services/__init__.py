@@ -24,6 +24,10 @@ from .favorito.deletar_favorito_service import DeletarFavoritoService
 from .favorito.listar_favoritos_service import ListarFavoritosService
 from .favorito.verificar_favorito_service import VerificarFavoritoService
 
+from .compartilhamento_processo.compartilhar_processo_service import CompartilharProcessoService
+from .compartilhamento_processo.listar_processos_recebidos_service import ListarProcessosRecebidosService
+from .compartilhamento_processo.listar_processos_enviados_service import ListarProcessosEnviadosService
+
 from .sincronizacao.buscar_dados_anm_service import BuscarDadosANMService
 from .sincronizacao.sincronizar_base_anm import SincronizarBaseANMService
 
@@ -57,5 +61,8 @@ __all__ = [
     "DeletarFavoritoService",
     "ListarFavoritosService",
     "VerificarFavoritoService",
+    "CompartilharProcessoService",
+    "ListarProcessosRecebidosService",
+    "ListarProcessosEnviadosService",
     "AnalisarProcessoIAService"
 ]

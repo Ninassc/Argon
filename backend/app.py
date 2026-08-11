@@ -6,7 +6,7 @@ import os
 
 from config import Config
 from models import db
-from controllers import usuario_bp, processo_bp, ativo_bp, auth_bp, favorito_bp
+from controllers import usuario_bp, processo_bp, ativo_bp, auth_bp, favorito_bp, compartilhamento_bp
 
 from scheduler import iniciar_scheduler
 
@@ -27,6 +27,7 @@ def create_app():
     app.register_blueprint(ativo_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(favorito_bp)
+    app.register_blueprint(compartilhamento_bp)
 
     with app.app_context():
         db.create_all()

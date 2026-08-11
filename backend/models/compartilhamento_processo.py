@@ -65,6 +65,15 @@ class CompartilhamentoProcesso(db.Model):
             .all()
         )
 
+    @classmethod
+    def listar_enviados(cls, id_usuario):
+        return (
+            cls.query
+            .filter_by(id_usuario_origem=id_usuario)
+            .order_by(cls.dt_compartilhamento.desc())
+            .all()
+        )
+
     def remover(self):
         db.session.delete(self)
         db.session.commit()
@@ -80,5 +89,8 @@ class CompartilhamentoProcesso(db.Model):
             "usuario_origem": (
                 self.usuario_origem.to_dict() if self.usuario_origem else None
             ),
-            "processo": self.processo.to_dict() if self.processo else None,
+            "usuario_destino": (
+                self.usuario_destino.to_dict() if self.usuario_destino else None
+            ),
+            "processo": (self.processo.to_dict() if self.processo else None),
         }

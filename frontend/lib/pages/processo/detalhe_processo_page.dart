@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/processo/editar_ativo_page.dart';
+import 'package:frontend/services/compartilhamento_processo_service.dart';
 import 'package:frontend/storage/auth_storage.dart';
+import 'package:frontend/widgets/bottom_sheets/compartilhar_processo_bottom_sheet.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
 import 'package:frontend/widgets/buttons/buttons_detalhe_processo.dart';
 
@@ -29,6 +31,8 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
   ProcessoMinerario? processo;
   AtivoMinerario? ativo;
   Usuario? usuarioLogado;
+
+  TextEditingController controllerEmail = TextEditingController();
 
   final AtivoService ativoService = AtivoService();
 
@@ -424,7 +428,22 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
 
                         ButtonsDetalheProcesso(
                           icone: Icons.share_outlined,
-                          onTap: () {},
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(24),
+                                ),
+                              ),
+                              builder: (context) {
+                                return CompartilharProcessoBottomSheet(
+                                  idProcesso: processo!.idProcesso,
+                                );
+                              },
+                            );
+                          },
                         ),
 
                         const SizedBox(height: 12),

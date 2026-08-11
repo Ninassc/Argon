@@ -3,6 +3,7 @@ import 'package:frontend/models/filtro_processo.dart';
 import 'package:frontend/models/processo_minerario.dart';
 import 'package:frontend/pages/processo/detalhe_processo_page.dart';
 import 'package:frontend/pages/processo/pesquisar_processo_ativo_page.dart';
+import 'package:frontend/pages/compartilhamentos/processos_compartilhados_page.dart';
 import 'package:frontend/pages/usuario/perfil_page.dart';
 import 'package:frontend/pages/usuario/processos_salvos_page.dart';
 import 'package:frontend/services/processo_service.dart';
@@ -226,6 +227,19 @@ class _HomePageState extends State<HomePage> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ProcessosSalvosPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    buttonSpeedChild(
+                      icone: Icons.group_outlined,
+                      label: 'Compartilhados',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const ProcessosCompartilhadosPage(),
                           ),
                         );
                       },
