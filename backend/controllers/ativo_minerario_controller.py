@@ -11,8 +11,8 @@ from services import (
     CriarAtivoService,
     AtualizarAtivoService,
     DeletarAtivoService,
-    BuscarAtivoService, 
-    ListarAtivosUsuarioService
+    BuscarAtivoService,
+    ListarAtivosUsuarioService,
 )
 
 ativo_bp = Blueprint(
@@ -21,58 +21,112 @@ ativo_bp = Blueprint(
     url_prefix="/ativos",
 )
 
-@ativo_bp.get('/todos')
-def listar_todos():
-    ativos = AtivoMinerario.listar_todos()
-    
-    ativos = list(ativo.to_dict() for ativo in ativos)
 
-    return jsonify(ativos), 200
+class AtivoMinerarioController:
 
+    @ativo_bp.get("/todos")
+    def listar_todos():
+        ativos = AtivoMinerario.listar_todos()
 
-@ativo_bp.post("/")
-@jwt_required()
-def criar_ativo():
+        ativos = list(ativo.to_dict() for ativo in ativos)
 
-    try:
-        dados = request.get_json()
+        return jsonify(ativos), 200
+
+    @ativo_bp.post("/")
+    @jwt_required()
+    def criar_ativo():
+
+        try:
+            dados = request.get_json()
+
+            id_usuario = int(get_jwt_identity())
+
+            service = CriarAtivoService()
+
+            ativo = service.executar(
+                dados,
+                id_usuario,
+            )
+
+            return jsonify(ativo), 201
+
+        except ValueError as erro:
+            return jsonify({"erro": str(erro)}), 400
+
+        except SQLAlchemyError:
+            db.session.rollback()
+            return jsonify({"erro": "Erro ao criar ativo."}), 500
+
+    @ativo_bp.put("/<int:id_ativo>")
+    @jwt_required()
+    def atualizar_ativo(id_ativo):
+
+        try:
+
+            dados = request.get_json()
+
+            id_usuario = int(get_jwt_identity())
+
+            service = AtualizarAtivoService()
+
+            ativo = service.executar(
+                id_ativo,
+                id_usuario,
+                dados,
+            )
+
+            if ativo is None:
+                return (
+                    jsonify(
+                        {"erro": "Ativo não encontrado ou você não possui permissão."}
+                    ),
+                    404,
+                )
+
+            return jsonify(ativo), 200
+
+        except ValueError as erro:
+            return jsonify({"erro": str(erro)}), 400
+
+        except SQLAlchemyError:
+            db.session.rollback()
+            return jsonify({"erro": "Erro ao atualizar ativo."}), 500
+
+    @ativo_bp.delete("/<int:id_ativo>")
+    @jwt_required()
+    def deletar_ativo(id_ativo):
+
+        try:
+
+            id_usuario = int(get_jwt_identity())
+
+            service = DeletarAtivoService()
+
+            resultado = service.executar(id_ativo, id_usuario)
+
+            if not resultado:
+                return (
+                    jsonify(
+                        {"erro": "Ativo não encontrado ou você não possui permissão."}
+                    ),
+                    404,
+                )
+
+            return jsonify({"mensagem": "Ativo excluído com sucesso."}), 200
+
+        except SQLAlchemyError:
+            db.session.rollback()
+            return jsonify({"erro": "Erro ao excluir ativo."}), 500
+
+    @ativo_bp.get("/<int:id_ativo>")
+    @jwt_required()
+    def buscar_ativo(id_ativo):
 
         id_usuario = int(get_jwt_identity())
 
-        service = CriarAtivoService()
+        service = BuscarAtivoService()
 
-        ativo = service.executar(
-            dados,
-            id_usuario,
-        )
-
-        return jsonify(ativo), 201
-
-    except ValueError as erro:
-        return jsonify({"erro": str(erro)}), 400
-
-    except SQLAlchemyError:
-        db.session.rollback()
-        return jsonify({"erro": "Erro ao criar ativo."}), 500
-
-
-@ativo_bp.put("/<int:id_ativo>")
-@jwt_required()
-def atualizar_ativo(id_ativo):
-
-    try:
-
-        dados = request.get_json()
-
-        id_usuario = int(get_jwt_identity())
-
-        service = AtualizarAtivoService()
-
-        ativo = service.executar(
-            id_ativo,
-            id_usuario,
-            dados,
-        )
+        ativo = service.executar(id_usuario, id_ativo)
 
         if ativo is None:
             return (
@@ -82,65 +136,14 @@ def atualizar_ativo(id_ativo):
 
         return jsonify(ativo), 200
 
-    except ValueError as erro:
-        return jsonify({"erro": str(erro)}), 400
-
-    except SQLAlchemyError:
-        db.session.rollback()
-        return jsonify({"erro": "Erro ao atualizar ativo."}), 500
-
-
-@ativo_bp.delete("/<int:id_ativo>")
-@jwt_required()
-def deletar_ativo(id_ativo):
-
-    try:
+    @ativo_bp.get("/meus")
+    @jwt_required()
+    def listar_meus_ativos():
 
         id_usuario = int(get_jwt_identity())
 
-        service = DeletarAtivoService()
+        service = ListarAtivosUsuarioService()
 
-        resultado = service.executar(id_ativo, id_usuario)
+        ativos = service.executar(id_usuario)
 
-        if not resultado:
-            return (
-                jsonify({"erro": "Ativo não encontrado ou você não possui permissão."}),
-                404,
-            )
-
-        return jsonify({"mensagem": "Ativo excluído com sucesso."}), 200
-
-    except SQLAlchemyError:
-        db.session.rollback()
-        return jsonify({"erro": "Erro ao excluir ativo."}), 500
-
-
-@ativo_bp.get("/<int:id_ativo>")
-@jwt_required()
-def buscar_ativo(id_ativo):
-
-    id_usuario = int(get_jwt_identity())
-
-    service = BuscarAtivoService()
-
-    ativo = service.executar(id_usuario, id_ativo)
-
-    if ativo is None:
-        return jsonify({
-            "erro": "Ativo não encontrado ou você não possui permissão."
-        }), 404
-
-    return jsonify(ativo), 200
-
-
-@ativo_bp.get("/meus")
-@jwt_required()
-def listar_meus_ativos():
-
-    id_usuario = int(get_jwt_identity())
-
-    service = ListarAtivosUsuarioService()
-
-    ativos = service.executar(id_usuario)
-
-    return jsonify(ativos), 200
+        return jsonify(ativos), 200

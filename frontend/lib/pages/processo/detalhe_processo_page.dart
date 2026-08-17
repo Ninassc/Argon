@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/processo/editar_ativo_page.dart';
-import 'package:frontend/services/compartilhamento_processo_service.dart';
 import 'package:frontend/storage/auth_storage.dart';
 import 'package:frontend/widgets/bottom_sheets/compartilhar_processo_bottom_sheet.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
