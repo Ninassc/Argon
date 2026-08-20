@@ -9,28 +9,69 @@ class Acesso(db.Model):
     id_acesso = db.Column(db.Integer, primary_key=True)
 
     id_usuario = db.Column(
-        db.Integer, db.ForeignKey("usuario.id_usuario"), nullable=False
+        db.Integer,
+        db.ForeignKey("usuario.id_usuario"),
+        nullable=False,
     )
 
     id_ativo = db.Column(
-        db.Integer, db.ForeignKey("ativo_minerario.id_ativo"), nullable=False
+        db.Integer,
+        db.ForeignKey("ativo_minerario.id_ativo"),
+        nullable=False,
     )
 
-    status = db.Column(db.String(20), nullable=False, default="pendente")
+    status = db.Column(
+        db.String(20),
+        nullable=False,
+        default="pendente",
+    )
 
-    origem = db.Column(db.String(20), nullable=False, default="solicitacao")
+    origem = db.Column(
+        db.String(20),
+        nullable=False,
+        default="solicitacao",
+    )
 
-    dt_solicitacao = db.Column(db.DateTime, default=datetime.now)
+    dt_solicitacao = db.Column(
+        db.DateTime,
+        default=datetime.now,
+    )
 
-    dt_acesso = db.Column(db.DateTime, nullable=True)
+    dt_acesso = db.Column(
+        db.DateTime,
+        nullable=True,
+    )
 
-    usuario = db.relationship("Usuario", back_populates="acessos")
+    usuario = db.relationship(
+        "Usuario",
+        back_populates="acessos",
+    )
 
-    ativo = db.relationship("AtivoMinerario", back_populates="acessos")
+    ativo = db.relationship(
+        "AtivoMinerario",
+        back_populates="acessos",
+    )
 
     @classmethod
     def buscar(cls, id_usuario, id_ativo):
-        return cls.query.filter_by(id_usuario=id_usuario, id_ativo=id_ativo).first()
+        return cls.query.filter_by(
+            id_usuario=id_usuario,
+            id_ativo=id_ativo,
+        ).first()
+
+    @classmethod
+    def criar_solicitacao(cls, id_usuario, id_ativo):
+        acesso = cls(
+            id_usuario=id_usuario,
+            id_ativo=id_ativo,
+            status="pendente",
+            origem="solicitacao",
+        )
+
+        db.session.add(acesso)
+        db.session.commit()
+
+        return acesso
 
     @classmethod
     def criar_compartilhamento(cls, id_usuario, id_ativo):
@@ -47,6 +88,22 @@ class Acesso(db.Model):
 
         return acesso
 
+    def aprovar(self):
+        self.status = "aprovado"
+        self.dt_acesso = datetime.now()
+
+        db.session.commit()
+
+        return self
+
+    def recusar(self):
+        self.status = "recusado"
+        self.dt_acesso = None
+
+        db.session.commit()
+
+        return self
+
     def remover(self):
         db.session.delete(self)
         db.session.commit()
@@ -59,7 +116,13 @@ class Acesso(db.Model):
             "status": self.status,
             "origem": self.origem,
             "dt_solicitacao": (
-                self.dt_solicitacao.isoformat() if self.dt_solicitacao else None
+                self.dt_solicitacao.isoformat()
+                if self.dt_solicitacao
+                else None
             ),
-            "dt_acesso": (self.dt_acesso.isoformat() if self.dt_acesso else None),
+            "dt_acesso": (
+                self.dt_acesso.isoformat()
+                if self.dt_acesso
+                else None
+            ),
         }
