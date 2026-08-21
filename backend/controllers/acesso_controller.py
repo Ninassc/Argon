@@ -20,7 +20,7 @@ class AcessoController:
         try:
             id_usuario = int(get_jwt_identity)
 
-            acesso = SolicitarAcessoService().executar(id_usuario, id_ativo)+--''
+            acesso = SolicitarAcessoService().executar(id_usuario, id_ativo)
 
             return jsonify(acesso), 201
 

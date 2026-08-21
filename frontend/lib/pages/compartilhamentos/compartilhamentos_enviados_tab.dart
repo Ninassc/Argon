@@ -90,6 +90,7 @@ class _CompartilhamentosEnviadosTabState
                 );
               },
             ),
+            const SizedBox(height: 15),
           ],
         );
       },

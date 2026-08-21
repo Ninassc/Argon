@@ -90,6 +90,7 @@ class _CompartilhamentosRecebidosTabState
                 );
               },
             ),
+            const SizedBox(height: 15),
           ],
         );
       },
