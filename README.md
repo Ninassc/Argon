@@ -69,7 +69,7 @@ A arquitetura foi construída seguindo a separação em camadas, promovendo orga
 
 - Cadastro de usuários
 - Login
-- Autenticação
+- Autenticação por JWT
 - Consulta de perfil
 - Atualização de perfil
 - Alteração de senha
@@ -80,12 +80,33 @@ A arquitetura foi construída seguindo a separação em camadas, promovendo orga
 ## Processos Minerários
 
 - Consulta paginada
-- Pesquisa por texto
+- Pesquisa por texto e número do processo
 - Visualização detalhada
 - Paginação infinita (Infinite Scroll)
 - Filtro por fase
 - Filtro por substância mineral
 - Consulta utilizando dados oficiais da ANM
+- Validação de processos antes do cadastro como ativo
+- Análise de processos com Inteligência Artificial
+
+---
+
+## Processos Salvos
+
+- Salvamento de processos para acesso posterior
+- Listagem dos processos salvos pelo usuário
+- Verificação de processos já salvos
+- Remoção de processos salvos
+
+---
+
+## Compartilhamento de Processos
+
+- Compartilhamento de processos entre usuários
+- Compartilhamento por meio do e-mail do destinatário
+- Visualização de processos recebidos
+- Visualização de processos enviados
+- Identificação dos usuários de origem e destino
 
 ---
 
@@ -97,14 +118,34 @@ A arquitetura foi construída seguindo a separação em camadas, promovendo orga
 - Associação entre usuário e processo minerário
 - Validação para impedir ativos duplicados
 - Restrição de edição apenas ao proprietário
+- Consulta dos ativos pertencentes ao usuário
+- Pesquisa de ativos minerários
+
+---
+
+## Controle de Acesso
+
+- Solicitação de acesso a ativos minerários (em desenvolvimento)
+- Controle de permissões para acesso a informações privadas (em desenvolvimento)
+
+---
+
+## Inteligência Artificial
+
+- Integração com a API do Google Gemini
+- Análise de dados de processos minerários
+- Geração de análise estruturada do processo
+- Exibição da análise na página de detalhes
 
 ---
 
 ## Sincronização
 
-- Importação automática da base da ANM
+- Importação da base oficial da ANM
 - Atualização de processos existentes
 - Inserção de novos processos
+- Tentativa de consulta pela API oficial da ANM
+- Utilização do Shapefile como fonte alternativa
 - Scheduler para sincronização periódica
 
 ---
@@ -195,8 +236,12 @@ Contêm as telas da aplicação.
 - Home
 - Perfil
 - Editar Perfil
+- Processos Salvos
 - Detalhes do Processo
 - Pesquisa de Ativos
+- Processos Compartilhados
+- Compartilhamentos Recebidos
+- Compartilhamentos Enviados
 
 ---
 
@@ -233,7 +278,7 @@ Gerenciamento das informações persistidas localmente.
 
 # Estrutura do Projeto
 
-A estrutura do Argon foi organizada separando frontend, backend, regras de negócio, persistência, sincronização de dados e componentes reutilizáveis.
+A estrutura do Argon foi organizada separando frontend, backend, regras de negócio, persistência, autenticação, sincronização de dados, Inteligência Artificial, compartilhamento e componentes reutilizáveis.
 
 ```text
 Argon/
@@ -242,8 +287,11 @@ Argon/
 │   │
 │   ├── controllers/
 │   │   ├── __init__.py
+│   │   ├── acesso_controller.py
 │   │   ├── ativo_minerario_controller.py
 │   │   ├── auth_controller.py
+│   │   ├── compartilhamento_processo_controller.py
+│   │   ├── favorito_controller.py
 │   │   ├── processo_minerario_controller.py
 │   │   └── usuario_controller.py
 │   │
@@ -255,6 +303,7 @@ Argon/
 │   │   ├── __init__.py
 │   │   ├── acesso.py
 │   │   ├── ativo_minerario.py
+│   │   ├── compartilhamento_processo.py
 │   │   ├── documento.py
 │   │   ├── favorito.py
 │   │   ├── processo_minerario.py
@@ -268,9 +317,13 @@ Argon/
 │   │
 │   ├── scripts/
 │   │   ├── seed.py
-│   │   └── sincronizar_anm.py
+│   │   ├── sincronizar_anm.py
+│   │   └── teste.py
 │   │
 │   ├── services/
+│   │   │
+│   │   ├── acesso/
+│   │   │   └── solicitar_acesso_service.py
 │   │   │
 │   │   ├── ativo_minerario/
 │   │   │   ├── atualizar_ativo_service.py
@@ -281,6 +334,20 @@ Argon/
 │   │   │
 │   │   ├── auth/
 │   │   │   └── login_service.py
+│   │   │
+│   │   ├── compartilhamento_processo/
+│   │   │   ├── compartilhar_processo_service.py
+│   │   │   ├── listar_processos_enviados_service.py
+│   │   │   └── listar_processos_recebidos_service.py
+│   │   │
+│   │   ├── favorito/
+│   │   │   ├── criar_favorito_service.py
+│   │   │   ├── deletar_favorito_service.py
+│   │   │   ├── listar_favoritos_service.py
+│   │   │   └── verificar_favorito_service.py
+│   │   │
+│   │   ├── ia/
+│   │   │   └── analisar_processo_ia_service.py
 │   │   │
 │   │   ├── processo_minerario/
 │   │   │   ├── buscar_detalhes_processo_service.py
@@ -304,17 +371,22 @@ Argon/
 │   │       └── listar_usuarios_service.py
 │   │
 │   ├── __init__.py
+│   ├── .env.example
 │   ├── app.py
 │   ├── config.py
 │   ├── requirements.txt
-│   ├── scheduler.py
-│   └── .env
+│   └── scheduler.py
 │
 ├── frontend/
 │   │
 │   ├── android/
 │   ├── assets/
-│   ├── build/
+│   │   └── images/
+│   │       ├── ArgON.png
+│   │       ├── onboarding1.png
+│   │       ├── onboarding2.png
+│   │       └── onboarding3.png
+│   │
 │   ├── ios/
 │   ├── linux/
 │   ├── macos/
@@ -324,9 +396,12 @@ Argon/
 │   ├── lib/
 │   │   │
 │   │   ├── data/
+│   │   │   └── processos_test.dart
 │   │   │
 │   │   ├── models/
 │   │   │   ├── ativo_minerario.dart
+│   │   │   ├── compartilhamento_processo.dart
+│   │   │   ├── favorito.dart
 │   │   │   ├── filtro_processo.dart
 │   │   │   ├── processo_minerario.dart
 │   │   │   └── usuario.dart
@@ -336,6 +411,11 @@ Argon/
 │   │   │   ├── auth/
 │   │   │   │   ├── cadastro_page.dart
 │   │   │   │   └── login_page.dart
+│   │   │   │
+│   │   │   ├── compartilhamentos/
+│   │   │   │   ├── compartilhamentos_enviados_tab.dart
+│   │   │   │   ├── compartilhamentos_recebidos_tab.dart
+│   │   │   │   └── processos_compartilhados_page.dart
 │   │   │   │
 │   │   │   ├── home/
 │   │   │   │   └── home_page.dart
@@ -347,7 +427,8 @@ Argon/
 │   │   │   │
 │   │   │   ├── usuario/
 │   │   │   │   ├── editar_perfil_page.dart
-│   │   │   │   └── perfil_page.dart
+│   │   │   │   ├── perfil_page.dart
+│   │   │   │   └── processos_salvos_page.dart
 │   │   │   │
 │   │   │   └── welcome/
 │   │   │       └── welcome_page.dart
@@ -356,6 +437,8 @@ Argon/
 │   │   │   ├── api_service.dart
 │   │   │   ├── ativo_service.dart
 │   │   │   ├── auth_service.dart
+│   │   │   ├── compartilhamento_processo_service.dart
+│   │   │   ├── favorito_service.dart
 │   │   │   ├── processo_service.dart
 │   │   │   └── usuario_service.dart
 │   │   │
@@ -365,6 +448,7 @@ Argon/
 │   │   ├── widgets/
 │   │   │   │
 │   │   │   ├── bottom_sheets/
+│   │   │   │   ├── compartilhar_processo_bottom_sheet.dart
 │   │   │   │   ├── filtro_bottom_sheet.dart
 │   │   │   │   └── selecionar_substancia_bottom_sheet.dart
 │   │   │   │
@@ -389,10 +473,9 @@ Argon/
 │   ├── pubspec.yaml
 │   └── analysis_options.yaml
 │
-├── README.md
-└── .gitignore
+├── .gitignore
+└── README.md
 ```
-
 ---
 
 # Responsabilidade das Principais Pastas
@@ -435,9 +518,10 @@ Entidades existentes:
 - usuário;
 - processo minerário;
 - ativo minerário;
+- favorito;
+- compartilhamento de processo;
 - acesso;
-- documento;
-- favorito.
+- documento.
 
 Esses modelos definem campos, relacionamentos, chaves estrangeiras e métodos de serialização.
 
@@ -478,6 +562,17 @@ Camada que concentra as regras de negócio da aplicação.
 
 Os services estão separados por domínio:
 
+#### `acesso/`
+
+Responsável pelo controle de acesso aos ativos minerários.
+
+Inclui:
+
+- solicitação de acesso a ativos;
+- validação do usuário solicitante;
+- prevenção de solicitações duplicadas;
+- gerenciamento das permissões de acesso.
+
 #### `ativo_minerario/`
 
 Responsável pelo gerenciamento dos ativos associados aos usuários.
@@ -500,7 +595,39 @@ Inclui:
 
 - login;
 - validação de credenciais;
-- retorno dos dados da sessão.
+- gerenciamento da autenticação por JWT.
+
+#### `compartilhamento_processo/`
+
+Responsável pelo compartilhamento de processos minerários entre usuários.
+
+Inclui:
+
+- compartilhamento de processos;
+- listagem de processos recebidos;
+- listagem de processos enviados;
+- identificação dos usuários envolvidos no compartilhamento.
+
+#### `favorito/`
+
+Responsável pelo gerenciamento dos processos salvos pelos usuários.
+
+Inclui:
+
+- salvamento de processos;
+- remoção de processos salvos;
+- listagem dos favoritos;
+- verificação do status de favorito.
+
+#### `ia/`
+
+Responsável pela integração dos processos minerários com recursos de Inteligência Artificial.
+
+Inclui:
+
+- análise de processos minerários;
+- geração de informações estruturadas a partir dos dados do processo;
+- integração com a API do Google Gemini.
 
 #### `processo_minerario/`
 
@@ -523,8 +650,9 @@ Responsável pela obtenção e atualização da base oficial da ANM.
 
 Inclui:
 
-- busca dos dados;
-- leitura da base;
+- tentativa de consulta à API da ANM;
+- utilização do Shapefile como fonte alternativa;
+- leitura e tratamento dos dados;
 - inserção de novos processos;
 - atualização de processos existentes.
 
@@ -540,7 +668,7 @@ Inclui:
 - alteração de senha;
 - exclusão;
 - listagem.
-
+  
 ---
 
 ### `app.py`
@@ -581,9 +709,11 @@ Modelos principais:
 - `Usuario`;
 - `ProcessoMinerario`;
 - `AtivoMinerario`;
+- `Favorito`;
+- `CompartilhamentoProcesso`;
 - `FiltroProcesso`.
 
-O modelo `FiltroProcesso` agrupa os filtros de fase e substância, facilitando futuras expansões.
+O modelo `FiltroProcesso` agrupa os filtros utilizados na consulta dos processos minerários.
 
 ---
 
@@ -596,6 +726,12 @@ Contém as telas da aplicação, separadas por domínio.
 - tela de login;
 - tela de cadastro.
 
+#### `compartilhamentos/`
+
+- tela de processos compartilhados;
+- aba de processos recebidos;
+- aba de processos enviados.
+
 #### `home/`
 
 - listagem dos processos;
@@ -607,18 +743,21 @@ Contém as telas da aplicação, separadas por domínio.
 #### `processo/`
 
 - detalhes do processo;
+- análise do processo com Inteligência Artificial;
 - edição de ativo;
-- busca de processo para cadastro como ativo.
+- busca de processo para cadastro como ativo;
+- compartilhamento de processos.
 
 #### `usuario/`
 
 - perfil;
-- edição do perfil.
+- edição do perfil;
+- processos salvos.
 
 #### `welcome/`
 
 - apresentação inicial da aplicação.
-
+  
 ---
 
 ### `services/`
@@ -627,11 +766,13 @@ Camada responsável pelas requisições HTTP ao backend.
 
 Principais serviços:
 
-- `ApiService`: configuração geral da API;
+- `ApiService`: configuração geral da API e cabeçalhos de autenticação;
 - `AuthService`: autenticação;
 - `UsuarioService`: operações de usuário;
-- `ProcessoService`: consulta, pesquisa, filtros e detalhes;
-- `AtivoService`: gerenciamento dos ativos.
+- `ProcessoService`: consulta, pesquisa, filtros, detalhes e análise com IA;
+- `AtivoService`: gerenciamento dos ativos;
+- `FavoritoService`: gerenciamento dos processos salvos;
+- `CompartilhamentoProcessoService`: envio e consulta de processos compartilhados.
 
 ---
 
@@ -647,8 +788,9 @@ Contém componentes reutilizáveis da interface.
 
 #### `bottom_sheets/`
 
-Componentes de seleção e filtragem:
+Componentes utilizados em ações contextuais, seleção e filtragem:
 
+- compartilhamento de processos;
 - filtro por fase;
 - filtro por substância;
 - seleção pesquisável de substâncias.
@@ -766,6 +908,36 @@ DELETE /ativos/{id}
 
 ---
 
+## Favoritos
+
+```text
+POST   /favoritos/{id_processo}
+
+GET    /favoritos/
+
+GET    /favoritos/{id_processo}
+
+DELETE /favoritos/{id_processo}
+```
+
+---
+## Compartilhamento Processo
+
+```text
+POST /compartilhamentos/{id_processo}
+
+GET  /compartilhamentos/recebidos
+
+GET  /compartilhamentos/enviados
+```
+
+---
+## IA
+
+```text
+POST /processos/{id_processo}/analisar-ia
+```
+
 # Fonte dos Dados
 
 O Argon utiliza dados públicos disponibilizados pela **Agência Nacional de Mineração (ANM)**.
@@ -779,35 +951,73 @@ A sincronização foi projetada para importar periodicamente os arquivos oficiai
 1. **Cadastro e autenticação de usuários**
    - Cadastro de novos usuários.
    - Login utilizando credenciais válidas.
+   - Autenticação por JWT.
 
 2. **Consulta de processos minerários**
-   - Pesquisa de processos minerários utilizando dados oficiais da Agência Nacional de Mineração (ANM).
+   - Consulta de processos utilizando dados oficiais da Agência Nacional de Mineração (ANM).
+   - Sincronização da base oficial da ANM.
+   - Utilização de Shapefile como alternativa em caso de indisponibilidade da API da ANM.
 
 3. **Visualização de detalhes dos processos**
-   - Exibição de informações completas de um processo minerário selecionado.
+   - Exibição das informações detalhadas de um processo minerário.
+   - Consulta dos dados oficiais associados ao processo.
 
 4. **Pesquisa e filtros**
    - Pesquisa por número do processo ou palavras-chave.
-   - Filtros por fase e substância mineral.
+   - Filtro por fase do processo.
+   - Filtro por substância mineral.
+   - Paginação dos resultados e carregamento por Infinite Scroll.
 
 5. **Validação de processos minerários**
-   - Confirmação da validação de um processo antes do cadastro como ativo.
+   - Verificação do processo com base nos dados oficiais da ANM.
+   - Confirmação da validação antes do cadastro como ativo minerário.
 
 6. **Gerenciamento de ativos minerários**
-   - Cadastro de ativos minerários vinculados a processos validados.
+   - Cadastro de ativos minerários a partir de processos validados.
+   - Associação do ativo ao usuário proprietário.
+   - Prevenção de cadastro duplicado.
+   - Exclusão de ativos minerários.
 
 7. **Consulta de ativos minerários**
-   - Pesquisa de ativos cadastrados por número do processo ou palavras-chave.
+   - Pesquisa de ativos cadastrados.
+   - Consulta dos ativos pertencentes ao usuário.
 
 8. **Edição de ativos minerários**
    - Atualização das informações dos ativos cadastrados.
+   - Restrição da edição ao proprietário do ativo.
 
 9. **Gerenciamento de perfil**
-   - Atualização das informações do perfil do usuário.
+   - Visualização do perfil do usuário.
+   - Atualização das informações do perfil.
+   - Alteração de senha.
+   - Exclusão da conta.
+   - Restrição da edição do perfil ao próprio usuário.
 
-10. **Controle de acesso**
-    - Restrição da edição de ativos minerários e perfis apenas aos seus respectivos proprietários.
+10. **Processos salvos**
+    - Salvamento de processos minerários como favoritos.
+    - Listagem dos processos salvos pelo usuário.
+    - Verificação se um processo já está salvo.
+    - Remoção de processos dos favoritos.
 
+11. **Compartilhamento de processos**
+    - Compartilhamento de processos minerários entre usuários da plataforma.
+    - Compartilhamento utilizando o e-mail do usuário destinatário.
+    - Visualização dos processos recebidos.
+    - Visualização dos processos enviados.
+    - Identificação do usuário que enviou ou recebeu o processo.
+
+12. **Análise de processos com Inteligência Artificial**
+    - Geração de análise de processos minerários utilizando Inteligência Artificial.
+    - Integração do backend com a API do Google Gemini.
+    - Exibição da análise diretamente na página de detalhes do processo.
+
+13. **Sincronização da base da ANM**
+    - Importação dos processos minerários oficiais.
+    - Atualização de processos existentes.
+    - Inserção de novos processos.
+    - Sincronização periódica através de Scheduler.
+    - Fallback para Shapefile quando a API da ANM está indisponível.
+      
 ---
 
 # Como Executar
