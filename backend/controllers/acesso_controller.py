@@ -7,7 +7,7 @@ from flask_jwt_extended import (
 
 from models import db
 
-from services import SolicitarAcessoService
+from services import SolicitarAcessoService, ListarSolicitacoesRecebidasService
 
 acesso_bp = Blueprint("acesso", __name__, url_prefix="/acessos")
 
@@ -31,3 +31,22 @@ class AcessoController:
             db.session.rollback()
 
             return jsonify({"erro": "Erro ao solicitar acesso."}), 500
+
+
+    @acesso_bp.get("/recebidas")
+    @jwt_required()
+    def listar_solicitacoes_recebidas():
+        try:
+            id_usuario = int(get_jwt_identity)
+
+            solicitacoes = ListarSolicitacoesRecebidasService().executar(id_usuario)
+
+            return jsonify(solicitacoes), 200
+
+        except ValueError as erro:
+                    return jsonify({"erro": str(erro)}), 400
+        
+        except SQLAlchemyError:
+            db.session.rollback()
+
+            return jsonify({"erro": "Erro ao carregar solicitações de acesso."}), 500

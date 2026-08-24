@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from models import db
+from models import AtivoMinerario
 
 
 class Acesso(db.Model):
@@ -108,6 +109,19 @@ class Acesso(db.Model):
         db.session.delete(self)
         db.session.commit()
 
+    @classmethod
+    def listar_solicitacoes_recebidas(cls, id_proprietario):
+        return (
+            cls.query.join(AtivoMinerario)
+            .filter(
+                AtivoMinerario.id_usuario == id_proprietario,
+                cls.status == "pendente",
+                cls.origem == "solicitacao",
+            )
+            .order_by(cls.dt_solicitacao.desc())
+            .all()
+        )
+
     def to_dict(self):
         return {
             "id_acesso": self.id_acesso,
@@ -116,13 +130,9 @@ class Acesso(db.Model):
             "status": self.status,
             "origem": self.origem,
             "dt_solicitacao": (
-                self.dt_solicitacao.isoformat()
-                if self.dt_solicitacao
-                else None
+                self.dt_solicitacao.isoformat() if self.dt_solicitacao else None
             ),
-            "dt_acesso": (
-                self.dt_acesso.isoformat()
-                if self.dt_acesso
-                else None
-            ),
+            "dt_acesso": (self.dt_acesso.isoformat() if self.dt_acesso else None),
+            "usuario": (self.usuario.to_dict() if self.usuario else None),
+            "ativo": (self.ativo.to_dict() if self.ativo else None),
         }
