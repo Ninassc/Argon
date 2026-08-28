@@ -64,7 +64,6 @@ class _PesquisarProcessoAtivoPageState
 
       debugPrint("Processo encontrado: ${processoEncontrado.processo}");
 
-     
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -97,8 +96,26 @@ class _PesquisarProcessoAtivoPageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        //automaticallyImplyLeading: false,
         centerTitle: true,
         title: Image.asset("assets/images/ArgON.png", height: 42),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: InkWell(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Color(0xFFE0E0E0), width: 2),
+              ),
+              child: Icon(
+                Icons.chevron_left,
+                size: 30,
+                color: Color(0xFF848484),
+              ),
+            ),
+          ),
+        ),
       ),
       body: SafeArea(
         child: Padding(

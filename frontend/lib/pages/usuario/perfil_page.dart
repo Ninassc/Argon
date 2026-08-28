@@ -10,6 +10,8 @@ import 'package:frontend/storage/auth_storage.dart';
 import 'package:frontend/widgets/cards/card_processo_minerario.dart';
 import 'package:frontend/widgets/textfields/pesquisar_input.dart';
 
+import 'package:intl/intl.dart';
+
 class PerfilPage extends StatefulWidget {
   const PerfilPage({super.key});
 
@@ -141,7 +143,7 @@ class _PerfilPageState extends State<PerfilPage> {
                   const SizedBox(height: 12),
 
                   Text(
-                    "Membro desde ${usuario.dtCadastro}",
+                    "Membro desde ${DateFormat('dd/MM/yyyy HH:mm').format(usuario.dtCadastro!)}",
                     style: const TextStyle(color: Color(0xFF848484)),
                   ),
 
