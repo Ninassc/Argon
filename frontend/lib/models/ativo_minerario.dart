@@ -5,6 +5,7 @@ class AtivoMinerario {
   final int? idAtivo;
   final int? idUsuario;
   final int idProcesso;
+  
   final String descricao;
   final DateTime? dtCadastro;
   final Usuario? usuario;

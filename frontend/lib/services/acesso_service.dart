@@ -78,7 +78,7 @@ class AcessoService {
     return Acesso.fromJson(json);
   }
 
-  Future<bool> verificar(int idAtivo) async {
+  Future<Map<String, dynamic>> verificar(int idAtivo) async {
     final response = await http.get(
       Uri.parse("${ApiService.baseUrl}/acessos/$idAtivo/verificar"),
       headers: await ApiService.authHeaders(),
@@ -92,6 +92,6 @@ class AcessoService {
 
     final json = jsonDecode(response.body);
 
-    return json["possui_acesso"];
+    return json;
   }
 }

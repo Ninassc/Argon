@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/processo/editar_ativo_page.dart';
+import 'package:frontend/services/acesso_service.dart';
 import 'package:frontend/storage/auth_storage.dart';
 import 'package:frontend/widgets/bottom_sheets/compartilhar_processo_bottom_sheet.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
@@ -39,6 +40,9 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
 
   bool salvo = false;
 
+  String? statusAcesso;
+  bool verificandoAcesso = false;
+
   @override
   void initState() {
     super.initState();
@@ -64,6 +68,10 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
 
       carregando = false;
     });
+
+    if (ativo != null) {
+      await verificarAcesso();
+    }
   }
 
   Future<void> cadastrarAtivo() async {
@@ -148,6 +156,59 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
       if (!mounted) return;
 
       Navigator.pop(context);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
+      );
+    }
+  }
+
+  Future<void> verificarAcesso() async {
+    if (ativo == null) return;
+
+    try {
+      setState(() {
+        verificandoAcesso = true;
+      });
+
+      final resultado = await AcessoService().verificar(ativo!.idAtivo!);
+
+      if (!mounted) return;
+
+      setState(() {
+        statusAcesso = resultado["status"];
+        verificandoAcesso = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        verificandoAcesso = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
+      );
+    }
+  }
+
+  Future<void> solicitarAcesso() async {
+    if (ativo == null) return;
+
+    try {
+      await AcessoService().solicitar(ativo!.idAtivo!);
+
+      if (!mounted) return;
+
+      setState(() {
+        statusAcesso = "pendente";
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Solicitação de acesso enviada!")),
+      );
+    } catch (e) {
+      if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
@@ -464,6 +525,35 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
               ),
 
               const SizedBox(height: 12),
+
+              if (ativo != null && !podeEditar) ...[
+                if (verificandoAcesso)
+                  const CircularProgressIndicator()
+                else if (statusAcesso == null)
+                  Buttons(
+                    texto: "Solicitar Acesso",
+                    corBotao: const Color(0xFF5A81FA),
+                    corTexto: Colors.white,
+                    onPressed: solicitarAcesso,
+                  )
+                else if (statusAcesso == "pendente")
+                  const Text(
+                    "Solicitação de acesso pendente",
+                    style: TextStyle(color: Color(0xFF848484)),
+                  )
+                else if (statusAcesso == "aprovado")
+                  const Text(
+                    "Você possui acesso a este ativo",
+                    style: TextStyle(color: Color(0xFF848484)),
+                  )
+                else if (statusAcesso == "recusado")
+                  const Text(
+                    "Solicitação de acesso recusada",
+                    style: TextStyle(color: Color(0xFF848484)),
+                  ),
+
+                const SizedBox(height: 12),
+              ],
 
               if (widget.modoCadastro && ativo == null) ...[
                 const SizedBox(height: 10),

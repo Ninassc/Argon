@@ -36,6 +36,8 @@ class Buttons extends StatelessWidget {
                       texto == "Salvando..." ||
                       texto == "Salvar Alterações" ||
                       texto == "Analisar com IA"
+                      ||
+                      texto == "Solicitar Acesso"
                   ? corBotao
                   : corTexto,
               width: 2,

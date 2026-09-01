@@ -10,11 +10,20 @@ class VerificarAcessoService:
             raise ValueError("Ativo não encontrado")
 
         if ativo.id_usuario == id_usuario:
-            return True
+            return {
+                "possui_acesso": True,
+                "status": "proprietario",
+            }
 
         acesso = Acesso.buscar(id_usuario, id_ativo)
 
         if acesso is None:
-            return False
+            return {
+                "possui_acesso": False,
+                "status": None,
+            }
 
-        return acesso.status == "aprovado"
+        return {
+            "possui_acesso": acesso.status == "aprovado",
+            "status": acesso.status,
+        }
