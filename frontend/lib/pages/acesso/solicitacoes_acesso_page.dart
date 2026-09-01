@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/processo/detalhe_processo_page.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/acesso.dart';
@@ -86,6 +87,11 @@ class _SolicitacoesAcessoPageState extends State<SolicitacoesAcessoPage> {
 
                 return Card(
                   margin: const EdgeInsets.only(bottom: 16),
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadiusGeometry.circular(10),
+                    side: BorderSide(color: Color(0xFFE0E0E0)),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
@@ -96,6 +102,7 @@ class _SolicitacoesAcessoPageState extends State<SolicitacoesAcessoPage> {
                           style: const TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.bold,
+                            // color: Color(0xFF5A81FA)
                           ),
                         ),
 
@@ -137,7 +144,14 @@ class _SolicitacoesAcessoPageState extends State<SolicitacoesAcessoPage> {
 
                             TextButton.icon(
                               onPressed: () {
-                                // abrir tela de detalhes
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DetalheProcessoPage(
+                                      idProcesso: acesso.ativo!.idProcesso,
+                                    ),
+                                  ),
+                                );
                               },
                               icon: const Icon(Icons.visibility_outlined),
                               label: const Text("Ver"),
