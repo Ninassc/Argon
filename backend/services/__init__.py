@@ -29,6 +29,8 @@ from .acesso.listar_solicitacoes_recebidas_service import ListarSolicitacoesRece
 from .acesso.aprovar_acesso_service import AprovarAcessoService
 from .acesso.recusar_acesso_service import RecusarAcessoService
 from .acesso.verificar_acesso_service import VerificarAcessoService
+from .acesso.listar_enviadas_service import ListarEnviadasService
+from .acesso.listar_historico_recebido_service import ListarHistoricoRecebidoService
 
 from .compartilhamento_processo.compartilhar_processo_service import CompartilharProcessoService
 from .compartilhamento_processo.listar_processos_recebidos_service import ListarProcessosRecebidosService
@@ -72,6 +74,8 @@ __all__ = [
     "AprovarAcessoService",
     "RecusarAcessoService",
     "VerificarAcessoService",
+    "ListarHistoricoRecebidoService",
+    "ListarEnviadasService",
     "CompartilharProcessoService",
     "ListarProcessosRecebidosService",
     "ListarProcessosEnviadosService",

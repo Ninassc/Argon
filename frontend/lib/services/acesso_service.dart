@@ -44,6 +44,49 @@ class AcessoService {
     return recebidos;
   }
 
+  Future<List<Acesso>> listarHistoricoRecebido() async {
+    final response = await http.get(
+      Uri.parse("${ApiService.baseUrl}/acessos/historico"),
+      headers: await ApiService.authHeaders(),
+    );
+
+    if (response.statusCode != 200) {
+      final json = jsonDecode(response.body);
+
+      throw Exception(json["erro"] ?? "Erro ao listar histórico de solicitações de acesso.");
+    }
+
+    final List<dynamic> listaJsons = jsonDecode(response.body);
+    print(response.body);
+
+    final recebidos = listaJsons.map((json) {
+      return Acesso.fromJson(json);
+    }).toList();
+
+    return recebidos;
+  }
+
+   Future<List<Acesso>> listarEnviadas() async {
+    final response = await http.get(
+      Uri.parse("${ApiService.baseUrl}/acessos/enviadas"),
+      headers: await ApiService.authHeaders(),
+    );
+
+    if (response.statusCode != 200) {
+      final json = jsonDecode(response.body);
+
+      throw Exception(json["erro"] ?? "Erro ao listar solicitações de acesso enviadas");
+    }
+
+    final List<dynamic> listaJsons = jsonDecode(response.body);
+
+    final enviadas = listaJsons.map((json) {
+      return Acesso.fromJson(json);
+    }).toList();
+
+    return enviadas;
+  }
+
   Future<Acesso> aprovar(int idAcesso) async {
     final response = await http.put(
       Uri.parse("${ApiService.baseUrl}/acessos/$idAcesso/aprovar"),

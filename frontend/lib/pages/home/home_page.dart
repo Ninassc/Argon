@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/filtro_processo.dart';
 import 'package:frontend/models/processo_minerario.dart';
-import 'package:frontend/pages/acesso/solicitacoes_acesso_page.dart';
+import 'package:frontend/pages/acesso/acesso_page.dart';
 import 'package:frontend/pages/processo/detalhe_processo_page.dart';
 import 'package:frontend/pages/processo/pesquisar_processo_ativo_page.dart';
 import 'package:frontend/pages/compartilhamentos/processos_compartilhados_page.dart';
@@ -253,7 +253,7 @@ class _HomePageState extends State<HomePage> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                const SolicitacoesAcessoPage(),
+                                const AcessoPage(),
                           ),
                         );
                       },

@@ -122,6 +122,30 @@ class Acesso(db.Model):
             .all()
         )
 
+    @classmethod
+    def listar_historico_recebido(cls, id_proprietario):
+        return (
+            cls.query.join(AtivoMinerario)
+            .filter(
+                AtivoMinerario.id_usuario == id_proprietario,
+                cls.status.in_(["aprovado", "recusado"]),
+                cls.origem == "solicitacao",
+            )
+            .order_by(cls.dt_solicitacao.desc())
+            .all()
+        )
+
+    @classmethod
+    def listar_enviadas(cls, id_usuario):
+        return (
+            cls.query.filter(
+                cls.id_usuario == id_usuario,
+                cls.origem == "solicitacao",
+            )
+            .order_by(cls.dt_solicitacao.desc())
+            .all()
+        )
+
     def to_dict(self):
         return {
             "id_acesso": self.id_acesso,

@@ -5,19 +5,19 @@ import 'package:intl/intl.dart';
 import '../../models/acesso.dart';
 import '../../services/acesso_service.dart';
 
-// importe também sua tela de detalhes do ativo/processo
-
-class SolicitacoesAcessoPage extends StatefulWidget {
-  const SolicitacoesAcessoPage({super.key});
+class HistoricoSolicitacoesAcessoPage extends StatefulWidget {
+  const HistoricoSolicitacoesAcessoPage({super.key});
 
   @override
-  State<SolicitacoesAcessoPage> createState() => _SolicitacoesAcessoPageState();
+  State<HistoricoSolicitacoesAcessoPage> createState() =>
+      _SolicitacoesAcessoPageState();
 }
 
-class _SolicitacoesAcessoPageState extends State<SolicitacoesAcessoPage> {
+class _SolicitacoesAcessoPageState
+    extends State<HistoricoSolicitacoesAcessoPage> {
   final AcessoService _acessoService = AcessoService();
 
-  List<Acesso> solicitacoes = [];
+  List<Acesso> historico = [];
   bool carregando = true;
 
   @override
@@ -28,12 +28,12 @@ class _SolicitacoesAcessoPageState extends State<SolicitacoesAcessoPage> {
 
   Future<void> carregarSolicitacoes() async {
     try {
-      final resultado = await _acessoService.listarRecebidas();
+      final resultado = await _acessoService.listarHistoricoRecebido();
 
       if (!mounted) return;
 
       setState(() {
-        solicitacoes = resultado;
+        historico = resultado;
         carregando = false;
       });
     } catch (e) {
@@ -52,38 +52,15 @@ class _SolicitacoesAcessoPageState extends State<SolicitacoesAcessoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        //automaticallyImplyLeading: false,
-        centerTitle: true,
-        title: Image.asset("assets/images/ArgON.png", height: 42),
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: InkWell(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Color(0xFFE0E0E0), width: 2),
-              ),
-              child: Icon(
-                Icons.chevron_left,
-                size: 30,
-                color: Color(0xFF848484),
-              ),
-            ),
-          ),
-        ),
-      ),
-
       body: carregando
           ? const Center(child: CircularProgressIndicator())
-          : solicitacoes.isEmpty
+          : historico.isEmpty
           ? const Center(child: Text("Nenhuma solicitação de acesso pendente."))
           : ListView.builder(
               padding: const EdgeInsets.all(16),
-              itemCount: solicitacoes.length,
+              itemCount: historico.length,
               itemBuilder: (context, index) {
-                final acesso = solicitacoes[index];
+                final acesso = historico[index];
 
                 return Card(
                   margin: const EdgeInsets.only(bottom: 16),
@@ -169,32 +146,6 @@ class _SolicitacoesAcessoPageState extends State<SolicitacoesAcessoPage> {
                               fontSize: 13,
                             ),
                           ),
-
-                        const SizedBox(height: 20),
-
-                        Row(
-                          children: [
-                            Expanded(
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  // recusar
-                                },
-                                child: const Text("Recusar"),
-                              ),
-                            ),
-
-                            const SizedBox(width: 12),
-
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  // aprovar
-                                },
-                                child: const Text("Aprovar"),
-                              ),
-                            ),
-                          ],
-                        ),
                       ],
                     ),
                   ),

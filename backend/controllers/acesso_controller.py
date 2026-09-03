@@ -13,6 +13,8 @@ from services import (
     AprovarAcessoService,
     RecusarAcessoService,
     VerificarAcessoService,
+    ListarHistoricoRecebidoService,
+    ListarEnviadasService
 )
 
 acesso_bp = Blueprint("acesso", __name__, url_prefix="/acessos")
@@ -55,6 +57,42 @@ class AcessoController:
             db.session.rollback()
 
             return jsonify({"erro": "Erro ao carregar solicitações de acesso."}), 500
+
+    @acesso_bp.get("/historico")
+    @jwt_required()
+    def listar_historico_recebido():
+        try:
+            id_usuario = int(get_jwt_identity())
+
+            solicitacoes = ListarHistoricoRecebidoService().executar(id_usuario)
+
+            return jsonify(solicitacoes), 200
+
+        except ValueError as erro:
+            return jsonify({"erro": str(erro)}), 400
+
+        except SQLAlchemyError as erro:
+            db.session.rollback()
+
+            return jsonify({"erro": "Erro ao carregar histórico de solicitações."}), 500
+
+    @acesso_bp.get("/enviadas")
+    @jwt_required()
+    def listar_enviadas():
+        try:
+            id_usuario = int(get_jwt_identity())
+
+            enviadas = ListarEnviadasService().executar(id_usuario)
+
+            return jsonify(enviadas), 200
+
+        except ValueError as erro:
+            return jsonify({"erro": str(erro)}), 400
+
+        except SQLAlchemyError as erro:
+            db.session.rollback()
+
+            return jsonify({"erro": "Erro ao carregar solicitações de acesso enviadas."}), 500
 
     @acesso_bp.put("/<int:id_acesso>/aprovar")
     @jwt_required()

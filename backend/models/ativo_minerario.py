@@ -1,6 +1,5 @@
 from . import db
 
-
 class AtivoMinerario(db.Model):
     __tablename__ = "ativo_minerario"
 
@@ -53,6 +52,7 @@ class AtivoMinerario(db.Model):
         return cls.query.get(id_ativo)
 
     # JSON
+
     def to_dict(self):
         return {
             "id_ativo": self.id_ativo,
@@ -64,4 +64,5 @@ class AtivoMinerario(db.Model):
                 "id_usuario": self.usuario.id_usuario,
                 "nome": self.usuario.nome,
             },
+            "processo": (self.processo.to_dict() if self.processo else None),
         }
