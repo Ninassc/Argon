@@ -63,6 +63,7 @@ class AtivoMinerario(db.Model):
             "usuario": {
                 "id_usuario": self.usuario.id_usuario,
                 "nome": self.usuario.nome,
+                "email" : self.usuario.email
             },
             "processo": (self.processo.to_dict() if self.processo else None),
         }

@@ -57,7 +57,6 @@ class AcessoService {
     }
 
     final List<dynamic> listaJsons = jsonDecode(response.body);
-    print(response.body);
 
     final recebidos = listaJsons.map((json) {
       return Acesso.fromJson(json);

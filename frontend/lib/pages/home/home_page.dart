@@ -247,7 +247,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                      buttonSpeedChild(
                       icone: Icons.move_to_inbox_outlined,
-                      label: 'Solicitações Recebidas',
+                      label: 'Solicitações de Acesso',
                       onTap: () {
                         Navigator.push(
                           context,
