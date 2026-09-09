@@ -125,8 +125,15 @@ A arquitetura foi construída seguindo a separação em camadas, promovendo orga
 
 ## Controle de Acesso
 
-- Solicitação de acesso a ativos minerários (em desenvolvimento)
-- Controle de permissões para acesso a informações privadas (em desenvolvimento)
+O sistema possui um mecanismo de controle de acesso às informações privadas associadas aos ativos minerários, como documentos e arquivos anexados pelo proprietário.
+
+- Solicitação de acesso às informações privadas de um ativo
+- Aprovação e recusa de solicitações pelo proprietário
+- Verificação do status de acesso do usuário
+- Listagem de solicitações pendentes recebidas
+- Histórico de solicitações recebidas
+- Listagem de solicitações enviadas
+- Controle de permissão para visualização e download de documentos associados ao ativo
 
 ---
 
@@ -201,6 +208,10 @@ Os serviços estão organizados por domínio:
 - Ativo Minerário
 - Autenticação
 - Sincronização
+- Favorito
+- Compartilhamento de Processo
+- Controle de Acesso
+- IA
 
 ---
 
@@ -323,7 +334,13 @@ Argon/
 │   ├── services/
 │   │   │
 │   │   ├── acesso/
-│   │   │   └── solicitar_acesso_service.py
+│   │   │   ├── aprovar_acesso_service.py
+│   │   │   ├── listar_enviadas_service.py
+│   │   │   ├── listar_historico_recebido_service.py
+│   │   │   ├── listar_solicitacoes_recebidas_service.py
+│   │   │   ├── recusar_acesso_service.py
+│   │   │   ├── solicitar_acesso_service.py
+│   │   │   └── verificar_acesso_service.py
 │   │   │
 │   │   ├── ativo_minerario/
 │   │   │   ├── atualizar_ativo_service.py
@@ -399,6 +416,7 @@ Argon/
 │   │   │   └── processos_test.dart
 │   │   │
 │   │   ├── models/
+│   │   │   ├── acesso.dart
 │   │   │   ├── ativo_minerario.dart
 │   │   │   ├── compartilhamento_processo.dart
 │   │   │   ├── favorito.dart
@@ -407,6 +425,12 @@ Argon/
 │   │   │   └── usuario.dart
 │   │   │
 │   │   ├── pages/
+│   │   │   │
+│   │   │   ├── acesso/
+│   │   │   │   ├── acesso_page.dart
+│   │   │   │   ├── historico_solicitacoes_acesso_page.dart
+│   │   │   │   ├── solicitacoes_acesso_enviadas_tab.dart
+│   │   │   │   └── solicitacoes_acesso_tab.dart
 │   │   │   │
 │   │   │   ├── auth/
 │   │   │   │   ├── cadastro_page.dart
@@ -434,6 +458,7 @@ Argon/
 │   │   │       └── welcome_page.dart
 │   │   │
 │   │   ├── services/
+│   │   │   ├── acesso_service.dart
 │   │   │   ├── api_service.dart
 │   │   │   ├── ativo_service.dart
 │   │   │   ├── auth_service.dart
@@ -448,25 +473,14 @@ Argon/
 │   │   ├── widgets/
 │   │   │   │
 │   │   │   ├── bottom_sheets/
-│   │   │   │   ├── compartilhar_processo_bottom_sheet.dart
-│   │   │   │   ├── filtro_bottom_sheet.dart
-│   │   │   │   └── selecionar_substancia_bottom_sheet.dart
 │   │   │   │
 │   │   │   ├── buttons/
-│   │   │   │   ├── action_button.dart
-│   │   │   │   ├── button_speed_child.dart
-│   │   │   │   ├── buttons_detalhe_processo.dart
-│   │   │   │   └── buttons.dart
 │   │   │   │
 │   │   │   ├── cards/
-│   │   │   │   └── card_processo_minerario.dart
 │   │   │   │
 │   │   │   ├── onboarding/
 │   │   │   │
 │   │   │   └── textfields/
-│   │   │       ├── campo_input.dart
-│   │   │       ├── pesquisar_input.dart
-│   │   │       └── tipo_conta.dart
 │   │   │
 │   │   └── main.dart
 │   │
@@ -564,14 +578,17 @@ Os services estão separados por domínio:
 
 #### `acesso/`
 
-Responsável pelo controle de acesso aos ativos minerários.
+Responsável pelo controle de acesso às informações privadas vinculadas aos ativos minerários, especialmente documentos e arquivos disponibilizados pelo proprietário.
 
 Inclui:
 
-- solicitação de acesso a ativos;
-- validação do usuário solicitante;
-- prevenção de solicitações duplicadas;
-- gerenciamento das permissões de acesso.
+- solicitação de acesso;
+- aprovação e recusa pelo proprietário do ativo;
+- verificação das permissões do usuário;
+- listagem de solicitações pendentes;
+- histórico de solicitações recebidas;
+- listagem de solicitações enviadas;
+- prevenção de solicitações duplicadas.
 
 #### `ativo_minerario/`
 
@@ -721,6 +738,13 @@ O modelo `FiltroProcesso` agrupa os filtros utilizados na consulta dos processos
 
 Contém as telas da aplicação, separadas por domínio.
 
+#### `acesso/`
+
+- tela principal de gerenciamento de acessos;
+- aba de solicitações pendentes recebidas;
+- histórico de solicitações aprovadas e recusadas;
+- aba de solicitações enviadas pelo usuário.
+
 #### `auth/`
 
 - tela de login;
@@ -773,6 +797,7 @@ Principais serviços:
 - `AtivoService`: gerenciamento dos ativos;
 - `FavoritoService`: gerenciamento dos processos salvos;
 - `CompartilhamentoProcessoService`: envio e consulta de processos compartilhados.
+- `AcessoService`: solicitação, aprovação, recusa, verificação e consulta das solicitações de acesso;
 
 ---
 
@@ -938,6 +963,26 @@ GET  /compartilhamentos/enviados
 POST /processos/{id_processo}/analisar-ia
 ```
 
+---
+## Controle de Acesso
+
+```text
+POST /acessos/{id_ativo}/solicitar
+
+GET  /acessos/recebidas
+
+GET  /acessos/historico
+
+GET  /acessos/enviadas
+
+GET  /acessos/{id_ativo}/verificar
+
+PUT  /acessos/{id_acesso}/aprovar
+
+PUT  /acessos/{id_acesso}/recusar
+```
+---
+
 # Fonte dos Dados
 
 O Argon utiliza dados públicos disponibilizados pela **Agência Nacional de Mineração (ANM)**.
@@ -1017,6 +1062,15 @@ A sincronização foi projetada para importar periodicamente os arquivos oficiai
     - Inserção de novos processos.
     - Sincronização periódica através de Scheduler.
     - Fallback para Shapefile quando a API da ANM está indisponível.
+
+14. **Controle de acesso a ativos minerários**
+    - Solicitação de acesso a ativos pertencentes a outros usuários.
+    - Aprovação e recusa de solicitações pelo proprietário do ativo.
+    - Verificação do status de acesso.
+    - Visualização das solicitações pendentes recebidas.
+    - Histórico de solicitações aprovadas e recusadas.
+    - Visualização das solicitações enviadas pelo usuário.
+    - Controle de permissão de acesso aos ativos minerários.
       
 ---
 
