@@ -58,8 +58,6 @@ class _CompartilharProcessoBottomSheetState
         SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
       );
     } finally {
-      if (!mounted) return;
-
       setState(() {
         carregando = false;
       });

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/viewmodels/favorito_viewmodel.dart';
 import 'package:frontend/widgets/textfields/pesquisar_input.dart';
+import 'package:provider/provider.dart';
 
-import '../../models/favorito.dart';
-import '../../services/favorito_service.dart';
 import '../../widgets/cards/card_processo_minerario.dart';
 import '../processo/detalhe_processo_page.dart';
 
@@ -14,34 +14,23 @@ class ProcessosSalvosPage extends StatefulWidget {
 }
 
 class _ProcessosSalvosPageState extends State<ProcessosSalvosPage> {
-  List<Favorito> favoritos = [];
+  
   TextEditingController controllerPesquisar = TextEditingController();
   String pesquisa = "";
-
-  bool carregando = true;
 
   @override
   void initState() {
     super.initState();
 
-    carregarFavoritos();
-  }
-
-  Future<void> carregarFavoritos() async {
-    final resultado = await FavoritoService().listar();
-
-    if (!mounted) return;
-
-    setState(() {
-      favoritos = resultado;
-      carregando = false;
-    });
+    Provider.of<FavoritoViewModel>(context, listen: false).carregarFavoritos();
   }
 
   @override
   Widget build(BuildContext context) {
 
-    final favoritosFiltrados = favoritos.where((favorito) {
+    final provider = Provider.of<FavoritoViewModel>(context);
+    
+    final favoritosFiltrados = provider.favoritos.where((favorito) {
       final processo = favorito.processo;
 
       return processo.processo.toLowerCase().contains(pesquisa) ||
@@ -74,9 +63,9 @@ class _ProcessosSalvosPageState extends State<ProcessosSalvosPage> {
         ),
       ),
 
-      body: carregando
+      body: provider.carregando
           ? const Center(child: CircularProgressIndicator())
-          : favoritos.isEmpty
+          : provider.favoritos.isEmpty
           ? const Center(child: Text("Você ainda não salvou nenhum processo."))
           : Padding(
               padding: const EdgeInsetsGeometry.all(24.0),

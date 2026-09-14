@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/processo/editar_ativo_page.dart';
-import 'package:frontend/services/acesso_service.dart';
-import 'package:frontend/storage/auth_storage.dart';
 import 'package:frontend/widgets/bottom_sheets/compartilhar_processo_bottom_sheet.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
 import 'package:frontend/widgets/buttons/buttons_detalhe_processo.dart';
 
-import '../../models/ativo_minerario.dart';
-import '../../services/ativo_service.dart';
-import '../../models/processo_minerario.dart';
-import '../../services/processo_service.dart';
-import '../../models/usuario.dart';
-import '../../services/favorito_service.dart';
+import 'package:provider/provider.dart';
+import '../../viewmodels/processo_viewmodel.dart';
+import '../../viewmodels/auth_viewmodel.dart';
+import '../../viewmodels/favorito_viewmodel.dart';
+import '../../viewmodels/acesso_viewmodel.dart';
+import '../../viewmodels/ativo_viewmodel.dart';
 
 class DetalheProcessoPage extends StatefulWidget {
   final int idProcesso;
@@ -28,20 +26,7 @@ class DetalheProcessoPage extends StatefulWidget {
 }
 
 class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
-  ProcessoMinerario? processo;
-  AtivoMinerario? ativo;
-  Usuario? usuarioLogado;
-
   TextEditingController controllerEmail = TextEditingController();
-
-  final AtivoService ativoService = AtivoService();
-
-  bool carregando = true;
-
-  bool salvo = false;
-
-  String? statusAcesso;
-  bool verificandoAcesso = false;
 
   @override
   void initState() {
@@ -51,37 +36,38 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
   }
 
   Future<void> carregarDetalhes() async {
-    final resultado = await ProcessoService().buscarDetalhes(widget.idProcesso);
+    final processoViewModel = Provider.of<ProcessoViewModel>(
+      context,
+      listen: false,
+    );
 
-    final usuario = await AuthStorage().buscarUsuario();
+    final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
 
-    final processoSalvo = await FavoritoService().verificar(widget.idProcesso);
+    final favoritoViewModel = Provider.of<FavoritoViewModel>(
+      context,
+      listen: false,
+    );
 
-    if (!mounted) return;
+    final acessoViewModel = Provider.of<AcessoViewModel>(
+      context,
+      listen: false,
+    );
 
-    setState(() {
-      processo = resultado["processo"];
-      ativo = resultado["ativo"];
-      usuarioLogado = usuario;
+    await processoViewModel.buscarDetalhes(widget.idProcesso);
 
-      salvo = processoSalvo;
-
-      carregando = false;
-    });
-
-    if (ativo != null) {
-      await verificarAcesso();
-    }
+    await Future.wait([
+      authViewModel.buscarUsuario(),
+      favoritoViewModel.verificar(widget.idProcesso),
+      if (processoViewModel.ativo != null)
+        acessoViewModel.verificar(processoViewModel.ativo!.idAtivo!),
+    ]);
   }
 
   Future<void> cadastrarAtivo() async {
-    try {
-      final novoAtivo = AtivoMinerario(
-        idProcesso: processo!.idProcesso,
-        descricao: "Novo ativo cadastrado.",
-      );
+    final ativoViewModel = Provider.of<AtivoViewModel>(context, listen: false);
 
-      await ativoService.criar(novoAtivo);
+    try {
+      await ativoViewModel.cadastrar(widget.idProcesso);
 
       await carregarDetalhes();
 
@@ -101,31 +87,18 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
 
   Future<void> alterarFavorito() async {
     try {
-      if (salvo) {
-        await FavoritoService().remover(processo!.idProcesso);
+      final favoritoViewModel = Provider.of<FavoritoViewModel>(
+        context,
+        listen: false,
+      );
 
-        if (!mounted) return;
+      final mensagem = await favoritoViewModel.alterar(widget.idProcesso);
 
-        setState(() {
-          salvo = false;
-        });
+      if (!mounted) return;
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Processo removido dos salvos.")),
-        );
-      } else {
-        await FavoritoService().criar(processo!.idProcesso);
-
-        if (!mounted) return;
-
-        setState(() {
-          salvo = true;
-        });
-
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text("Processo salvo.")));
-      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(mensagem)));
     } catch (e) {
       if (!mounted) return;
 
@@ -136,6 +109,15 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
   }
 
   Future<void> analisarComIa() async {
+    final processoViewModel = Provider.of<ProcessoViewModel>(
+      context,
+      listen: false,
+    );
+
+    final processo = processoViewModel.processo;
+
+    if (processo == null) return;
+
     try {
       showDialog(
         context: context,
@@ -143,8 +125,8 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
         builder: (_) => const Center(child: CircularProgressIndicator()),
       );
 
-      final resultado = await ProcessoService().analisarComIa(
-        processo!.idProcesso,
+      final resultado = await processoViewModel.analisarComIa(
+        processo.idProcesso,
       );
 
       if (!mounted) return;
@@ -163,46 +145,27 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
     }
   }
 
-  Future<void> verificarAcesso() async {
-    if (ativo == null) return;
-
-    try {
-      setState(() {
-        verificandoAcesso = true;
-      });
-
-      final resultado = await AcessoService().verificar(ativo!.idAtivo!);
-
-      if (!mounted) return;
-
-      setState(() {
-        statusAcesso = resultado["status"];
-        verificandoAcesso = false;
-      });
-    } catch (e) {
-      if (!mounted) return;
-
-      setState(() {
-        verificandoAcesso = false;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
-      );
-    }
-  }
-
   Future<void> solicitarAcesso() async {
-    if (ativo == null) return;
+    final processoViewModel = Provider.of<ProcessoViewModel>(
+      context,
+      listen: false,
+    );
+
+    final acessoViewModel = Provider.of<AcessoViewModel>(
+      context,
+      listen: false,
+    );
+
+    final ativo = processoViewModel.ativo;
+
+    if (ativo == null || ativo.idAtivo == null) {
+      return;
+    }
 
     try {
-      await AcessoService().solicitar(ativo!.idAtivo!);
+      await acessoViewModel.solicitar(ativo.idAtivo!);
 
       if (!mounted) return;
-
-      setState(() {
-        statusAcesso = "pendente";
-      });
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Solicitação de acesso enviada!")),
@@ -304,12 +267,28 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
 
   @override
   Widget build(BuildContext context) {
+    final processoViewModel = Provider.of<ProcessoViewModel>(context);
+
+    final authViewModel = Provider.of<AuthViewModel>(context);
+
+    final favoritoViewModel = Provider.of<FavoritoViewModel>(context);
+
+    final acessoViewModel = Provider.of<AcessoViewModel>(context);
+
+    final processo = processoViewModel.processo;
+    final ativo = processoViewModel.ativo;
+    final usuarioLogado = authViewModel.usuarioLogado;
+
+    final salvo = favoritoViewModel.salvo;
+    final statusAcesso = acessoViewModel.statusAcesso;
+    final verificandoAcesso = acessoViewModel.verificandoAcesso;
+
     final bool podeEditar =
         ativo != null &&
         usuarioLogado != null &&
-        ativo!.idUsuario == usuarioLogado!.idUsuario;
+        ativo.idUsuario == usuarioLogado.idUsuario;
 
-    if (carregando) {
+    if (processoViewModel.carregando || processo == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
@@ -363,70 +342,70 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                             "Substância",
                             style: TextStyle(color: Color(0xFF848484)),
                           ),
-                          SelectableText(processo!.subs),
+                          SelectableText(processo.subs),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "Ano",
                             style: TextStyle(color: Color(0xFF848484)),
                           ),
-                          SelectableText(processo!.ano),
+                          SelectableText(processo.ano),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "Área",
                             style: TextStyle(color: Color(0xFF848484)),
                           ),
-                          SelectableText("${processo!.areaHa} ha"),
+                          SelectableText("${processo.areaHa} ha"),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "Fase",
                             style: TextStyle(color: Color(0xFF848484)),
                           ),
-                          SelectableText(processo!.fase),
+                          SelectableText(processo.fase),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "Último Evento",
                             style: TextStyle(color: Color(0xFF848484)),
                           ),
-                          SelectableText(processo!.ultEvento),
+                          SelectableText(processo.ultEvento),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "Nome",
                             style: TextStyle(color: Color(0xFF848484)),
                           ),
-                          SelectableText(processo!.nome),
+                          SelectableText(processo.nome),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "Uso",
                             style: TextStyle(color: Color(0xFF848484)),
                           ),
-                          SelectableText(processo!.uso),
+                          SelectableText(processo.uso),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "DSProcesso",
                             style: TextStyle(color: Color(0xFF848484)),
                           ),
-                          SelectableText(processo!.dsProcesso),
+                          SelectableText(processo.dsProcesso),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "ID Processo",
                             style: TextStyle(color: Color(0xFF848484)),
                           ),
-                          SelectableText(processo!.idAnm),
+                          SelectableText(processo.idAnm),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "ID",
                             style: TextStyle(color: Color(0xFF848484)),
                           ),
-                          SelectableText(processo!.idProcesso.toString()),
+                          SelectableText(processo.idProcesso.toString()),
 
                           const SizedBox(height: 12),
 
@@ -438,21 +417,21 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                               "Descrição",
                               style: TextStyle(color: Color(0xFF848484)),
                             ),
-                            SelectableText(ativo!.descricao),
+                            SelectableText(ativo.descricao),
 
                             const SizedBox(height: 12),
                             SelectableText(
                               "Titular",
                               style: TextStyle(color: Color(0xFF848484)),
                             ),
-                            SelectableText(ativo!.usuario!.nome),
+                            SelectableText(ativo.usuario!.nome),
 
                             const SizedBox(height: 12),
                             SelectableText(
                               "Data de Cadastro",
                               style: TextStyle(color: Color(0xFF848484)),
                             ),
-                            SelectableText(ativo!.dtCadastro.toString()),
+                            SelectableText(ativo.dtCadastro.toString()),
 
                             const SizedBox(height: 30),
                           ],
@@ -471,8 +450,8 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => EditarAtivoPage(
-                                    ativo: ativo!,
-                                    processo: processo!,
+                                    ativo: ativo,
+                                    processo: processo,
                                   ),
                                 ),
                               );
@@ -499,7 +478,7 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                               ),
                               builder: (context) {
                                 return CompartilharProcessoBottomSheet(
-                                  idProcesso: processo!.idProcesso,
+                                  idProcesso: processo.idProcesso,
                                 );
                               },
                             );
