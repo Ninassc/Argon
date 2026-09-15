@@ -32,7 +32,9 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
   void initState() {
     super.initState();
 
-    carregarDetalhes();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      carregarDetalhes();
+    });
   }
 
   Future<void> carregarDetalhes() async {
@@ -335,7 +337,7 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                             "Processo",
                             style: TextStyle(color: Color(0xFF848484)),
                           ),
-                          SelectableText(processo!.processo),
+                          SelectableText(processo.processo),
 
                           const SizedBox(height: 12),
                           SelectableText(

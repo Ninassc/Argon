@@ -7,13 +7,14 @@ import 'package:frontend/pages/processo/pesquisar_processo_ativo_page.dart';
 import 'package:frontend/pages/compartilhamentos/processos_compartilhados_page.dart';
 import 'package:frontend/pages/usuario/perfil_page.dart';
 import 'package:frontend/pages/usuario/processos_salvos_page.dart';
-import 'package:frontend/services/processo_service.dart';
+import 'package:frontend/viewmodels/processo_viewmodel.dart';
 import 'package:frontend/widgets/buttons/action_button.dart';
 import 'package:frontend/widgets/buttons/button_speed_child.dart';
 import 'package:frontend/widgets/bottom_sheets/filtro_bottom_sheet.dart';
 import 'package:frontend/widgets/cards/card_processo_minerario.dart';
 import 'package:frontend/widgets/textfields/pesquisar_input.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,30 +26,26 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   TextEditingController controller = TextEditingController();
 
-  List<ProcessoMinerario> processosMinerarios = [];
-
-  FiltroProcesso filtro = const FiltroProcesso();
-
-  int pagina = 1;
-  final int limite = 20;
-
-  bool carregando = false;
-  bool temMais = true;
-
-  String termoPesquisa = "";
-
   final ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
 
-    carregarProcessos();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ProcessoViewModel>(
+        context,
+        listen: false,
+      ).carregarProcessos();
+    });
 
     scrollController.addListener(() {
       if (scrollController.position.pixels >=
           scrollController.position.maxScrollExtent - 300) {
-        carregarProcessos();
+        Provider.of<ProcessoViewModel>(
+          context,
+          listen: false,
+        ).carregarProcessos();
       }
     });
   }
@@ -60,65 +57,12 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  String faseFiltro = "Todas";
-  String substanciaFiltro = "Todas";
-
-  Future<void> aplicarFiltro(FiltroProcesso novoFiltro) async {
-    filtro = novoFiltro;
-
-    setState(() {
-      pagina = 1;
-      temMais = true;
-      processosMinerarios.clear();
-    });
-
-    await carregarProcessos();
-  }
-
-  Future<void> carregarProcessos() async {
-    if (carregando || !temMais) return;
-
-    carregando = true;
-
-    final novos = termoPesquisa.isEmpty
-        ? await ProcessoService().listar(
-            page: pagina,
-            limit: limite,
-            fase: filtro.fase,
-            substancia: filtro.substancia,
-          )
-        : await ProcessoService().pesquisar(
-            termo: termoPesquisa,
-            page: pagina,
-            limit: limite,
-            fase: filtro.fase,
-            substancia: filtro.substancia,
-          );
-
-    setState(() {
-      processosMinerarios.addAll(novos);
-      pagina++;
-      carregando = false;
-      if (novos.length < limite) {
-        temMais = false;
-      }
-    });
-  }
-
-  Future<void> pesquisar(String texto) async {
-    termoPesquisa = texto;
-
-    setState(() {
-      pagina = 1;
-      temMais = true;
-      processosMinerarios.clear();
-    });
-
-    await carregarProcessos();
-  }
-
   @override
   Widget build(BuildContext context) {
+    final processoViewModel = Provider.of<ProcessoViewModel>(context);
+    List<ProcessoMinerario> processosMinerarios =
+        processoViewModel.processosMinerarios;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -137,7 +81,9 @@ class _HomePageState extends State<HomePage> {
                   Expanded(
                     child: PesquisarInput(
                       controller: controller,
-                      onChanged: pesquisar, //(_) => pesquisar(),
+                      onChanged: (texto) {
+                        processoViewModel.pesquisar(texto);
+                      }, //(_) => pesquisar(),
                     ),
                   ),
                   ActionButton(
@@ -160,7 +106,7 @@ class _HomePageState extends State<HomePage> {
                           );
 
                       if (resultado != null) {
-                        aplicarFiltro(resultado);
+                        processoViewModel.aplicarFiltro(resultado);
                       }
                     },
                   ),
@@ -170,7 +116,9 @@ class _HomePageState extends State<HomePage> {
               Expanded(
                 child: ListView.builder(
                   controller: scrollController,
-                  itemCount: processosMinerarios.length + (temMais ? 1 : 0),
+                  itemCount:
+                      processosMinerarios.length +
+                      (processoViewModel.temMais ? 1 : 0),
                   itemBuilder: (context, index) {
                     if (index == processosMinerarios.length) {
                       return const Padding(
@@ -245,15 +193,14 @@ class _HomePageState extends State<HomePage> {
                         );
                       },
                     ),
-                     buttonSpeedChild(
+                    buttonSpeedChild(
                       icone: Icons.move_to_inbox_outlined,
                       label: 'Solicitações de Acesso',
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                const AcessoPage(),
+                            builder: (context) => const AcessoPage(),
                           ),
                         );
                       },

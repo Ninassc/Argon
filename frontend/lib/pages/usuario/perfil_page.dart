@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/ativo_minerario.dart';
-import 'package:frontend/models/usuario.dart';
 import 'package:frontend/pages/auth/login_page.dart';
 import 'package:frontend/pages/processo/detalhe_processo_page.dart';
 import 'package:frontend/pages/usuario/editar_perfil_page.dart';
-import 'package:frontend/services/ativo_service.dart';
-import 'package:frontend/services/usuario_service.dart';
-import 'package:frontend/storage/auth_storage.dart';
+import 'package:frontend/viewmodels/ativo_viewmodel.dart';
+import 'package:frontend/viewmodels/auth_viewmodel.dart';
+import 'package:frontend/viewmodels/usuario_viewmodel.dart';
 import 'package:frontend/widgets/cards/card_processo_minerario.dart';
 import 'package:frontend/widgets/textfields/pesquisar_input.dart';
 
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class PerfilPage extends StatefulWidget {
   const PerfilPage({super.key});
@@ -20,9 +19,6 @@ class PerfilPage extends StatefulWidget {
 }
 
 class _PerfilPageState extends State<PerfilPage> {
-  late Future<Usuario> _usuarioFuture;
-  late Future<List<AtivoMinerario>> _ativosFuture;
-
   final TextEditingController controllerPesquisar = TextEditingController();
 
   String pesquisa = "";
@@ -31,11 +27,15 @@ class _PerfilPageState extends State<PerfilPage> {
   void initState() {
     super.initState();
 
-    _usuarioFuture = UsuarioService().buscarPerfil();
-    _ativosFuture = AtivoService().listar();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<UsuarioViewModel>(context, listen: false).buscarPerfil();
+      Provider.of<AtivoViewModel>(context, listen: false).listar();
+    });
   }
 
   Future<void> sair() async {
+    final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -62,7 +62,7 @@ class _PerfilPageState extends State<PerfilPage> {
 
     if (confirmar != true) return;
 
-    await AuthStorage().removerToken();
+    authViewModel.removerToken();
 
     if (!mounted) return;
 
@@ -75,6 +75,23 @@ class _PerfilPageState extends State<PerfilPage> {
 
   @override
   Widget build(BuildContext context) {
+    final usuarioViewModel = Provider.of<UsuarioViewModel>(context);
+    final ativoViewModel = Provider.of<AtivoViewModel>(context);
+
+    final usuario = usuarioViewModel.usuario;
+    final ativos = ativoViewModel.ativos;
+
+    final ativosFiltrados = ativos.where((ativo) {
+      final processo = ativo.processoMinerario;
+
+      if (processo == null) return false;
+
+      return processo.processo.toLowerCase().contains(pesquisa) ||
+          processo.nome.toLowerCase().contains(pesquisa) ||
+          processo.subs.toLowerCase().contains(pesquisa) ||
+          processo.fase.toLowerCase().contains(pesquisa);
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(
         //automaticallyImplyLeading: false,
@@ -99,136 +116,102 @@ class _PerfilPageState extends State<PerfilPage> {
         ),
       ),
 
-      body: FutureBuilder<Usuario>(
-        future: _usuarioFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.hasError) {
-            return Center(child: Text(snapshot.error.toString()));
-          }
-
-          final usuario = snapshot.data!;
-
-          return Padding(
-            padding: const EdgeInsets.all(24),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const CircleAvatar(
-                    radius: 42,
-                    child: Icon(Icons.person, size: 42),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  Text(
-                    usuario.nome,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF5A81FA),
+      body: usuarioViewModel.carregando || usuario == null
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(24),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const CircleAvatar(
+                      radius: 42,
+                      child: Icon(Icons.person, size: 42),
                     ),
-                  ),
 
-                  const SizedBox(height: 4),
+                    const SizedBox(height: 16),
 
-                  Text(
-                    usuario.email ?? usuario.telefone ?? "Não informado",
-                    style: const TextStyle(color: Color(0xFF848484)),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  Text(
-                    "Membro desde ${DateFormat('dd/MM/yyyy HH:mm').format(usuario.dtCadastro!)}",
-                    style: const TextStyle(color: Color(0xFF848484)),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    spacing: 10,
-                    children: [
-                      OutlinedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  EditarPerfilPage(usuario: usuario),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.edit),
-                        label: const Text("Editar perfil"),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed: sair,
-                        icon: const Icon(Icons.logout),
-                        label: const Text("Sair"),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 25),
-
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Meus Ativos",
-                      style: TextStyle(
-                        fontSize: 20,
+                    Text(
+                      usuario.nome,
+                      style: const TextStyle(
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF5A81FA),
                       ),
                     ),
-                  ),
 
-                  const SizedBox(height: 10),
-                  PesquisarInput(
-                    controller: controllerPesquisar,
-                    onChanged: (valor) {
-                      setState(() {
-                        pesquisa = valor.toLowerCase();
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 4),
 
-                  FutureBuilder<List<AtivoMinerario>>(
-                    future: _ativosFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
+                    Text(
+                      usuario.email ?? usuario.telefone ?? "Não informado",
+                      style: const TextStyle(color: Color(0xFF848484)),
+                    ),
 
-                      if (snapshot.hasError) {
-                        return Center(child: Text(snapshot.error.toString()));
-                      }
+                    const SizedBox(height: 12),
 
-                      final ativos = snapshot.data!;
+                    Text(
+                      usuario.dtCadastro != null
+                          ? "Membro desde ${DateFormat('dd/MM/yyyy HH:mm').format(usuario.dtCadastro!)}"
+                          : "Data de cadastro não informada",
+                      style: const TextStyle(color: Color(0xFF848484)),
+                    ),
 
-                      final ativosFiltrados = ativos.where((ativo) {
-                        final processo = ativo.processoMinerario!;
+                    const SizedBox(height: 20),
 
-                        return processo.processo.toLowerCase().contains(
-                              pesquisa,
-                            ) ||
-                            processo.nome.toLowerCase().contains(pesquisa) ||
-                            processo.subs.toLowerCase().contains(pesquisa) ||
-                            processo.fase.toLowerCase().contains(pesquisa);
-                      }).toList();
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      spacing: 10,
+                      children: [
+                        OutlinedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    EditarPerfilPage(usuario: usuario),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.edit),
+                          label: const Text("Editar perfil"),
+                        ),
+                        OutlinedButton.icon(
+                          onPressed: sair,
+                          icon: const Icon(Icons.logout),
+                          label: const Text("Sair"),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 25),
 
-                      if (ativosFiltrados.isEmpty) {
-                        return const Text(
-                          "Você ainda não possui ativos cadastrados.",
-                        );
-                      }
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Meus Ativos",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF5A81FA),
+                        ),
+                      ),
+                    ),
 
-                      return ListView.builder(
+                    const SizedBox(height: 10),
+                    PesquisarInput(
+                      controller: controllerPesquisar,
+                      onChanged: (valor) {
+                        setState(() {
+                          pesquisa = valor.toLowerCase();
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 10),
+
+                    if (ativoViewModel.carregandoAtivos)
+                      const Center(child: CircularProgressIndicator())
+                    else if (ativosFiltrados.isEmpty)
+                      const Text("Você ainda não possui ativos cadastrados.")
+                    else
+                      ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: ativosFiltrados.length,
@@ -249,15 +232,11 @@ class _PerfilPageState extends State<PerfilPage> {
                             },
                           );
                         },
-                      );
-                    },
-                  ),
-                ],
+                      ),
+                  ],
+                ),
               ),
             ),
-          );
-        },
-      ),
     );
   }
 }

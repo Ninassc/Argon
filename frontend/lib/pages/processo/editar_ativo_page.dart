@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/ativo_minerario.dart';
 import 'package:frontend/models/processo_minerario.dart';
-import 'package:frontend/services/ativo_service.dart';
+import 'package:frontend/viewmodels/ativo_viewmodel.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
+import 'package:provider/provider.dart';
 
 class EditarAtivoPage extends StatefulWidget {
   final AtivoMinerario ativo;
@@ -20,10 +21,6 @@ class EditarAtivoPage extends StatefulWidget {
 class _EditarAtivoPageState extends State<EditarAtivoPage> {
   final TextEditingController controllerDescricao = TextEditingController();
 
-  final AtivoService ativoService = AtivoService();
-
-  bool salvando = false;
-
   @override
   void initState() {
     super.initState();
@@ -38,6 +35,8 @@ class _EditarAtivoPageState extends State<EditarAtivoPage> {
   }
 
   Future<void> salvarAlteracoes() async {
+    final ativoViewModel = Provider.of<AtivoViewModel>(context, listen: false);
+
     final descricao = controllerDescricao.text.trim();
 
     if (descricao.isEmpty) {
@@ -48,18 +47,16 @@ class _EditarAtivoPageState extends State<EditarAtivoPage> {
       return;
     }
 
-    setState(() {
-      salvando = true;
-    });
-
     try {
-      final ativoAtualizado = AtivoMinerario(
-        idAtivo: widget.ativo.idAtivo,
-        idProcesso: widget.ativo.idProcesso,
-        descricao: descricao,
+      await ativoViewModel.atualizar(
+        AtivoMinerario(
+          idAtivo: widget.ativo.idAtivo,
+          idProcesso: widget.processo.idProcesso,
+          idUsuario: widget.ativo.idUsuario,
+          descricao: descricao,
+        ),
       );
 
-      await ativoService.atualizar(widget.ativo.idAtivo!, ativoAtualizado);
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -73,17 +70,13 @@ class _EditarAtivoPageState extends State<EditarAtivoPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
       );
-    } finally {
-      if (mounted) {
-        setState(() {
-          salvando = false;
-        });
-      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final ativoViewModel = Provider.of<AtivoViewModel>(context);
+
     return Scaffold(
       appBar: AppBar(
         //automaticallyImplyLeading: false,
@@ -181,11 +174,13 @@ class _EditarAtivoPageState extends State<EditarAtivoPage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Buttons(
-                    texto: salvando ? "Salvando..." : "Salvar e Sair",
+                    texto: ativoViewModel.salvando
+                        ? "Salvando..."
+                        : "Salvar e Sair",
                     corBotao: const Color(0xFF5A81FA),
                     corTexto: Colors.white,
                     onPressed: () {
-                      if (!salvando) {
+                      if (!ativoViewModel.salvando) {
                         salvarAlteracoes();
                       }
                     },

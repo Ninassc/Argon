@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/usuario.dart';
-import 'package:frontend/pages/usuario/perfil_page.dart';
-import 'package:frontend/services/usuario_service.dart';
+import 'package:frontend/viewmodels/usuario_viewmodel.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
 import 'package:frontend/widgets/textfields/campo_input.dart';
+import 'package:provider/provider.dart';
 
 class EditarPerfilPage extends StatefulWidget {
   final Usuario usuario;
@@ -32,14 +32,12 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
   }
 
   Future<void> atualizarPerfil() async {
-    try {
-      await UsuarioService().atualizarPerfil(
-        nome: controllerNome.text,
-        email: controllerEmail.text,
-        telefone: controllerTelefone.text,
-        tipoConta: widget.usuario.tipoConta,
-      );
+    final usuarioViewModel = Provider.of<UsuarioViewModel>(
+      context,
+      listen: false,
+    );
 
+    try {
       final alterarSenha =
           controllerSenhaAtual.text.isNotEmpty ||
           controllerNovaSenha.text.isNotEmpty ||
@@ -53,12 +51,19 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
       }
 
       if (alterarSenha) {
-        await UsuarioService().alterarSenha(
+        await usuarioViewModel.alterarSenha(
           senhaAtual: controllerSenhaAtual.text,
           novaSenha: controllerNovaSenha.text,
           confirmarSenha: controllerConfirmarSenha.text,
         );
       }
+
+      await usuarioViewModel.atualizarPerfil(
+        nome: controllerNome.text,
+        email: controllerEmail.text,
+        telefone: controllerTelefone.text,
+        tipoConta: widget.usuario.tipoConta,
+      );
 
       if (!mounted) return;
 
@@ -66,10 +71,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         const SnackBar(content: Text("Perfil atualizado com sucesso!")),
       );
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PerfilPage()),
-      );
+      Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
 

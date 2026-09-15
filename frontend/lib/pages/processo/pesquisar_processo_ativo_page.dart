@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/processo/detalhe_processo_page.dart';
+import 'package:frontend/viewmodels/processo_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/processo_minerario.dart';
-import '../../services/processo_service.dart';
 import '../../widgets/buttons/buttons.dart';
 import '../../widgets/textfields/campo_input.dart';
 
@@ -18,10 +19,6 @@ class _PesquisarProcessoAtivoPageState
     extends State<PesquisarProcessoAtivoPage> {
   final TextEditingController controllerProcesso = TextEditingController();
 
-  final ProcessoService processoService = ProcessoService();
-
-  bool carregando = false;
-
   @override
   void dispose() {
     controllerProcesso.dispose();
@@ -29,6 +26,11 @@ class _PesquisarProcessoAtivoPageState
   }
 
   Future<void> pesquisarProcesso() async {
+    final processoViewModel = Provider.of<ProcessoViewModel>(
+      context,
+      listen: false,
+    );
+
     final termo = controllerProcesso.text.trim();
 
     if (termo.isEmpty) {
@@ -39,20 +41,12 @@ class _PesquisarProcessoAtivoPageState
       return;
     }
 
-    setState(() {
-      carregando = true;
-    });
-
     try {
-      final processos = await processoService.pesquisar(
-        termo: termo,
-        page: 1,
-        limit: 20,
-      );
+      await processoViewModel.pesquisarProcessoAtivo(termo);
 
       if (!mounted) return;
 
-      if (processos.isEmpty) {
+      if (processoViewModel.processosAtivoPesquisa.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Nenhum processo encontrado.")),
         );
@@ -60,7 +54,8 @@ class _PesquisarProcessoAtivoPageState
         return;
       }
 
-      final ProcessoMinerario processoEncontrado = processos.first;
+      final ProcessoMinerario processoEncontrado =
+          processoViewModel.processosAtivoPesquisa.first;
 
       debugPrint("Processo encontrado: ${processoEncontrado.processo}");
 
@@ -73,8 +68,6 @@ class _PesquisarProcessoAtivoPageState
           ),
         ),
       );
-
-      // No próximo passo, vamos abrir a tela de detalhes aqui.
     } catch (erro) {
       if (!mounted) return;
 
@@ -83,17 +76,13 @@ class _PesquisarProcessoAtivoPageState
           content: Text(erro.toString().replaceFirst("Exception: ", "")),
         ),
       );
-    } finally {
-      if (mounted) {
-        setState(() {
-          carregando = false;
-        });
-      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final processoViewModel = Provider.of<ProcessoViewModel>(context);
+
     return Scaffold(
       appBar: AppBar(
         //automaticallyImplyLeading: false,
@@ -147,11 +136,13 @@ class _PesquisarProcessoAtivoPageState
               Column(
                 children: [
                   Buttons(
-                    texto: carregando ? "Pesquisando..." : "Pesquisar",
+                    texto: processoViewModel.carregandoProcessosAtivos
+                        ? "Pesquisando..."
+                        : "Pesquisar",
                     corBotao: const Color(0xFF5A81FA),
                     corTexto: Colors.white,
                     onPressed: () {
-                      if (!carregando) {
+                      if (!processoViewModel.carregandoProcessosAtivos) {
                         pesquisarProcesso();
                       }
                     },

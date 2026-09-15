@@ -11,4 +11,9 @@ class AuthViewModel extends ChangeNotifier {
     usuarioLogado = await _storage.buscarUsuario();
     notifyListeners();
   }
+
+  Future<void> removerToken() async {
+    await _storage.removerToken();
+    notifyListeners();
+  }
 }

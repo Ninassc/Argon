@@ -14,22 +14,24 @@ class ProcessosSalvosPage extends StatefulWidget {
 }
 
 class _ProcessosSalvosPageState extends State<ProcessosSalvosPage> {
-  
   TextEditingController controllerPesquisar = TextEditingController();
   String pesquisa = "";
 
   @override
   void initState() {
     super.initState();
-
-    Provider.of<FavoritoViewModel>(context, listen: false).carregarFavoritos();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<FavoritoViewModel>(
+        context,
+        listen: false,
+      ).carregarFavoritos();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-
     final provider = Provider.of<FavoritoViewModel>(context);
-    
+
     final favoritosFiltrados = provider.favoritos.where((favorito) {
       final processo = favorito.processo;
 

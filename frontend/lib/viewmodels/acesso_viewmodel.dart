@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../models/acesso.dart';
 import '../services/acesso_service.dart';
 
 class AcessoViewModel extends ChangeNotifier {
