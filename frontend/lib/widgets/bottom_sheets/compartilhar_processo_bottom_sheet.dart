@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/services/compartilhamento_processo_service.dart';
+import 'package:frontend/viewmodels/compartilhamento_processo_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class CompartilharProcessoBottomSheet extends StatefulWidget {
   final int idProcesso;
@@ -15,8 +16,6 @@ class _CompartilharProcessoBottomSheetState
     extends State<CompartilharProcessoBottomSheet> {
   final TextEditingController controllerEmail = TextEditingController();
 
-  bool carregando = false;
-
   @override
   void dispose() {
     controllerEmail.dispose();
@@ -24,6 +23,9 @@ class _CompartilharProcessoBottomSheetState
   }
 
   Future<void> compartilhar() async {
+    final compartilhamentoProcessoViewmodel =
+        Provider.of<CompartilhamentoProcessoViewmodel>(context, listen: false);
+
     final email = controllerEmail.text.trim();
 
     if (email.isEmpty) {
@@ -35,13 +37,9 @@ class _CompartilharProcessoBottomSheetState
     }
 
     try {
-      setState(() {
-        carregando = true;
-      });
-
-      await CompartilhamentoProcessoService().compartilhar(
-        idProcesso: widget.idProcesso,
-        email: email,
+      await compartilhamentoProcessoViewmodel.compartilhar(
+        widget.idProcesso,
+        email,
       );
 
       if (!mounted) return;
@@ -57,15 +55,14 @@ class _CompartilharProcessoBottomSheetState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
       );
-    } finally {
-      setState(() {
-        carregando = false;
-      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final compartilhamentoProcessoViewmodel =
+        Provider.of<CompartilhamentoProcessoViewmodel>(context);
+
     return Padding(
       padding: EdgeInsets.only(
         left: 24,
@@ -103,7 +100,10 @@ class _CompartilharProcessoBottomSheetState
             children: [
               Expanded(
                 child: OutlinedButton(
-                  onPressed: carregando ? null : () => Navigator.pop(context),
+                  onPressed:
+                      compartilhamentoProcessoViewmodel.carregandoCompartilhar
+                      ? null
+                      : () => Navigator.pop(context),
                   child: const Text("Cancelar"),
                 ),
               ),
@@ -115,8 +115,12 @@ class _CompartilharProcessoBottomSheetState
                   style: FilledButton.styleFrom(
                     backgroundColor: const Color(0xFF5A81FA),
                   ),
-                  onPressed: carregando ? null : compartilhar,
-                  child: carregando
+                  onPressed:
+                      compartilhamentoProcessoViewmodel.carregandoCompartilhar
+                      ? null
+                      : compartilhar,
+                  child:
+                      compartilhamentoProcessoViewmodel.carregandoCompartilhar
                       ? const SizedBox(
                           width: 18,
                           height: 18,

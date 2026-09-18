@@ -8,6 +8,11 @@ class UsuarioViewModel extends ChangeNotifier {
   Usuario? usuario;
   bool carregando = false;
 
+  Future<void> cadastrar(Usuario usuario) async {
+    await _service.criar(usuario);
+    notifyListeners();
+  }
+
   Future<void> buscarPerfil() async {
     carregando = true;
     notifyListeners();

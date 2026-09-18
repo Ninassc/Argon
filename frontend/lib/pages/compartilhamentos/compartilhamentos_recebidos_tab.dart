@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/compartilhamento_processo.dart';
 import 'package:frontend/pages/processo/detalhe_processo_page.dart';
-import 'package:frontend/services/compartilhamento_processo_service.dart';
+import 'package:frontend/viewmodels/compartilhamento_processo_viewmodel.dart';
 import 'package:frontend/widgets/cards/card_processo_minerario.dart';
+import 'package:provider/provider.dart';
 
 class CompartilhamentosRecebidosTab extends StatefulWidget {
   const CompartilhamentosRecebidosTab({super.key});
@@ -14,44 +15,27 @@ class CompartilhamentosRecebidosTab extends StatefulWidget {
 
 class _CompartilhamentosRecebidosTabState
     extends State<CompartilhamentosRecebidosTab> {
-  bool carregando = true;
-
-  List<CompartilhamentoProcesso> compartilhamentos = [];
-
   @override
   void initState() {
     super.initState();
 
-    carregar();
-  }
-
-  Future<void> carregar() async {
-    try {
-      final resultado = await CompartilhamentoProcessoService()
-          .listarRecebidos();
-
-      if (!mounted) return;
-
-      setState(() {
-        compartilhamentos = resultado;
-        carregando = false;
-      });
-    } catch (e) {
-      if (!mounted) return;
-
-      setState(() {
-        carregando = false;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
-      );
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<CompartilhamentoProcessoViewmodel>(
+        context,
+        listen: false,
+      ).carregarRecebidos();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (carregando) {
+    final compartilhamentoProcessoViewmodel =
+        Provider.of<CompartilhamentoProcessoViewmodel>(context);
+
+    List<CompartilhamentoProcesso> compartilhamentos =
+        compartilhamentoProcessoViewmodel.enviados;
+
+    if (compartilhamentoProcessoViewmodel.carregandoRecebidos) {
       return const Center(child: CircularProgressIndicator());
     }
 

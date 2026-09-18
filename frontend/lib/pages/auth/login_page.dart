@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:frontend/pages/auth/cadastro_page.dart';
 import 'package:frontend/pages/home/home_page.dart';
 import 'package:frontend/pages/welcome/welcome_page.dart';
-import 'package:frontend/storage/auth_storage.dart';
+import 'package:frontend/viewmodels/auth_viewmodel.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
 import 'package:frontend/widgets/textfields/campo_input.dart';
-import 'package:frontend/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -18,17 +18,14 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController controllerEmailTelefone = TextEditingController();
   final TextEditingController controllerSenha = TextEditingController();
 
-  final AuthService authService = AuthService();
-
   Future<void> fazerLogin() async {
-    try {
-      final resultado = await authService.login(
-        identificador: controllerEmailTelefone.text.trim(),
-        senha: controllerSenha.text,
-      );
+    final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
 
-      await AuthStorage().salvarToken(resultado["token"]);
-      await AuthStorage().salvarUsuario(resultado["usuario"]);
+    try {
+      await authViewModel.fazerLogin(
+        controllerEmailTelefone.text.trim(),
+        controllerSenha.text.trim(),
+      );
 
       if (!mounted) return;
 

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/auth/login_page.dart';
 import 'package:frontend/pages/welcome/welcome_page.dart';
+import 'package:frontend/viewmodels/usuario_viewmodel.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
 import 'package:frontend/widgets/textfields/campo_input.dart';
 import 'package:frontend/widgets/tipo_conta.dart';
 import 'package:frontend/models/usuario.dart';
-import 'package:frontend/services/usuario_service.dart';
+import 'package:provider/provider.dart';
 
 enum TipoUsuario { titular, interessado }
 
@@ -26,8 +27,6 @@ class _CadastroPageState extends State<CadastroPage> {
   TipoUsuario _selecionado = TipoUsuario.titular;
   final _opcoes = ['Titular', 'Interessado'];
 
-  final UsuarioService usuarioService = UsuarioService();
-
   @override
   void dispose() {
     controllerNome.dispose();
@@ -38,6 +37,11 @@ class _CadastroPageState extends State<CadastroPage> {
   }
 
   Future<void> cadastrar() async {
+    final usuarioViewModel = Provider.of<UsuarioViewModel>(
+      context,
+      listen: false,
+    );
+
     if (controllerSenha.text != controllerConfirmarSenha.text) {
       ScaffoldMessenger.of(
         context,
@@ -59,7 +63,7 @@ class _CadastroPageState extends State<CadastroPage> {
     );
 
     try {
-      await usuarioService.criar(usuario);
+      await usuarioViewModel.cadastrar(usuario);
 
       if (!mounted) return;
 
@@ -72,7 +76,7 @@ class _CadastroPageState extends State<CadastroPage> {
         MaterialPageRoute(builder: (context) => LoginPage()),
       );
     } catch (e) {
-     ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
       );
     }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/welcome/welcome_page.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:frontend/viewmodels/compartilhamento_processo_viewmodel.dart';
 import 'package:frontend/viewmodels/usuario_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +22,9 @@ void main() {
           ChangeNotifierProvider(create: (_) => AcessoViewModel()),
           ChangeNotifierProvider(create: (_) => AtivoViewModel()),
           ChangeNotifierProvider(create: (_) => UsuarioViewModel()),
+          ChangeNotifierProvider(
+            create: (_) => CompartilhamentoProcessoViewmodel(),
+          ),
         ],
         child: const MyApp(),
       ),
