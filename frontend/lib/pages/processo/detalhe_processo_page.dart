@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/processo/editar_ativo_page.dart';
+import 'package:frontend/widgets/bottom_sheets/compartilhar_opcoes_bottom_sheet.dart';
 import 'package:frontend/widgets/bottom_sheets/compartilhar_processo_bottom_sheet.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
 import 'package:frontend/widgets/buttons/buttons_detalhe_processo.dart';
@@ -479,8 +480,8 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                                 ),
                               ),
                               builder: (context) {
-                                return CompartilharProcessoBottomSheet(
-                                  idProcesso: processo.idProcesso,
+                                return CompartilharOpcoesBottomSheet(
+                                  processo: processo,
                                 );
                               },
                             );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/pages/welcome/welcome_page.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:frontend/viewmodels/compartilhamento_processo_viewmodel.dart';
+import 'package:frontend/viewmodels/exportacao_viewmodel.dart';
 import 'package:frontend/viewmodels/usuario_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +15,7 @@ import 'viewmodels/ativo_viewmodel.dart';
 void main() {
   runApp(
     DevicePreview(
+      enabled: false,
       builder: (context) => MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => ProcessoViewModel()),
@@ -25,6 +27,7 @@ void main() {
           ChangeNotifierProvider(
             create: (_) => CompartilhamentoProcessoViewmodel(),
           ),
+          ChangeNotifierProvider(create: (_) => ExportacaoViewModel()),
         ],
         child: const MyApp(),
       ),
