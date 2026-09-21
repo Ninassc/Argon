@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/processo/detalhe_processo_page.dart';
+import 'package:frontend/viewmodels/acesso_viewmodel.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/acesso.dart';
-import '../../services/acesso_service.dart';
 
 class HistoricoSolicitacoesAcessoPage extends StatefulWidget {
   const HistoricoSolicitacoesAcessoPage({super.key});
@@ -15,44 +16,21 @@ class HistoricoSolicitacoesAcessoPage extends StatefulWidget {
 
 class _SolicitacoesAcessoPageState
     extends State<HistoricoSolicitacoesAcessoPage> {
-  final AcessoService _acessoService = AcessoService();
-
-  List<Acesso> historico = [];
-  bool carregando = true;
-
   @override
   void initState() {
     super.initState();
-    carregarSolicitacoes();
-  }
-
-  Future<void> carregarSolicitacoes() async {
-    try {
-      final resultado = await _acessoService.listarHistoricoRecebido();
-
-      if (!mounted) return;
-
-      setState(() {
-        historico = resultado;
-        carregando = false;
-      });
-    } catch (e) {
-      if (!mounted) return;
-
-      setState(() {
-        carregando = false;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
-      );
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AcessoViewModel>(context, listen: false).carregarHistorico();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final acessoViewModel = Provider.of<AcessoViewModel>(context);
+    List<Acesso> historico = acessoViewModel.historico;
+
     return Scaffold(
-      body: carregando
+      body: acessoViewModel.carregandoHistorico
           ? const Center(child: CircularProgressIndicator())
           : historico.isEmpty
           ? const Center(child: Text("Nenhuma solicitação de acesso pendente."))
@@ -176,7 +154,6 @@ class _SolicitacoesAcessoPageState
                                 ),
 
                                 const SizedBox(height: 16),
-
 
                                 if (acesso.dtSolicitacao != null)
                                   Text(

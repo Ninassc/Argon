@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/processo/detalhe_processo_page.dart';
+import 'package:frontend/viewmodels/acesso_viewmodel.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/acesso.dart';
-import '../../services/acesso_service.dart';
 
 class SolicitacoesAcessoTab extends StatefulWidget {
   const SolicitacoesAcessoTab({super.key});
@@ -13,49 +14,20 @@ class SolicitacoesAcessoTab extends StatefulWidget {
 }
 
 class _SolicitacoesAcessoPageState extends State<SolicitacoesAcessoTab> {
-  final AcessoService _acessoService = AcessoService();
-
-  List<Acesso> solicitacoes = [];
-  bool carregando = true;
-
   @override
   void initState() {
     super.initState();
-    carregarSolicitacoes();
-  }
-
-  Future<void> carregarSolicitacoes() async {
-    try {
-      final resultado = await _acessoService.listarRecebidas();
-
-      if (!mounted) return;
-
-      setState(() {
-        solicitacoes = resultado;
-        carregando = false;
-      });
-    } catch (e) {
-      if (!mounted) return;
-
-      setState(() {
-        carregando = false;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
-      );
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AcessoViewModel>(context, listen: false).carregarRecebidas();
+    });
   }
 
   Future<void> aprovar(int idAcesso) async {
+    final acessoViewModel = Provider.of<AcessoViewModel>(context, listen: false);
     try {
-      await _acessoService.aprovar(idAcesso);
+      await acessoViewModel.aprovar(idAcesso);
 
       if (!mounted) return;
-
-      setState(() {
-        solicitacoes.removeWhere((acesso) => acesso.idAcesso == idAcesso);
-      });
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Acesso aprovado com sucesso!")),
@@ -70,14 +42,11 @@ class _SolicitacoesAcessoPageState extends State<SolicitacoesAcessoTab> {
   }
 
   Future<void> recusar(int idAcesso) async {
+    final acessoViewModel = Provider.of<AcessoViewModel>(context, listen: false);
     try {
-      await _acessoService.recusar(idAcesso);
+      await acessoViewModel.recusar(idAcesso);
 
       if (!mounted) return;
-
-      setState(() {
-        solicitacoes.removeWhere((acesso) => acesso.idAcesso == idAcesso);
-      });
 
       ScaffoldMessenger.of(
         context,
@@ -93,8 +62,11 @@ class _SolicitacoesAcessoPageState extends State<SolicitacoesAcessoTab> {
 
   @override
   Widget build(BuildContext context) {
+    final acessoViewModel = Provider.of<AcessoViewModel>(context);
+    List<Acesso> solicitacoes = acessoViewModel.solicitacoesRecebidas;
+
     return Scaffold(
-      body: carregando
+      body: acessoViewModel.carregandoRecebidas
           ? const Center(child: CircularProgressIndicator())
           : solicitacoes.isEmpty
           ? const Center(child: Text("Nenhuma solicitação de acesso pendente."))
