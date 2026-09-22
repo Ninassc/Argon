@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:frontend/models/processo_minerario.dart';
 import 'package:frontend/pages/processo/editar_ativo_page.dart';
+import 'package:frontend/viewmodels/exportacao_viewmodel.dart';
 import 'package:frontend/widgets/bottom_sheets/compartilhar_opcoes_bottom_sheet.dart';
-import 'package:frontend/widgets/bottom_sheets/compartilhar_processo_bottom_sheet.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
 import 'package:frontend/widgets/buttons/buttons_detalhe_processo.dart';
 
@@ -102,6 +105,33 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(mensagem)));
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
+      );
+    }
+  }
+
+  Future<void> exportarPlanilha(ProcessoMinerario processo) async {
+    final exportacaoViewModel = Provider.of<ExportacaoViewModel>(
+      context,
+      listen: false,
+    );
+
+    try {
+      final caminho = await exportacaoViewModel.salvarPlanilha(processo);
+
+      if (!mounted) return;
+
+      if (caminho == null) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Planilha exportada com sucesso!")),
+      );
     } catch (e) {
       if (!mounted) return;
 
@@ -493,6 +523,13 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                         ButtonsDetalheProcesso(
                           icone: salvo ? Icons.bookmark : Icons.bookmark_border,
                           onTap: alterarFavorito,
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        ButtonsDetalheProcesso(
+                          icone: Icons.save_alt_outlined,
+                          onTap: () => exportarPlanilha(processo),
                         ),
                       ],
                     ),

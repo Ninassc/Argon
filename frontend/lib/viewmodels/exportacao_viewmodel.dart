@@ -30,4 +30,16 @@ class ExportacaoViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<String?> salvarPlanilha(ProcessoMinerario processo) async {
+    exportando = true;
+    notifyListeners();
+
+    try {
+      return await _service.salvarPlanilha(processo);
+    } finally {
+      exportando = false;
+      notifyListeners();
+    }
+  }
 }

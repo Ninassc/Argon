@@ -4,6 +4,9 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:file_selector/file_selector.dart';
+import 'dart:typed_data';
+import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 
 class ExportacaoService {
   List<int>? gerarPlanilha(ProcessoMinerario processo) {
@@ -72,5 +75,34 @@ class ExportacaoService {
         subject: 'Processo minerário ${processo.processo}',
       ),
     );
+  }
+
+  Future<String?> salvarPlanilha(ProcessoMinerario processo) async {
+    final bytes = gerarPlanilha(processo);
+
+    if (bytes == null) {
+      throw Exception("Não foi possível gerar a planilha.");
+    }
+
+    final diretorioTemporario = await getTemporaryDirectory();
+
+    final nomeProcesso = processo.processo
+        .replaceAll('/', '-')
+        .replaceAll(' ', '_');
+
+    final nomeArquivo = 'processo_$nomeProcesso.xlsx';
+
+    final arquivoTemporario = File('${diretorioTemporario.path}/$nomeArquivo');
+
+    await arquivoTemporario.writeAsBytes(bytes);
+
+    final caminhoSalvo = await FlutterFileDialog.saveFile(
+      params: SaveFileDialogParams(
+        sourceFilePath: arquivoTemporario.path,
+        fileName: nomeArquivo,
+      ),
+    );
+
+    return caminhoSalvo;
   }
 }
