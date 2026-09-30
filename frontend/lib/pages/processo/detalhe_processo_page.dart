@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:frontend/models/processo_minerario.dart';
 import 'package:frontend/pages/processo/editar_ativo_page.dart';
+import 'package:frontend/pages/usuario/perfil_usuario_page.dart';
 import 'package:frontend/viewmodels/exportacao_viewmodel.dart';
 import 'package:frontend/widgets/bottom_sheets/compartilhar_opcoes_bottom_sheet.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
@@ -453,11 +452,36 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                             SelectableText(ativo.descricao),
 
                             const SizedBox(height: 12),
-                            SelectableText(
+                            const SelectableText(
                               "Titular",
                               style: TextStyle(color: Color(0xFF848484)),
                             ),
-                            SelectableText(ativo.usuario!.nome),
+                            Row(
+                              spacing: 10,
+                              children: [
+                                Text(ativo.usuario!.nome),
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => PerfilUsuarioPage(
+                                          idUsuario: ativo.idUsuario!,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    "Ver perfil",
+                                    style: const TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      color: Color(0xFF5A81FA),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
 
                             const SizedBox(height: 12),
                             SelectableText(

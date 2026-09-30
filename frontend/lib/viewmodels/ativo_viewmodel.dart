@@ -8,6 +8,9 @@ class AtivoViewModel extends ChangeNotifier {
   List<AtivoMinerario> ativos = [];
   bool carregandoAtivos = false;
 
+  List<AtivoMinerario> ativosUsuarioSelecionado = [];
+  bool carregandoAtivosUsuario = false;
+
   bool salvando = false;
 
   Future<void> listar() async {
@@ -18,6 +21,18 @@ class AtivoViewModel extends ChangeNotifier {
       ativos = await _service.listar();
     } finally {
       carregandoAtivos = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> listarAtivosUsuarioSelecionado(int idUsuario) async {
+    carregandoAtivosUsuario = true;
+    notifyListeners();
+
+    try {
+      ativosUsuarioSelecionado = await _service.listarPorUsuario(idUsuario);
+    } finally {
+      carregandoAtivosUsuario = false;
       notifyListeners();
     }
   }

@@ -62,7 +62,7 @@ class AtivoMinerarioRepository:
             .all()
         )
 
-        return ativos
+        return [ativo.to_dict() for ativo in ativos]
 
     @staticmethod
     def buscar_por_usuario_processo(id_usuario, id_processo):

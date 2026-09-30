@@ -4,8 +4,6 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:file_selector/file_selector.dart';
-import 'dart:typed_data';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 
 class ExportacaoService {

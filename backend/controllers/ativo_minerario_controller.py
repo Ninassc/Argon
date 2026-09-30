@@ -136,6 +136,15 @@ class AtivoMinerarioController:
 
         return jsonify(ativo), 200
 
+    @ativo_bp.get("/usuario/<int:id_usuario>")
+    @jwt_required()
+    def listar_ativos_usuario(id_usuario):
+        service = ListarAtivosUsuarioService()
+
+        ativos = service.executar(id_usuario)
+
+        return jsonify(ativos), 200
+
     @ativo_bp.get("/meus")
     @jwt_required()
     def listar_meus_ativos():

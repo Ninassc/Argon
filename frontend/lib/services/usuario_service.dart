@@ -23,6 +23,7 @@ class UsuarioService {
   Future<Usuario> buscarPorId(int idUsuario) async {
     final response = await http.get(
       Uri.parse("${ApiService.baseUrl}/usuarios/$idUsuario"),
+      headers: await ApiService.authHeaders(),
     );
 
     if (response.statusCode == 404) {

@@ -15,6 +15,7 @@ import 'package:frontend/widgets/cards/card_processo_minerario.dart';
 import 'package:frontend/widgets/textfields/pesquisar_input.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
+import 'dart:async';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,6 +26,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TextEditingController controller = TextEditingController();
+  Timer? _debounce;
 
   final ScrollController scrollController = ScrollController();
 
@@ -54,7 +56,23 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     scrollController.dispose();
     controller.dispose();
+    _debounce?.cancel();
     super.dispose();
+  }
+
+  void pesquisar(String texto) {
+    _debounce?.cancel();
+
+    _debounce = Timer(const Duration(milliseconds: 800), () {
+      if (!mounted) return;
+
+      final processoViewModel = Provider.of<ProcessoViewModel>(
+        context,
+        listen: false,
+      );
+
+      processoViewModel.pesquisar(texto.trim());
+    });
   }
 
   @override
@@ -81,9 +99,7 @@ class _HomePageState extends State<HomePage> {
                   Expanded(
                     child: PesquisarInput(
                       controller: controller,
-                      onChanged: (texto) {
-                        processoViewModel.pesquisar(texto);
-                      }, //(_) => pesquisar(),
+                      onChanged: pesquisar,
                     ),
                   ),
                   ActionButton(

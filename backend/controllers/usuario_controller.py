@@ -51,6 +51,7 @@ class UsuarioController:
 
 
     @usuario_bp.get("/<int:usuario_id>")
+    @jwt_required()
     def buscar_usuario_id(usuario_id):
         service = BuscarUsuarioService()
 
