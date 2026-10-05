@@ -3,6 +3,7 @@ import 'package:frontend/pages/processo/detalhe_processo_page.dart';
 import 'package:frontend/viewmodels/ativo_viewmodel.dart';
 import 'package:frontend/viewmodels/usuario_viewmodel.dart';
 import 'package:frontend/widgets/cards/card_processo_minerario.dart';
+import 'package:frontend/widgets/textfields/pesquisar_input.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +17,10 @@ class PerfilUsuarioPage extends StatefulWidget {
 }
 
 class _PerfilUsuarioPageState extends State<PerfilUsuarioPage> {
+  final TextEditingController controllerPesquisar = TextEditingController();
+
+  String pesquisa = "";
+
   @override
   void initState() {
     super.initState();
@@ -40,6 +45,17 @@ class _PerfilUsuarioPageState extends State<PerfilUsuarioPage> {
 
     final usuario = usuarioViewModel.usuarioVisitado;
     final ativos = ativoViewModel.ativosUsuarioSelecionado;
+
+    final ativosFiltrados = ativos.where((ativo) {
+      final processo = ativo.processoMinerario;
+
+      if (processo == null) return false;
+
+      return processo.processo.toLowerCase().contains(pesquisa) ||
+          processo.nome.toLowerCase().contains(pesquisa) ||
+          processo.subs.toLowerCase().contains(pesquisa) ||
+          processo.fase.toLowerCase().contains(pesquisa);
+    }).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -110,19 +126,34 @@ class _PerfilUsuarioPageState extends State<PerfilUsuarioPage> {
                       ),
                     ),
 
+                    const SizedBox(height: 10),
+
+                    PesquisarInput(
+                      controller: controllerPesquisar,
+                      onChanged: (valor) {
+                        setState(() {
+                          pesquisa = valor.toLowerCase();
+                        });
+                      },
+                    ),
+
+                    const SizedBox(height: 10),
+
                     if (ativoViewModel.carregandoAtivosUsuario)
                       const Center(child: CircularProgressIndicator())
-                    else if (ativos.isEmpty)
-                      const Text(
-                        "Este usuário ainda não possui ativos cadastrados.",
+                    else if (ativosFiltrados.isEmpty)
+                      Text(
+                        pesquisa.isEmpty
+                            ? "Este usuário ainda não possui ativos cadastrados."
+                            : "Nenhum ativo encontrado.",
                       )
                     else
                       ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: ativos.length,
+                        itemCount: ativosFiltrados.length,
                         itemBuilder: (context, index) {
-                          final ativo = ativos[index];
+                          final ativo = ativosFiltrados[index];
 
                           return CardProcessoMinerario(
                             processo: ativo.processoMinerario!,

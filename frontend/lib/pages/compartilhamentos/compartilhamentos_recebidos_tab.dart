@@ -33,7 +33,7 @@ class _CompartilhamentosRecebidosTabState
         Provider.of<CompartilhamentoProcessoViewmodel>(context);
 
     List<CompartilhamentoProcesso> compartilhamentos =
-        compartilhamentoProcessoViewmodel.enviados;
+        compartilhamentoProcessoViewmodel.recebidos;
 
     if (compartilhamentoProcessoViewmodel.carregandoRecebidos) {
       return const Center(child: CircularProgressIndicator());
