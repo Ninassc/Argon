@@ -8,6 +8,7 @@ from .ativo_minerario import AtivoMinerario
 from .favorito import Favorito
 from .acesso import Acesso
 from .compartilhamento_processo import CompartilhamentoProcesso
+from .documento import Documento
 
 __all__ = [
     "db",
@@ -16,5 +17,6 @@ __all__ = [
     "AtivoMinerario",
     "Favorito",
     "Acesso",
-    "CompartilhamentoProcesso"
+    "CompartilhamentoProcesso",
+    "Documento"
 ]

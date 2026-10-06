@@ -4,7 +4,6 @@ from datetime import timedelta
 
 from dotenv import load_dotenv
 
-
 BASE_DIR = Path(__file__).resolve().parent
 
 load_dotenv(BASE_DIR / ".env")
@@ -20,3 +19,7 @@ class Config:
     )
 
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=8)
+
+    SUPABASE_URL = os.getenv("SUPABASE_URL")
+    SUPABASE_SECRET_KEY = os.getenv("SUPABASE_SECRET_KEY")
+    SUPABASE_BUCKET = os.getenv("SUPABASE_BUCKET")

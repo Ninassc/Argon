@@ -1,5 +1,6 @@
 from . import db
 
+
 class AtivoMinerario(db.Model):
     __tablename__ = "ativo_minerario"
 
@@ -23,6 +24,12 @@ class AtivoMinerario(db.Model):
 
     acessos = db.relationship(
         "Acesso", back_populates="ativo", cascade="all, delete-orphan"
+    )
+
+    documentos = db.relationship(
+        "Documento",
+        back_populates="ativo",
+        cascade="all, delete-orphan",
     )
 
     # CREATE
@@ -63,7 +70,7 @@ class AtivoMinerario(db.Model):
             "usuario": {
                 "id_usuario": self.usuario.id_usuario,
                 "nome": self.usuario.nome,
-                "email" : self.usuario.email
+                "email": self.usuario.email,
             },
             "processo": (self.processo.to_dict() if self.processo else None),
         }

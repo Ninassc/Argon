@@ -1,5 +1,4 @@
-create database argon
-CHARACTER
+create database argon CHARACTER
 SET
     utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -48,51 +47,46 @@ CREATE TABLE
 
 CREATE TABLE
     documento (
-        id_arquivo INT AUTO_INCREMENT PRIMARY KEY,
+        id_documento INT AUTO_INCREMENT PRIMARY KEY,
         id_ativo INT NOT NULL,
-        nome VARCHAR(200) NOT NULL,
-        tipo VARCHAR(50),
-        caminho VARCHAR(500) NOT NULL,
-        dt_upload DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (id_ativo) REFERENCES ativo_minerario (id_ativo)
+        nome_original VARCHAR(255) NOT NULL,
+        tipo_arquivo VARCHAR(100) NOT NULL,
+        tamanho INT NOT NULL,
+        caminho_storage VARCHAR(240) NOT NULL UNIQUE,
+        dt_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (id_ativo) REFERENCES ativo_minerario (id_ativo) ON DELETE CASCADE
     );
 
-CREATE TABLE acesso (
-    id_acesso INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario INT NOT NULL,
-    id_ativo INT NOT NULL,
-    status VARCHAR(20) NOT NULL DEFAULT 'pendente',
-    origem VARCHAR(20) NOT NULL DEFAULT 'solicitacao',
-    dt_solicitacao DATETIME DEFAULT CURRENT_TIMESTAMP,
-    dt_acesso DATETIME NULL,
+CREATE TABLE
+    acesso (
+        id_acesso INT AUTO_INCREMENT PRIMARY KEY,
+        id_usuario INT NOT NULL,
+        id_ativo INT NOT NULL,
+        status VARCHAR(20) NOT NULL DEFAULT 'pendente',
+        origem VARCHAR(20) NOT NULL DEFAULT 'solicitacao',
+        dt_solicitacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+        dt_acesso DATETIME NULL,
+        FOREIGN KEY (id_usuario) REFERENCES usuario (id_usuario),
+        FOREIGN KEY (id_ativo) REFERENCES ativo_minerario (id_ativo),
+        UNIQUE (id_usuario, id_ativo)
+    );
 
-    FOREIGN KEY (id_usuario)
-        REFERENCES usuario(id_usuario),
-
-    FOREIGN KEY (id_ativo)
-        REFERENCES ativo_minerario(id_ativo),
-
-    UNIQUE (id_usuario, id_ativo)
-);
-
-CREATE TABLE compartilhamento_processo (
-    id_compartilhamento INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario_origem INT NOT NULL,
-    id_usuario_destino INT NOT NULL,
-    id_processo INT NOT NULL,
-    dt_compartilhamento DATETIME DEFAULT CURRENT_TIMESTAMP,
-
-    FOREIGN KEY (id_usuario_origem)
-        REFERENCES usuario(id_usuario),
-
-    FOREIGN KEY (id_usuario_destino)
-        REFERENCES usuario(id_usuario),
-
-    FOREIGN KEY (id_processo)
-        REFERENCES processo_minerario(id_processo),
-
-    UNIQUE (id_usuario_origem, id_usuario_destino, id_processo)
-);
+CREATE TABLE
+    compartilhamento_processo (
+        id_compartilhamento INT AUTO_INCREMENT PRIMARY KEY,
+        id_usuario_origem INT NOT NULL,
+        id_usuario_destino INT NOT NULL,
+        id_processo INT NOT NULL,
+        dt_compartilhamento DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (id_usuario_origem) REFERENCES usuario (id_usuario),
+        FOREIGN KEY (id_usuario_destino) REFERENCES usuario (id_usuario),
+        FOREIGN KEY (id_processo) REFERENCES processo_minerario (id_processo),
+        UNIQUE (
+            id_usuario_origem,
+            id_usuario_destino,
+            id_processo
+        )
+    );
 
 CREATE TABLE
     favorito (
