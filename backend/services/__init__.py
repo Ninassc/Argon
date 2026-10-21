@@ -39,6 +39,9 @@ from .compartilhamento_processo.listar_processos_enviados_service import ListarP
 from .sincronizacao.buscar_dados_anm_service import BuscarDadosANMService
 from .sincronizacao.sincronizar_base_anm import SincronizarBaseANMService
 
+from .documento.cadastrar_documento_service import CadastrarDocumentoService
+from .documento.storage_service import StorageService
+
 from .auth.login_service import LoginService
 
 from .ia.analisar_processo_ia_service import AnalisarProcessoIAService
@@ -79,5 +82,7 @@ __all__ = [
     "CompartilharProcessoService",
     "ListarProcessosRecebidosService",
     "ListarProcessosEnviadosService",
+    "CadastrarDocumentoService",
+    "StorageService",
     "AnalisarProcessoIAService"
 ]

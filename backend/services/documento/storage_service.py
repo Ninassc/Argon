@@ -14,7 +14,7 @@ class StorageService:
 
         self.bucket = current_app.config["SUPABASE_BUCKET"]
 
-    def upload(self, arquivo, id_ativo):
+    def upload(self, arquivo, id_ativo, tipo_arquivo):
         extensao = Path(arquivo.filename).suffix.lower()
 
         nome_unico = f"{uuid.uuid4()}{extensao}"
@@ -26,8 +26,11 @@ class StorageService:
             path=caminho,
             file=conteudo,
             file_options={
-                "content-type": arquivo.content_type,
+                "content-type": tipo_arquivo,
             },
         )
 
         return caminho
+
+    def excluir(self, caminho):
+        self.supabase.storage.from_(self.bucket).remove([caminho])
