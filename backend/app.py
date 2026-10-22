@@ -14,6 +14,7 @@ from controllers import (
     favorito_bp,
     compartilhamento_bp,
     acesso_bp,
+    documento_bp
 )
 
 from scheduler import iniciar_scheduler
@@ -37,6 +38,7 @@ def create_app():
     app.register_blueprint(favorito_bp)
     app.register_blueprint(compartilhamento_bp)
     app.register_blueprint(acesso_bp)
+    app.register_blueprint(documento_bp)
 
     with app.app_context():
         db.create_all()

@@ -23,3 +23,5 @@ class Config:
     SUPABASE_URL = os.getenv("SUPABASE_URL")
     SUPABASE_SECRET_KEY = os.getenv("SUPABASE_SECRET_KEY")
     SUPABASE_BUCKET = os.getenv("SUPABASE_BUCKET")
+
+    MAX_CONTENT_LENGTH = 11 * 1024 * 1024

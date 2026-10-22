@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/models/processo_minerario.dart';
 import 'package:frontend/pages/processo/editar_ativo_page.dart';
 import 'package:frontend/pages/usuario/perfil_usuario_page.dart';
+import 'package:frontend/viewmodels/documento_viewmodel.dart';
 import 'package:frontend/viewmodels/exportacao_viewmodel.dart';
 import 'package:frontend/widgets/bottom_sheets/compartilhar_opcoes_bottom_sheet.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
@@ -13,6 +14,10 @@ import '../../viewmodels/auth_viewmodel.dart';
 import '../../viewmodels/favorito_viewmodel.dart';
 import '../../viewmodels/acesso_viewmodel.dart';
 import '../../viewmodels/ativo_viewmodel.dart';
+import '../../viewmodels/documento_viewmodel.dart';
+
+import 'package:intl/intl.dart';
+import 'package:file_picker/file_picker.dart';
 
 class DetalheProcessoPage extends StatefulWidget {
   final int idProcesso;
@@ -130,6 +135,53 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Planilha exportada com sucesso!")),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
+      );
+    }
+  }
+
+  Future<void> selecionarDocumento() async {
+    final processoViewModel = Provider.of<ProcessoViewModel>(
+      context,
+      listen: false,
+    );
+
+    final documentoViewModel = Provider.of<DocumentoViewModel>(
+      context,
+      listen: false,
+    );
+
+    final ativo = processoViewModel.ativo;
+
+    if (ativo == null) return;
+
+    try {
+      final resultado = await FilePicker.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png', 'docx'],
+      );
+
+      if (resultado == null || resultado.isEmpty) return;
+
+      final arquivo = resultado.first;
+
+      final tamanho = await arquivo.length();
+
+      if (tamanho! > 10 * 1024 * 1024) {
+        throw Exception("O arquivo deve ter no máximo 10 MB.");
+      }
+
+      await documentoViewModel.cadastrar(ativo.idAtivo!, arquivo);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Documento anexado com sucesso!")),
       );
     } catch (e) {
       if (!mounted) return;
@@ -306,6 +358,8 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
     final favoritoViewModel = Provider.of<FavoritoViewModel>(context);
 
     final acessoViewModel = Provider.of<AcessoViewModel>(context);
+
+    final documentoViewModel = Provider.of<DocumentoViewModel>(context);
 
     final processo = processoViewModel.processo;
     final ativo = processoViewModel.ativo;
@@ -488,8 +542,11 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                               "Data de Cadastro",
                               style: TextStyle(color: Color(0xFF848484)),
                             ),
-                            SelectableText(ativo.dtCadastro.toString()),
-
+                            SelectableText(
+                              DateFormat(
+                                'dd/MM/yyyy HH:mm',
+                              ).format(ativo.dtCadastro!),
+                            ),
                             const SizedBox(height: 30),
                           ],
                         ],
@@ -517,6 +574,13 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                                 await carregarDetalhes();
                               }
                             },
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          ButtonsDetalheProcesso(
+                            icone: Icons.upload_file_outlined,
+                            onTap: selecionarDocumento,
                           ),
 
                           const SizedBox(height: 12),

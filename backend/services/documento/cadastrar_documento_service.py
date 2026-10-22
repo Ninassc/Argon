@@ -1,7 +1,6 @@
 from models import AtivoMinerario, Documento, db
 from .storage_service import StorageService
 from pathlib import Path
-from models import db
 from flask import current_app
 
 

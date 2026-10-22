@@ -11,6 +11,7 @@ import 'viewmodels/auth_viewmodel.dart';
 import 'viewmodels/favorito_viewmodel.dart';
 import 'viewmodels/acesso_viewmodel.dart';
 import 'viewmodels/ativo_viewmodel.dart';
+import 'viewmodels/documento_viewmodel.dart';
 
 void main() {
   runApp(
@@ -28,6 +29,7 @@ void main() {
             create: (_) => CompartilhamentoProcessoViewmodel(),
           ),
           ChangeNotifierProvider(create: (_) => ExportacaoViewModel()),
+          ChangeNotifierProvider(create: (_) => DocumentoViewModel()),
         ],
         child: const MyApp(),
       ),

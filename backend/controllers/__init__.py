@@ -5,6 +5,7 @@ from .auth_controller import auth_bp
 from .favorito_controller import favorito_bp
 from .compartilhamento_processo_controller import compartilhamento_bp
 from .acesso_controller import acesso_bp
+from .documento_controller import documento_bp;
 
 __all__ = [
     "usuario_bp",
@@ -14,4 +15,5 @@ __all__ = [
     "favorito_bp",
     "compartilhamento_bp",
     "acesso_bp",
+    "documento_bp",
 ]
