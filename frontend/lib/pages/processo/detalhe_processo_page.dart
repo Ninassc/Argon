@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/processo_minerario.dart';
+import 'package:frontend/pages/documento/documentos_ativo_page.dart';
 import 'package:frontend/pages/processo/editar_ativo_page.dart';
 import 'package:frontend/pages/usuario/perfil_usuario_page.dart';
 import 'package:frontend/viewmodels/documento_viewmodel.dart';
@@ -63,7 +64,14 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
       listen: false,
     );
 
+    final documentoViewModel = Provider.of<DocumentoViewModel>(
+      context,
+      listen: false,
+    );
+
     await processoViewModel.buscarDetalhes(widget.idProcesso);
+
+    if (!mounted) return;
 
     await Future.wait([
       authViewModel.buscarUsuario(),
@@ -71,6 +79,22 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
       if (processoViewModel.ativo != null)
         acessoViewModel.verificar(processoViewModel.ativo!.idAtivo!),
     ]);
+
+    if (!mounted) return;
+
+    final ativo = processoViewModel.ativo;
+    final usuario = authViewModel.usuarioLogado;
+
+    final bool proprietario =
+        ativo != null &&
+        usuario != null &&
+        ativo.idUsuario == usuario.idUsuario;
+
+    final bool acessoAprovado = acessoViewModel.statusAcesso == "aprovado";
+
+    if (ativo != null && (proprietario || acessoAprovado)) {
+      await documentoViewModel.listarPorAtivo(ativo.idAtivo!);
+    }
   }
 
   Future<void> cadastrarAtivo() async {
@@ -135,53 +159,6 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Planilha exportada com sucesso!")),
-      );
-    } catch (e) {
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
-      );
-    }
-  }
-
-  Future<void> selecionarDocumento() async {
-    final processoViewModel = Provider.of<ProcessoViewModel>(
-      context,
-      listen: false,
-    );
-
-    final documentoViewModel = Provider.of<DocumentoViewModel>(
-      context,
-      listen: false,
-    );
-
-    final ativo = processoViewModel.ativo;
-
-    if (ativo == null) return;
-
-    try {
-      final resultado = await FilePicker.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png', 'docx'],
-      );
-
-      if (resultado == null || resultado.isEmpty) return;
-
-      final arquivo = resultado.first;
-
-      final tamanho = await arquivo.length();
-
-      if (tamanho! > 10 * 1024 * 1024) {
-        throw Exception("O arquivo deve ter no máximo 10 MB.");
-      }
-
-      await documentoViewModel.cadastrar(ativo.idAtivo!, arquivo);
-
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Documento anexado com sucesso!")),
       );
     } catch (e) {
       if (!mounted) return;
@@ -577,10 +554,23 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                           ),
 
                           const SizedBox(height: 12),
+                        ],
 
+                        if (ativo != null &&
+                            (podeEditar || statusAcesso == "aprovado")) ...[
                           ButtonsDetalheProcesso(
-                            icone: Icons.upload_file_outlined,
-                            onTap: selecionarDocumento,
+                            icone: Icons.folder_outlined,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DocumentosAtivoPage(
+                                    idAtivo: ativo.idAtivo!,
+                                    podeEditar: podeEditar,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
 
                           const SizedBox(height: 12),

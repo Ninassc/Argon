@@ -78,6 +78,5 @@ class Documento(db.Model):
             "nome_original": self.nome_original,
             "tipo_arquivo": self.tipo_arquivo,
             "tamanho": self.tamanho,
-            "caminho_storage": self.caminho_storage,
             "dt_cadastro": (self.dt_cadastro.isoformat() if self.dt_cadastro else None),
         }

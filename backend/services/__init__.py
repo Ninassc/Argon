@@ -41,6 +41,8 @@ from .sincronizacao.sincronizar_base_anm import SincronizarBaseANMService
 
 from .documento.cadastrar_documento_service import CadastrarDocumentoService
 from .documento.storage_service import StorageService
+from .documento.listar_documento_service import ListarDocumentosService
+from .documento.baixar_documento_service import BaixarDocumentoService
 
 from .auth.login_service import LoginService
 
@@ -84,5 +86,7 @@ __all__ = [
     "ListarProcessosEnviadosService",
     "CadastrarDocumentoService",
     "StorageService",
+    "ListarDocumentosService",
+    "BaixarDocumentoService",
     "AnalisarProcessoIAService"
 ]

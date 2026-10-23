@@ -32,5 +32,10 @@ class StorageService:
 
         return caminho
 
+    def download(self, caminho):
+        resposta = self.supabase.storage.from_(self.bucket).download(caminho)
+
+        return resposta
+
     def excluir(self, caminho):
         self.supabase.storage.from_(self.bucket).remove([caminho])
