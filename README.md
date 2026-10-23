@@ -2,9 +2,9 @@
 
 # Plataforma de Organização e Compartilhamento Controlado de Direitos Minerários
 
-O **Argon** é uma plataforma web desenvolvida para organizar, consultar e compartilhar informações relacionadas a processos minerários utilizando dados públicos da **Agência Nacional de Mineração (ANM)**.
+O **Argon** é uma plataforma multiplataforma desenvolvida para organizar, consultar e compartilhar informações relacionadas a processos minerários utilizando dados públicos da **Agência Nacional de Mineração (ANM)**.
 
-O sistema integra uma API REST desenvolvida em **Flask** com uma interface em **Flutter Web**, permitindo que usuários consultem processos minerários, organizem seus ativos, acompanhem informações detalhadas e gerenciem seus direitos minerários de forma estruturada e segura.
+O sistema integra uma API REST desenvolvida em **Flask** com uma interface em **Flutter (Web e Android)**, permitindo que usuários consultem processos minerários, organizem seus ativos, acompanhem informações detalhadas e gerenciem seus direitos minerários de forma estruturada e segura.
 
 O projeto foi desenvolvido como parte da disciplina de **Projeto de Software**.
 
@@ -50,6 +50,8 @@ https://github.com/Ninassc/Argon
 - Git
 - GitHub
 - Postman
+- Supabase Storage (armazenamento privado de documentos)
+- File Picker (seleção de arquivos)
 
 ---
 
@@ -65,7 +67,11 @@ A arquitetura foi construída seguindo a separação em camadas, promovendo orga
 
 # Funcionalidades
 
+As funcionalidades estão organizadas abaixo por área do sistema. A relação formal dos **20 requisitos funcionais implementados (RF01 a RF20)**, com suas descrições individuais, está na seção **Requisitos Funcionais**. Esta divisão por áreas não representa uma segunda lista de requisitos.
+
 ## Usuários
+
+**Requisitos relacionados:** RF01, RF04, RF11 e RF12.
 
 - Cadastro de usuários
 - Login
@@ -79,6 +85,9 @@ A arquitetura foi construída seguindo a separação em camadas, promovendo orga
 
 ## Processos Minerários
 
+**Requisitos relacionados:** RF02, RF03, RF05, RF07, RF14 e RF16.
+
+- Exportação dos dados de processos para planilha
 - Consulta paginada
 - Pesquisa por texto e número do processo
 - Visualização detalhada
@@ -93,6 +102,8 @@ A arquitetura foi construída seguindo a separação em camadas, promovendo orga
 
 ## Processos Salvos
 
+**Requisito relacionado:** RF06.
+
 - Salvamento de processos para acesso posterior
 - Listagem dos processos salvos pelo usuário
 - Verificação de processos já salvos
@@ -101,6 +112,8 @@ A arquitetura foi construída seguindo a separação em camadas, promovendo orga
 ---
 
 ## Compartilhamento de Processos
+
+**Requisito relacionado:** RF10 (compartilhamento de ativos), além do compartilhamento de processos entre usuários.
 
 - Compartilhamento de processos entre usuários
 - Compartilhamento por meio do e-mail do destinatário
@@ -112,6 +125,10 @@ A arquitetura foi construída seguindo a separação em camadas, promovendo orga
 
 ## Ativos Minerários
 
+**Requisitos relacionados:** RF08, RF09, RF10, RF11, RF13 e RF15.
+
+- Compartilhamento de ativos com outros usuários
+- Filtros de visualização de ativos minerários
 - Cadastro de ativos
 - Edição de ativos
 - Exclusão de ativos
@@ -125,6 +142,8 @@ A arquitetura foi construída seguindo a separação em camadas, promovendo orga
 
 ## Controle de Acesso
 
+**Requisitos relacionados:** RF11 e RF17.
+
 O sistema possui um mecanismo de controle de acesso às informações privadas associadas aos ativos minerários, como documentos e arquivos anexados pelo proprietário.
 
 - Solicitação de acesso às informações privadas de um ativo
@@ -134,6 +153,24 @@ O sistema possui um mecanismo de controle de acesso às informações privadas a
 - Histórico de solicitações recebidas
 - Listagem de solicitações enviadas
 - Controle de permissão para visualização e download de documentos associados ao ativo
+
+---
+
+## Documentos e Arquivos de Ativos Minerários
+
+**Requisitos relacionados:** RF17, RF18, RF19 e RF20.
+
+Os documentos ficam associados a um ativo minerário e são armazenados em um bucket privado do **Supabase Storage**. O MySQL mantém os metadados de cada documento, como nome original, tipo, tamanho, data de cadastro e caminho interno no armazenamento. O caminho interno não é exposto na resposta pública de listagem.
+
+- Anexação de documentos pelo proprietário do ativo;
+- Aceitação de PDF, JPG, JPEG, PNG e DOCX;
+- Limite configurado de 10 MB por arquivo;
+- Listagem de documentos associados ao ativo;
+- Download do arquivo original mediante autenticação e autorização;
+- Acesso permitido ao proprietário e a usuários com solicitação de acesso aprovada;
+- Separação entre os metadados no MySQL e os arquivos no Supabase Storage.
+
+As operações de documentos integram o módulo de gerenciamento de arquivos do Argon. A implementação é apresentada como concluída conforme o escopo informado pela equipe; testes de compatibilidade e validação final permanecem atividades de qualidade.
 
 ---
 
@@ -212,6 +249,7 @@ Os serviços estão organizados por domínio:
 - Compartilhamento de Processo
 - Controle de Acesso
 - IA
+- Documentos e armazenamento de arquivos
 
 ---
 
@@ -304,7 +342,8 @@ Argon/
 │   │   ├── compartilhamento_processo_controller.py
 │   │   ├── favorito_controller.py
 │   │   ├── processo_minerario_controller.py
-│   │   └── usuario_controller.py
+│   │   ├── usuario_controller.py
+│   │   └── documento_controller.py
 │   │
 │   ├── database/
 │   │   ├── create_database.sql
@@ -422,7 +461,8 @@ Argon/
 │   │   │   ├── favorito.dart
 │   │   │   ├── filtro_processo.dart
 │   │   │   ├── processo_minerario.dart
-│   │   │   └── usuario.dart
+│   │   │   ├── usuario.dart
+│   │   │   └── documento.dart
 │   │   │
 │   │   ├── pages/
 │   │   │   │
@@ -449,7 +489,11 @@ Argon/
 │   │   │   │   ├── editar_ativo_page.dart
 │   │   │   │   └── pesquisar_processo_ativo_page.dart
 │   │   │   │
-│   │   │   ├── usuario/
+│   │   │   ├── documento/
+│   │   │   ├── baixar_documento_service.py
+│   │   │   └── [serviços de cadastro e listagem de documentos]
+│   │   │
+│   │   ├── usuario/
 │   │   │   │   ├── editar_perfil_page.dart
 │   │   │   │   ├── perfil_page.dart
 │   │   │   │   └── processos_salvos_page.dart
@@ -465,7 +509,11 @@ Argon/
 │   │   │   ├── compartilhamento_processo_service.dart
 │   │   │   ├── favorito_service.dart
 │   │   │   ├── processo_service.dart
-│   │   │   └── usuario_service.dart
+│   │   │   ├── usuario_service.dart
+│   │   │   └── documento_service.dart
+│   │   │
+│   │   ├── viewmodels/
+│   │   │   └── documento_viewmodel.dart
 │   │   │
 │   │   ├── storage/
 │   │   │   └── auth_storage.dart
@@ -673,6 +721,10 @@ Inclui:
 - inserção de novos processos;
 - atualização de processos existentes.
 
+#### `documento/` e `storage_service.py`
+
+O domínio de documentos valida a associação com o ativo, as permissões do usuário e as operações de listagem e download. O `StorageService` centraliza a comunicação com o bucket privado do Supabase, incluindo envio, exclusão no armazenamento e recuperação de bytes.
+
 #### `usuario/`
 
 Responsável pelas operações de gerenciamento de usuários.
@@ -800,6 +852,10 @@ Principais serviços:
 - `AcessoService`: solicitação, aprovação, recusa, verificação e consulta das solicitações de acesso;
 
 ---
+
+### `viewmodels/`
+
+Os ViewModels fazem a mediação entre páginas e serviços, mantêm estados de carregamento e notificam a interface quando os dados mudam. O `DocumentoViewModel` oferece operações de cadastro, listagem e obtenção dos bytes para download.
 
 ### `storage/`
 
@@ -983,6 +1039,19 @@ PUT  /acessos/{id_acesso}/recusar
 ```
 ---
 
+
+## Documentos
+
+```text
+POST /ativos/{id_ativo}/documentos
+GET  /ativos/{id_ativo}/documentos
+GET  /documentos/{id_documento}/download
+```
+
+O envio exige autenticação e propriedade do ativo. A listagem e o download exigem que o usuário seja o proprietário ou tenha acesso aprovado. O download retorna o arquivo binário com o nome e o tipo MIME originais. A API não fornece diretamente uma URL pública para o bucket privado.
+
+---
+
 # Fonte dos Dados
 
 O Argon utiliza dados públicos disponibilizados pela **Agência Nacional de Mineração (ANM)**.
@@ -991,87 +1060,154 @@ A sincronização foi projetada para importar periodicamente os arquivos oficiai
 
 ---
 
-# Funcionalidades Implementadas
+# Seção 3 – Requisitos Funcionais (RF01–RF20)
 
-1. **Cadastro e autenticação de usuários**
-   - Cadastro de novos usuários.
-   - Login utilizando credenciais válidas.
-   - Autenticação por JWT.
+Esta seção apresenta os **20 requisitos funcionais do Argon**, considerados implementados no escopo do projeto. A validação operacional completa em todos os ambientes é uma etapa distinta da implementação.
+| ID | Requisito | Situação documentada |
+|---|---|---|
+| RF01 | Cadastro e login | Implementado |
+| RF02 | Verificação de processo pelo número | Implementado |
+| RF03 | Detalhes de processo validado | Implementado |
+| RF04 | Perfil de outro usuário | Implementado |
+| RF05 | Exportação para planilha | Implementado |
+| RF06 | Salvar processos | Implementado |
+| RF07 | Confirmação de validação | Implementado |
+| RF08 | Cadastro de ativo | Implementado |
+| RF09 | Edição de ativo | Implementado |
+| RF10 | Compartilhamento de ativo | Implementado |
+| RF11 | Restrição de edição | Implementado |
+| RF12 | Edição do próprio perfil | Implementado |
+| RF13 | Busca de ativos | Implementado |
+| RF14 | Filtros de busca | Implementado |
+| RF15 | Filtros de visualização de ativos | Implementado |
+| RF16 | Veracidade das informações | Implementado |
+| RF17 | Solicitação de acesso à documentação | Implementado |
+| RF18 | Anexação de arquivos | Implementado |
+| RF19 | Download de arquivos | Implementado |
+| RF20 | Gerenciamento de arquivos | Implementado |
 
-2. **Consulta de processos minerários**
-   - Consulta de processos utilizando dados oficiais da Agência Nacional de Mineração (ANM).
-   - Sincronização da base oficial da ANM.
-   - Utilização de Shapefile como alternativa em caso de indisponibilidade da API da ANM.
+## Descrição detalhada dos requisitos
 
-3. **Visualização de detalhes dos processos**
-   - Exibição das informações detalhadas de um processo minerário.
-   - Consulta dos dados oficiais associados ao processo.
+### RF01 — Cadastro e login
 
-4. **Pesquisa e filtros**
-   - Pesquisa por número do processo ou palavras-chave.
-   - Filtro por fase do processo.
-   - Filtro por substância mineral.
-   - Paginação dos resultados e carregamento por Infinite Scroll.
+Permitir cadastro e autenticação por credenciais válidas, com sessão protegida por JWT.
 
-5. **Validação de processos minerários**
-   - Verificação do processo com base nos dados oficiais da ANM.
-   - Confirmação da validação antes do cadastro como ativo minerário.
+**Situação:** Implementado.
 
-6. **Gerenciamento de ativos minerários**
-   - Cadastro de ativos minerários a partir de processos validados.
-   - Associação do ativo ao usuário proprietário.
-   - Prevenção de cadastro duplicado.
-   - Exclusão de ativos minerários.
+### RF02 — Verificação de processo pelo número
 
-7. **Consulta de ativos minerários**
-   - Pesquisa de ativos cadastrados.
-   - Consulta dos ativos pertencentes ao usuário.
+Consultar o número informado na base de processos obtida de fontes oficiais da ANM.
 
-8. **Edição de ativos minerários**
-   - Atualização das informações dos ativos cadastrados.
-   - Restrição da edição ao proprietário do ativo.
+**Situação:** Implementado.
 
-9. **Gerenciamento de perfil**
-   - Visualização do perfil do usuário.
-   - Atualização das informações do perfil.
-   - Alteração de senha.
-   - Exclusão da conta.
-   - Restrição da edição do perfil ao próprio usuário.
+### RF03 — Detalhes de processo validado
 
-10. **Processos salvos**
-    - Salvamento de processos minerários como favoritos.
-    - Listagem dos processos salvos pelo usuário.
-    - Verificação se um processo já está salvo.
-    - Remoção de processos dos favoritos.
+Exibir os dados disponíveis do processo minerário consultado.
 
-11. **Compartilhamento de processos**
-    - Compartilhamento de processos minerários entre usuários da plataforma.
-    - Compartilhamento utilizando o e-mail do usuário destinatário.
-    - Visualização dos processos recebidos.
-    - Visualização dos processos enviados.
-    - Identificação do usuário que enviou ou recebeu o processo.
+**Situação:** Implementado.
 
-12. **Análise de processos com Inteligência Artificial**
-    - Geração de análise de processos minerários utilizando Inteligência Artificial.
-    - Integração do backend com a API do Google Gemini.
-    - Exibição da análise diretamente na página de detalhes do processo.
+### RF04 — Perfil de outro usuário
 
-13. **Sincronização da base da ANM**
-    - Importação dos processos minerários oficiais.
-    - Atualização de processos existentes.
-    - Inserção de novos processos.
-    - Sincronização periódica através de Scheduler.
-    - Fallback para Shapefile quando a API da ANM está indisponível.
+Permitir visualizar o perfil público do autor/proprietário de um ativo.
 
-14. **Controle de acesso a ativos minerários**
-    - Solicitação de acesso a ativos pertencentes a outros usuários.
-    - Aprovação e recusa de solicitações pelo proprietário do ativo.
-    - Verificação do status de acesso.
-    - Visualização das solicitações pendentes recebidas.
-    - Histórico de solicitações aprovadas e recusadas.
-    - Visualização das solicitações enviadas pelo usuário.
-    - Controle de permissão de acesso aos ativos minerários.
-      
+**Situação:** Implementado.
+
+### RF05 — Exportação para planilha
+
+Exportar dados de processos minerários em formato de planilha.
+
+**Situação:** Implementado.
+
+### RF06 — Salvar processos
+
+Adicionar processos à lista de favoritos e recuperá-los posteriormente.
+
+**Situação:** Implementado.
+
+### RF07 — Confirmação de validação
+
+Solicitar confirmação do usuário antes de cadastrar como ativo um processo validado.
+
+**Situação:** Implementado.
+
+### RF08 — Cadastro de ativo
+
+Vincular um processo validado ao usuário proprietário como ativo minerário.
+
+**Situação:** Implementado.
+
+### RF09 — Edição de ativo
+
+Permitir alterar as informações editáveis de ativos cadastrados.
+
+**Situação:** Implementado.
+
+### RF10 — Compartilhamento de ativo
+
+Permitir disponibilizar um ativo minerário a outros usuários, respeitando o modelo de acesso definido.
+
+**Situação:** Implementado.
+
+### RF11 — Restrição de edição
+
+Impedir que usuários alterem ativos e perfis que não lhes pertencem.
+
+**Situação:** Implementado.
+
+### RF12 — Edição do próprio perfil
+
+Permitir atualização dos dados de perfil do usuário autenticado.
+
+**Situação:** Implementado.
+
+### RF13 — Busca de ativos
+
+Pesquisar ativos por palavras-chave ou número do processo.
+
+**Situação:** Implementado.
+
+### RF14 — Filtros de busca
+
+Refinar resultados de pesquisa com filtros disponíveis, como fase e substância.
+
+**Situação:** Implementado.
+
+### RF15 — Filtros de visualização de ativos
+
+Aplicar filtros específicos à apresentação dos ativos minerários.
+
+**Situação:** Implementado.
+
+### RF16 — Veracidade das informações
+
+Conferir informações de processos com base nos dados oficiais disponibilizados pela ANM.
+
+**Situação:** Implementado.
+
+### RF17 — Solicitação de acesso à documentação
+
+Permitir solicitar acesso a documentos privados, com aprovação ou recusa pelo proprietário.
+
+**Situação:** Implementado.
+
+### RF18 — Anexação de arquivos
+
+Permitir ao proprietário anexar arquivos aos ativos, com validação de tipo e tamanho.
+
+**Situação:** Implementado.
+
+### RF19 — Download de arquivos
+
+Permitir a usuários autorizados baixar documentos associados a ativos.
+
+**Situação:** Implementado.
+
+### RF20 — Gerenciamento de arquivos
+
+Permitir organizar e administrar arquivos associados aos próprios ativos.
+
+**Situação:** Implementado.
+
 ---
 
 # Como Executar
@@ -1116,7 +1252,12 @@ Abra o arquivo `.env` e preencha as variáveis necessárias:
 DATABASE_URL=mysql+pymysql://usuario:senha@localhost:3306/argon
 GEMINI_API_KEY=sua_chave_do_gemini
 JWT_SECRET_KEY=chave_secreta
+SUPABASE_URL=https://seu-projeto.supabase.co
+SUPABASE_SECRET_KEY=sua_chave_privada
+SUPABASE_BUCKET=argon-documentos
 ```
+
+> **Segurança:** nunca envie o `.env` ao GitHub nem coloque a `SUPABASE_SECRET_KEY` no aplicativo Flutter. O bucket de documentos deve permanecer privado.
 
 > **Importante:** antes de iniciar o projeto, certifique-se de que o MySQL esteja em execução e que o banco de dados `argon` já tenha sido criado.
 
@@ -1166,6 +1307,12 @@ Execute a aplicação:
 flutter run -d chrome
 ```
 
+Para executar em um emulador Android iniciado:
+
+```bash
+flutter run -d emulator-5554
+```
+
 ---
 
 ## Requisitos
@@ -1176,10 +1323,11 @@ Antes de executar o projeto, é necessário possuir:
 - Flutter SDK instalado e configurado;
 - MySQL Server em execução;
 - Banco de dados `argon` criado;
-- Chave da API do Google Gemini.
+- Chave da API do Google Gemini;
+- Projeto Supabase com bucket privado `argon-documentos` e credenciais configuradas no backend.
 
 # Status do Projeto
 
 O projeto encontra-se funcional e em constante evolução.
 
-Atualmente contempla autenticação de usuários, gerenciamento de ativos minerários, consulta de processos da ANM, sincronização da base de dados e interface web desenvolvida em Flutter integrada a uma API REST em Flask.
+Atualmente contempla autenticação de usuários, gerenciamento de ativos minerários, consulta de processos da ANM, sincronização da base de dados, controle de acesso e gerenciamento de documentos privados. A interface Flutter é integrada à API REST Flask e ao armazenamento de arquivos no Supabase. Os 20 requisitos funcionais previstos estão documentados como implementados na seção RF01–RF20; testes e melhorias contínuas permanecem parte da evolução do sistema.
