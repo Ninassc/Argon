@@ -27,6 +27,8 @@ class _SolicitacoesAcessoPageState extends State<SolicitacoesAcessoTab> {
     try {
       await acessoViewModel.aprovar(idAcesso);
 
+      await acessoViewModel.carregarRecebidas();
+
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -45,6 +47,8 @@ class _SolicitacoesAcessoPageState extends State<SolicitacoesAcessoTab> {
     final acessoViewModel = Provider.of<AcessoViewModel>(context, listen: false);
     try {
       await acessoViewModel.recusar(idAcesso);
+
+       await acessoViewModel.carregarRecebidas();
 
       if (!mounted) return;
 

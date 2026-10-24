@@ -63,6 +63,16 @@ Além da consulta aos processos minerários, o sistema permite que cada usuário
 
 A arquitetura foi construída seguindo a separação em camadas, promovendo organização, reutilização de código e facilidade de manutenção.
 
+
+---
+
+## Modelagem de Domínio
+
+O diagrama de classes apresenta as principais entidades do Argon,
+seus atributos, métodos e relacionamentos.
+
+![Diagrama de Classes do Argon](docs/images/modelagem_dominio.png)
+
 ---
 
 # Funcionalidades
