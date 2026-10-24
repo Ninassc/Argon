@@ -71,7 +71,7 @@ A arquitetura foi construída seguindo a separação em camadas, promovendo orga
 O diagrama de classes apresenta as principais entidades do Argon,
 seus atributos, métodos e relacionamentos.
 
-![Diagrama de Classes do Argon](docs/images/modelagem_dominio.png)
+![Diagrama de Classes do Argon](docs/modelagem_dominio.jpeg)
 
 ---
 
