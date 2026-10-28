@@ -4,7 +4,7 @@ class Buttons extends StatelessWidget {
   final String texto;
   final Color corBotao;
   final Color corTexto;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const Buttons({
     super.key,

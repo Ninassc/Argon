@@ -27,6 +27,8 @@ class _CadastroPageState extends State<CadastroPage> {
   TipoUsuario _selecionado = TipoUsuario.titular;
   final _opcoes = ['Titular', 'Interessado'];
 
+  bool _aceitouTermo = false;
+
   @override
   void dispose() {
     controllerNome.dispose();
@@ -151,11 +153,49 @@ class _CadastroPageState extends State<CadastroPage> {
 
               SizedBox(height: 10),
 
+              Row(
+                children: [
+                  Checkbox(
+                    value: _aceitouTermo,
+                    activeColor: const Color(0xFF5A81FA),
+                    onChanged: (value) {
+                      setState(() {
+                        _aceitouTermo = value ?? false;
+                      });
+                    },
+                  ),
+                  Expanded(
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        const Text("Li e aceito o "),
+                        InkWell(
+                          mouseCursor: SystemMouseCursors.click,
+                          onTap: () {
+                            // Vamos abrir o termo aqui na próxima etapa.
+                          },
+                          child: const Text(
+                            "Termo de Consentimento",
+                            style: TextStyle(
+                              color: Color(0xFF5A81FA),
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                        const Text(" do Argon."),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 10),
+
               Buttons(
                 texto: "Criar Conta",
                 corBotao: const Color(0xFF5A81FA),
                 corTexto: Colors.white,
-                onPressed: cadastrar,
+                onPressed: _aceitouTermo ? cadastrar : null,
               ),
               Buttons(
                 texto: "Já Possuo uma Conta",
