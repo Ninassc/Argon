@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/auth/login_page.dart';
+import 'package:frontend/pages/auth/termo_consentimento_page.dart';
 import 'package:frontend/pages/welcome/welcome_page.dart';
 import 'package:frontend/viewmodels/usuario_viewmodel.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
@@ -172,7 +173,13 @@ class _CadastroPageState extends State<CadastroPage> {
                         InkWell(
                           mouseCursor: SystemMouseCursors.click,
                           onTap: () {
-                            // Vamos abrir o termo aqui na próxima etapa.
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    TermoConsentimentoPage(),
+                              ),
+                            );
                           },
                           child: const Text(
                             "Termo de Consentimento",

@@ -45,7 +45,7 @@ dependencies:
   file_selector: ^1.1.0
   flutter_file_dialog: ^3.3.3
   file_picker: ^13.1.0
-
+  flutter_pdfview: ^1.4.5
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -74,6 +74,7 @@ flutter:
     - assets/images/onboarding2.png
     - assets/images/onboarding3.png
     - assets/images/ArgON.png
+    - assets/docs/termo_consentimento.pdf
    
 
   # An image asset can refer to one or more resolution-specific "variants", see
