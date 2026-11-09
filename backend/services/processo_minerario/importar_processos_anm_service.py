@@ -2,6 +2,24 @@ from models import ProcessoMinerario
 from models import db
 
 
+CAMPOS = [
+    "processo",
+    "numero",
+    "ano",
+    "area_ha",
+    "id_anm",
+    "fase",
+    "ult_evento",
+    "nome",
+    "subs",
+    "uso",
+    "uf",
+    "ds_processo",
+]
+
+TAMANHO_LOTE = 1000
+
+
 class ImportarProcessosANMService:
 
     def executar_importacao(self, processos):
@@ -14,57 +32,62 @@ class ImportarProcessosANMService:
             for processo in ProcessoMinerario.query.all()
         }
 
+        novos = []
+        ids_vistos = set()
+
         for dados in processos:
 
             id_anm = dados.get("id_anm")
 
-            if not id_anm:
+            if not id_anm or id_anm in ids_vistos:
                 continue
+
+            ids_vistos.add(id_anm)
 
             processo = existentes.get(id_anm)
 
             if processo is None:
 
-                processo = ProcessoMinerario(
-                    processo=dados.get("processo"),
-                    numero=dados.get("numero"),
-                    ano=dados.get("ano"),
-                    area_ha=dados.get("area_ha"),
-                    id_anm=id_anm,
-                    fase=dados.get("fase"),
-                    ult_evento=dados.get("ult_evento"),
-                    dt_ult_evento=dados["dt_ult_evento"],
-                    nome=dados.get("nome"),
-                    subs=dados.get("subs"),
-                    uso=dados.get("uso"),
-                    uf=dados.get("uf"),
-                    ds_processo=dados.get("ds_processo"),
-                )
+                registro = {campo: dados.get(campo) for campo in CAMPOS}
+                registro["dt_ult_evento"] = dados.get("dt_ult_evento")
 
-                processo.salvar()
-
-                importados += 1
+                novos.append(registro)
 
             else:
 
-                processo.atualizar(
-                    processo=dados.get("processo"),
-                    numero=dados.get("numero"),
-                    ano=dados.get("ano"),
-                    area_ha=dados.get("area_ha"),
-                    id_anm=id_anm,
-                    fase=dados.get("fase"),
-                    ult_evento=dados.get("ult_evento"),
-                    nome=dados.get("nome"),
-                    subs=dados.get("subs"),
-                    uso=dados.get("uso"),
-                    uf=dados.get("uf"),
-                    ds_processo=dados.get("ds_processo"),
+                # Só mexe no que realmente mudou: evita milhares de UPDATEs
+                # desnecessários a cada sincronização.
+                mudou = any(
+                    dados.get(campo) is not None
+                    and getattr(processo, campo) != dados.get(campo)
+                    for campo in CAMPOS
                 )
 
-                atualizados += 1
+                if mudou:
+                    processo.atualizar(
+                        **{campo: dados.get(campo) for campo in CAMPOS}
+                    )
+
+                    atualizados += 1
 
         try:
+            # Atualizações dos processos já existentes
+            db.session.flush()
+
+            # Inserções em lote (uma instrução SQL por lote, e não uma por
+            # processo), com commit a cada lote e progresso na tela.
+            total = len(novos)
+
+            for inicio in range(0, total, TAMANHO_LOTE):
+                lote = novos[inicio:inicio + TAMANHO_LOTE]
+
+                db.session.bulk_insert_mappings(ProcessoMinerario, lote)
+                db.session.commit()
+
+                importados += len(lote)
+
+                print(f"Gravados {importados} de {total} processos novos...")
+
             db.session.commit()
 
         except Exception:
