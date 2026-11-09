@@ -1,0 +1,8 @@
+[build]
+  command = "flutter channel stable && flutter upgrade && flutter build web --release --dart-define=API_URL=argon-production-dc27.up.railway.app"
+  publish = "build/web"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
