@@ -11,7 +11,10 @@ load_dotenv(BASE_DIR / ".env")
 
 
 def _normalizar_database_url(url):
-
+    """
+    O Railway entrega a URL como mysql://usuario:senha@host:porta/banco,
+    mas o SQLAlchemy precisa do driver explícito (mysql+pymysql://).
+    """
     if not url:
         raise RuntimeError(
             "DATABASE_URL não definida. Configure no arquivo .env "
@@ -42,3 +45,9 @@ class Config:
     )
 
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=8)
+
+    # Supabase Storage (documentos dos ativos). Usados pelo StorageService.
+    # Se faltarem, o app sobe normalmente e só os documentos deixam de funcionar.
+    SUPABASE_URL = os.getenv("SUPABASE_URL")
+    SUPABASE_SECRET_KEY = os.getenv("SUPABASE_SECRET_KEY")
+    SUPABASE_BUCKET = os.getenv("SUPABASE_BUCKET")
