@@ -72,52 +72,54 @@ class _LoginPageState extends State<LoginPage> {
       ),
 
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            spacing: 20,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CampoInput(
-                controller: controllerEmailTelefone,
-                label: "Email ou Telefone",
-                obscureText: false,
-              ),
-              CampoInput(
-                controller: controllerSenha,
-                label: "Senha",
-                obscureText: true,
-              ),
-              TextButton(
-                onPressed: () {},
-                child: Text(
-                  "Esqueci minha senha",
-                  style: TextStyle(
-                    color: const Color(0xFF5A81FA),
-                    fontSize: 14,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              spacing: 20,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CampoInput(
+                  controller: controllerEmailTelefone,
+                  label: "Email ou Telefone",
+                  obscureText: false,
+                ),
+                CampoInput(
+                  controller: controllerSenha,
+                  label: "Senha",
+                  obscureText: true,
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    "Esqueci minha senha",
+                    style: TextStyle(
+                      color: const Color(0xFF5A81FA),
+                      fontSize: 14,
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 30),
-              Buttons(
-                texto: "Entrar",
-                corBotao: const Color(0xFF5A81FA),
-                corTexto: Colors.white,
-                onPressed: fazerLogin,
-              ),
-              Buttons(
-                texto: "Não Possuo uma Conta",
-                corBotao: Colors.white,
-                corTexto: const Color(0xFF5A81FA),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CadastroPage()),
-                  );
-                },
-              ),
-            ],
+                SizedBox(height: 5),
+                Buttons(
+                  texto: "Entrar",
+                  corBotao: const Color(0xFF5A81FA),
+                  corTexto: Colors.white,
+                  onPressed: fazerLogin,
+                ),
+                Buttons(
+                  texto: "Não Possuo uma Conta",
+                  corBotao: Colors.white,
+                  corTexto: const Color(0xFF5A81FA),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CadastroPage()),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

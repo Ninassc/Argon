@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
         snackBarTheme: SnackBarThemeData(
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color.fromARGB(255, 168, 173, 187),
+          backgroundColor: const Color.fromARGB(255, 168, 173, 187),  
           contentTextStyle: const TextStyle(
             color: Colors.white,
             fontSize: 14,

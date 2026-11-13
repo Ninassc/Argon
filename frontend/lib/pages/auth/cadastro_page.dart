@@ -115,107 +115,109 @@ class _CadastroPageState extends State<CadastroPage> {
       ),
 
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 20,
-            children: [
-              CampoInput(
-                controller: controllerNome,
-                label: "Nome Completo",
-                obscureText: false,
-              ),
-              CampoInput(
-                controller: controllerEmailTelefone,
-                label: "Email ou Telefone",
-                obscureText: false,
-              ),
-
-              TipoContaUsuario(
-                opcoes: _opcoes,
-                onChanged: (i) {
-                  setState(() {
-                    _selecionado = TipoUsuario.values[i];
-                  });
-                },
-              ),
-
-              CampoInput(
-                controller: controllerSenha,
-                label: "Senha",
-                obscureText: true,
-              ),
-              CampoInput(
-                controller: controllerConfirmarSenha,
-                label: "Confirmar Senha",
-                obscureText: true,
-              ),
-
-              SizedBox(height: 10),
-
-              Row(
-                children: [
-                  Checkbox(
-                    value: _aceitouTermo,
-                    activeColor: const Color(0xFF5A81FA),
-                    onChanged: (value) {
-                      setState(() {
-                        _aceitouTermo = value ?? false;
-                      });
-                    },
-                  ),
-                  Expanded(
-                    child: Wrap(
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        const Text("Li e aceito o "),
-                        InkWell(
-                          mouseCursor: SystemMouseCursors.click,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    TermoConsentimentoPage(),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 20,
+              children: [
+                CampoInput(
+                  controller: controllerNome,
+                  label: "Nome Completo",
+                  obscureText: false,
+                ),
+                CampoInput(
+                  controller: controllerEmailTelefone,
+                  label: "Email ou Telefone",
+                  obscureText: false,
+                ),
+          
+                TipoContaUsuario(
+                  opcoes: _opcoes,
+                  onChanged: (i) {
+                    setState(() {
+                      _selecionado = TipoUsuario.values[i];
+                    });
+                  },
+                ),
+          
+                CampoInput(
+                  controller: controllerSenha,
+                  label: "Senha",
+                  obscureText: true,
+                ),
+                CampoInput(
+                  controller: controllerConfirmarSenha,
+                  label: "Confirmar Senha",
+                  obscureText: true,
+                ),
+          
+                SizedBox(height: 10),
+          
+                Row(
+                  children: [
+                    Checkbox(
+                      value: _aceitouTermo,
+                      activeColor: const Color(0xFF5A81FA),
+                      onChanged: (value) {
+                        setState(() {
+                          _aceitouTermo = value ?? false;
+                        });
+                      },
+                    ),
+                    Expanded(
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          const Text("Li e aceito o "),
+                          InkWell(
+                            mouseCursor: SystemMouseCursors.click,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      TermoConsentimentoPage(),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              "Termo de Consentimento",
+                              style: TextStyle(
+                                color: Color(0xFF5A81FA),
+                                decoration: TextDecoration.underline,
                               ),
-                            );
-                          },
-                          child: const Text(
-                            "Termo de Consentimento",
-                            style: TextStyle(
-                              color: Color(0xFF5A81FA),
-                              decoration: TextDecoration.underline,
                             ),
                           ),
-                        ),
-                        const Text(" do Argon."),
-                      ],
+                          const Text(" do Argon."),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 10),
-
-              Buttons(
-                texto: "Criar Conta",
-                corBotao: const Color(0xFF5A81FA),
-                corTexto: Colors.white,
-                onPressed: _aceitouTermo ? cadastrar : null,
-              ),
-              Buttons(
-                texto: "Já Possuo uma Conta",
-                corBotao: Colors.white,
-                corTexto: const Color(0xFF5A81FA),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                  );
-                },
-              ),
-            ],
+                  ],
+                ),
+          
+                SizedBox(height: 5),
+          
+                Buttons(
+                  texto: "Criar Conta",
+                  corBotao: const Color(0xFF5A81FA),
+                  corTexto: Colors.white,
+                  onPressed: _aceitouTermo ? cadastrar : null,
+                ),
+                Buttons(
+                  texto: "Já Possuo uma Conta",
+                  corBotao: Colors.white,
+                  corTexto: const Color(0xFF5A81FA),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

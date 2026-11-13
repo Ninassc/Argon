@@ -26,6 +26,10 @@ class ProcessoService {
 
     final response = await http.get(uri);
 
+    print("URL: $uri");
+    print("STATUS: ${response.statusCode}");
+    print("RESPOSTA: ${response.body}");
+
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
 
@@ -34,7 +38,9 @@ class ProcessoService {
       return lista.map((e) => ProcessoMinerario.fromJson(e)).toList();
     }
 
-    throw Exception("Erro ao carregar processos.");
+    throw Exception(
+      "Erro ao carregar processos. Status: ${response.statusCode}",
+    );
   }
 
   Future<List<ProcessoMinerario>> pesquisar({
