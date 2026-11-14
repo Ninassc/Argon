@@ -103,10 +103,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   ActionButton(
-                    icone: Icons.remove_red_eye_outlined,
-                    onPressed: () {},
-                  ),
-                  ActionButton(
                     icone: Icons.tune,
                     onPressed: () async {
                       final resultado =
