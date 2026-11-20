@@ -27,6 +27,13 @@ def _normalizar_database_url(url):
     return url
 
 
+def _jwt_secret_key():
+    chave = os.getenv("JWT_SECRET_KEY", "").strip()
+    if len(chave.encode("utf-8")) < 32:
+        raise RuntimeError("Configure JWT_SECRET_KEY com pelo menos 32 bytes aleatórios.")
+    return chave
+
+
 class Config:
     SQLALCHEMY_DATABASE_URI = _normalizar_database_url(os.getenv("DATABASE_URL"))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -34,15 +41,20 @@ class Config:
     # Banco na nuvem derruba conexões ociosas: testa a conexão antes de usar
     # e renova as conexões antigas.
     SQLALCHEMY_ENGINE_OPTIONS = {
+        "hide_parameters": True,
         "pool_pre_ping": True,
         "pool_recycle": 280,
         "connect_args": {"connect_timeout": 15},
     }
 
-    JWT_SECRET_KEY = os.getenv(
-        "JWT_SECRET_KEY",
-        "argon_projeto_software_2026",
-    )
+    JWT_SECRET_KEY = _jwt_secret_key()
+    APP_DEBUG = os.getenv("ARGON_DEBUG") == "1"
+    CORS_ORIGINS = [
+        origem.strip()
+        for origem in os.getenv("CORS_ORIGINS", "").split(",")
+        if origem.strip()
+    ]
+    MAX_CONTENT_LENGTH = 11 * 1024 * 1024
 
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=8)
 

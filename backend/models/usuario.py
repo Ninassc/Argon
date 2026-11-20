@@ -1,8 +1,14 @@
+from hashlib import sha256
+from hmac import compare_digest
+
+from werkzeug.security import check_password_hash, generate_password_hash
+
 from . import db
 
 
 class Usuario(db.Model):
     __tablename__ = "usuario"
+    PREFIXO_HASH_SENHA = "scrypt:"
 
     id_usuario = db.Column(db.Integer, primary_key=True)
 
@@ -53,7 +59,6 @@ class Usuario(db.Model):
         self,
         nome=None,
         email=None,
-        senha=None,
         telefone=None,
         tipo_conta=None,
     ):
@@ -62,9 +67,6 @@ class Usuario(db.Model):
 
         if email is not None:
             self.email = email
-
-        if senha is not None:
-            self.senha = senha
 
         if telefone is not None:
             self.telefone = telefone
@@ -84,14 +86,29 @@ class Usuario(db.Model):
     def listar_todos(cls):
         return cls.query.order_by(cls.id_usuario.asc()).all()
 
+    def definir_senha(self, senha):
+        if not isinstance(senha, str) or not 1 <= len(senha) <= 255:
+            raise ValueError("A senha deve ter entre 1 e 255 caracteres.")
+        self.senha = generate_password_hash(senha, method="scrypt")
+
+    def verificar_senha(self, senha):
+        if not isinstance(senha, str) or not 1 <= len(senha) <= 255:
+            return False
+        if self.senha.startswith(self.PREFIXO_HASH_SENHA):
+            return check_password_hash(self.senha, senha)
+        return compare_digest(self.senha.encode("utf-8"), senha.encode("utf-8"))
+
     # Json
-    def to_dict(self):
-        return {
+    def versao_credencial(self):
+        return sha256(self.senha.encode("utf-8")).hexdigest()
+
+    def to_dict(self, incluir_contato=False):
+        dados = {
             "id_usuario": self.id_usuario,
             "nome": self.nome,
-            "email": self.email,
-            "senha": self.senha,
-            "telefone": self.telefone,
             "tipo_conta": self.tipo_conta,
             "dt_cadastro": (self.dt_cadastro.isoformat() if self.dt_cadastro else None),
         }
+        if incluir_contato:
+            dados.update(email=self.email, telefone=self.telefone)
+        return dados

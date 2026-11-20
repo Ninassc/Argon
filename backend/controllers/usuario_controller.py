@@ -20,7 +20,9 @@ class UsuarioController:
     @usuario_bp.post("/")
     def criar_usuario():
         try:
-            dados = request.get_json()
+            dados = request.get_json(silent=True)
+            if not isinstance(dados, dict):
+                return jsonify({"erro": "Envie um objeto JSON."}), 400
 
             service = CriarUsuarioService()
 
@@ -31,17 +33,12 @@ class UsuarioController:
         except ValueError as erro:
             return jsonify({"erro": str(erro)}), 400
 
-        except Exception as e:
+        except SQLAlchemyError:
             db.session.rollback()
-            print(e)
             raise
 
-        # except SQLAlchemyError:
-        #     db.session.rollback()
-        #     return jsonify({"erro": "Erro ao salvar usuário no banco de dados."}), 500
-
-
     @usuario_bp.get("/")
+    @jwt_required()
     def listar_usuarios():
         service = ListarUsuariosService()
 
@@ -55,7 +52,9 @@ class UsuarioController:
     def buscar_usuario_id(usuario_id):
         service = BuscarUsuarioService()
 
-        usuario = service.executar(usuario_id)
+        usuario = service.executar(
+            usuario_id, incluir_contato=str(usuario_id) == get_jwt_identity()
+        )
 
         if usuario is None:
             return jsonify({"erro": "Usuário não encontrado."}), 404
@@ -64,7 +63,11 @@ class UsuarioController:
 
 
     @usuario_bp.delete("/<int:usuario_id>")
+    @jwt_required()
     def deletar_usuario(usuario_id):
+        if str(usuario_id) != get_jwt_identity():
+            return jsonify({"erro": "Acesso negado."}), 403
+
         try:
             service = DeletarUsuarioService()
 
@@ -85,7 +88,7 @@ class UsuarioController:
     def buscar_me():
         id_usuario = int(get_jwt_identity())
 
-        usuario = BuscarUsuarioService().executar(id_usuario)
+        usuario = BuscarUsuarioService().executar(id_usuario, incluir_contato=True)
 
         return jsonify(usuario), 200
 
@@ -96,7 +99,11 @@ class UsuarioController:
         try:
             id_usuario = int(get_jwt_identity())
 
-            usuario = AtualizarUsuarioService().executar(id_usuario, request.get_json())
+            dados = request.get_json(silent=True)
+            if not isinstance(dados, dict):
+                return jsonify({"erro": "Envie um objeto JSON."}), 400
+
+            usuario = AtualizarUsuarioService().executar(id_usuario, dados)
 
             if usuario is None:
                 return jsonify({"erro": "Usuário não encontrado."}), 404
@@ -117,13 +124,18 @@ class UsuarioController:
         try:
             id_usuario = int(get_jwt_identity())
 
-            dados = request.get_json()
+            dados = request.get_json(silent=True)
+            if not isinstance(dados, dict):
+                return jsonify({"erro": "Envie um objeto JSON."}), 400
 
             service = AlterarSenhaService()
 
-            service.executar(id_usuario, dados)
+            token = service.executar(id_usuario, dados)
 
-            return jsonify({"mensagem": "Senha alterada com sucesso."}), 200
+            return jsonify({
+                "mensagem": "Senha alterada com sucesso.",
+                "token": token,
+            }), 200
 
         except ValueError as erro:
             return jsonify({"erro": str(erro)}), 400

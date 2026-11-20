@@ -26,10 +26,6 @@ class ProcessoService {
 
     final response = await http.get(uri);
 
-    print("URL: $uri");
-    print("STATUS: ${response.statusCode}");
-    print("RESPOSTA: ${response.body}");
-
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
 
@@ -121,6 +117,7 @@ class ProcessoService {
   Future<Map<String, dynamic>> analisarComIa(int idProcesso) async {
     final response = await http.post(
       Uri.parse("${ApiService.baseUrl}/processos/$idProcesso/analisar-ia"),
+      headers: await ApiService.authHeaders(),
     );
 
     if (response.statusCode != 200) {

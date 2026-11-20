@@ -1,11 +1,17 @@
-from repositories import UsuarioRepository
+from models import Usuario, db
+from services.auth.login_service import LoginService
 
 
 class AlterarSenhaService:
 
     def executar(self, id_usuario, dados):
 
-        usuario = UsuarioRepository.buscar_por_id(id_usuario)
+        usuario = (
+            Usuario.query.filter_by(id_usuario=id_usuario)
+            .populate_existing()
+            .with_for_update()
+            .one_or_none()
+        )
 
         if usuario is None:
             raise ValueError("Usuário não encontrado.")
@@ -14,8 +20,8 @@ class AlterarSenhaService:
         nova_senha = dados.get("nova_senha")
         confirmar_senha = dados.get("confirmar_senha")
 
-        if not senha_atual:
-            raise ValueError("Informe a senha atual.")
+        if not usuario.verificar_senha(senha_atual):
+            raise ValueError("Senha atual incorreta.")
 
         if not nova_senha:
             raise ValueError("Informe a nova senha.")
@@ -26,4 +32,7 @@ class AlterarSenhaService:
         if nova_senha != confirmar_senha:
             raise ValueError("As senhas não coincidem.")
 
-        usuario.atualizar(senha=nova_senha)
+        usuario.definir_senha(nova_senha)
+        token = LoginService.emitir_token(usuario.id_usuario, usuario.versao_credencial())
+        db.session.commit()
+        return token

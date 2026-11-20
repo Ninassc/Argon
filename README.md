@@ -1261,13 +1261,18 @@ Abra o arquivo `.env` e preencha as variáveis necessárias:
 ```env
 DATABASE_URL=mysql+pymysql://usuario:senha@localhost:3306/argon
 GEMINI_API_KEY=sua_chave_do_gemini
-JWT_SECRET_KEY=chave_secreta
+JWT_SECRET_KEY=
+CORS_ORIGINS=
 SUPABASE_URL=https://seu-projeto.supabase.co
 SUPABASE_SECRET_KEY=sua_chave_privada
 SUPABASE_BUCKET=argon-documentos
 ```
 
 > **Segurança:** nunca envie o `.env` ao GitHub nem coloque a `SUPABASE_SECRET_KEY` no aplicativo Flutter. O bucket de documentos deve permanecer privado.
+
+Gere uma chave JWT exclusiva por ambiente com `python -c "import secrets; print(secrets.token_hex(32))"` e use o valor em `JWT_SECRET_KEY`. Ao trocar a chave ou instalar esta atualização, os usuários precisarão entrar novamente.
+
+Se usar Flutter Web, configure `CORS_ORIGINS` com as origens exatas do frontend, separadas por vírgulas, incluindo protocolo e porta quando aplicável. O modo de depuração fica desativado por padrão. Para ativá-lo localmente, defina `ARGON_DEBUG=1`.
 
 > **Importante:** antes de iniciar o projeto, certifique-se de que o MySQL esteja em execução e que o banco de dados `argon` já tenha sido criado.
 
@@ -1282,6 +1287,8 @@ pip install -r requirements.txt
 ```bash
 python app.py
 ```
+
+Em instalações com contas já cadastradas, execute `python -m flask --app app migrar-senhas` no ambiente do backend após publicar o código atualizado. O comando converte as senhas antigas em hashes sem alterar a senha usada para entrar. O login também faz essa conversão para contas que ainda precisarem dela.
 
 ---
 

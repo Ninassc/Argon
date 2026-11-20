@@ -31,11 +31,11 @@ class CriarUsuarioService:
         usuario = Usuario(
             nome=nome,
             email=email,
-            senha=senha,
             telefone=telefone,
             tipo_conta = tipo_conta
         )
 
+        usuario.definir_senha(senha)
         usuario.salvar()
 
-        return usuario.to_dict()
+        return usuario.to_dict(incluir_contato=True)

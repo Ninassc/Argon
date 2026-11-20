@@ -1,4 +1,5 @@
 import os
+from secrets import token_urlsafe
 import sys
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,19 +21,19 @@ with app.app_context():
         Usuario(
             nome="Clara",
             email="clara@email.com",
-            senha="123456",
             telefone="31999990001",
             tipo_conta="Titular",
         ),
         Usuario(
             nome="Victor",
             email="victor@email.com",
-            senha="123456",
             telefone="31999990002",
             tipo_conta="Interessado",
         ),
     ]
 
+    for usuario in usuarios:
+        usuario.definir_senha(token_urlsafe(24))
     db.session.add_all(usuarios)
 
     # Processos Minerários

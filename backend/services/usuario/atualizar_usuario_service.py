@@ -41,4 +41,4 @@ class AtualizarUsuarioService:
             tipo_conta=tipo_conta,
         )
 
-        return usuario.to_dict()
+        return usuario.to_dict(incluir_contato=True)

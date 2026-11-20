@@ -19,7 +19,9 @@ class AuthController:
     @auth_bp.post("/login")
     def login():
         try:
-            dados = request.get_json() or {}
+            dados = request.get_json(silent=True)
+            if not isinstance(dados, dict):
+                return jsonify({"erro": "Envie um objeto JSON."}), 400
 
             resultado = LoginService().executar(dados)
 
@@ -37,7 +39,7 @@ class AuthController:
 
         service = BuscarUsuarioService()
 
-        usuario = service.executar(id_usuario)
+        usuario = service.executar(id_usuario, incluir_contato=True)
 
         if usuario is None:
             return jsonify({"erro": "Usuário não encontrado."}), 404

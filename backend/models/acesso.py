@@ -157,6 +157,10 @@ class Acesso(db.Model):
                 self.dt_solicitacao.isoformat() if self.dt_solicitacao else None
             ),
             "dt_acesso": (self.dt_acesso.isoformat() if self.dt_acesso else None),
-            "usuario": (self.usuario.to_dict() if self.usuario else None),
+            "usuario": (
+                self.usuario.to_dict(incluir_contato=True)
+                if self.usuario
+                else None
+            ),
             "ativo": (self.ativo.to_dict() if self.ativo else None),
         }

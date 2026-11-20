@@ -1,8 +1,5 @@
-from flask import Blueprint, request, jsonify
-from flask_jwt_extended import (
-    jwt_required,
-    get_jwt_identity,
-)
+from flask import Blueprint, current_app, request, jsonify
+from flask_jwt_extended import jwt_required
 from sqlalchemy.exc import SQLAlchemyError
 
 from models import db
@@ -29,7 +26,8 @@ class ProcessoMinerarioController:
         fase = request.args.get("fase") or None
         substancia = request.args.get("substancia") or None
 
-        limite = min(limite, 100)
+        limite = max(1, min(limite, 100))
+        pagina = max(1, pagina)
 
         service = ListarProcessosService()
         resultado = service.executar(
@@ -52,7 +50,8 @@ class ProcessoMinerarioController:
         pagina = request.args.get("page", 1, type=int)
         limite = request.args.get("limit", 20, type=int)
 
-        limite = min(limite, 100)
+        limite = max(1, min(limite, 100))
+        pagina = max(1, pagina)
 
         service = PesquisarProcessosService()
         resultado = service.executar(
@@ -86,8 +85,9 @@ class ProcessoMinerarioController:
 
             return jsonify(fases), 200
 
-        except Exception as erro:
-            return jsonify({"erro": str(erro)}), 500
+        except Exception:
+            current_app.logger.exception("Erro ao listar fases.")
+            return jsonify({"erro": "Erro ao listar fases."}), 500
 
 
     @processo_bp.get("/substancias")
@@ -97,11 +97,13 @@ class ProcessoMinerarioController:
 
             return jsonify(substancias), 200
 
-        except Exception as erro:
-            return jsonify({"erro": str(erro)}), 500
+        except Exception:
+            current_app.logger.exception("Erro ao listar substâncias.")
+            return jsonify({"erro": "Erro ao listar substâncias."}), 500
 
 
     @processo_bp.post("/<int:id_processo>/analisar-ia")
+    @jwt_required()
     def analisar_processo_ia(id_processo):
         try:
             resultado = AnalisarProcessoIAService().executar(id_processo)

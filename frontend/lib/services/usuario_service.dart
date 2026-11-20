@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../models/usuario.dart';
+import '../storage/auth_storage.dart';
 import 'api_service.dart';
 
 class UsuarioService {
   Future<List<Usuario>> listar() async {
     final response = await http.get(
       Uri.parse("${ApiService.baseUrl}/usuarios/"),
+      headers: await ApiService.authHeaders(),
     );
 
     if (response.statusCode != 200) {
@@ -95,15 +97,22 @@ class UsuarioService {
       }),
     );
 
+    final dados = jsonDecode(response.body);
     if (response.statusCode != 200) {
-      final mensagem = jsonDecode(response.body)["erro"];
+      final mensagem = dados["erro"] ?? dados["msg"];
       throw Exception(mensagem);
+    }
+
+    final token = dados["token"];
+    if (token is String) {
+      await AuthStorage().salvarToken(token);
     }
   }
 
   Future<void> deletar(int idUsuario) async {
     final response = await http.delete(
       Uri.parse("${ApiService.baseUrl}/usuarios/$idUsuario"),
+      headers: await ApiService.authHeaders(),
     );
 
     if (response.statusCode != 200) {
