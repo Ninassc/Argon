@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 import 'package:frontend/pages/processo/detalhe_processo_page.dart';
 import 'package:frontend/viewmodels/processo_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -95,12 +96,12 @@ class _PesquisarProcessoAtivoPageState
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Color(0xFFE0E0E0), width: 2),
+                border: Border.all(color: context.cores.outlineVariant, width: 2),
               ),
               child: Icon(
                 Icons.chevron_left,
                 size: 30,
-                color: Color(0xFF848484),
+                color: context.cores.onSurfaceVariant,
               ),
             ),
           ),
@@ -139,8 +140,8 @@ class _PesquisarProcessoAtivoPageState
                     texto: processoViewModel.carregandoProcessosAtivos
                         ? "Pesquisando..."
                         : "Pesquisar",
-                    corBotao: const Color(0xFF5A81FA),
-                    corTexto: Colors.white,
+                    corBotao: context.cores.primary,
+                    corTexto: context.cores.onPrimary,
                     onPressed: () {
                       if (!processoViewModel.carregandoProcessosAtivos) {
                         pesquisarProcesso();
@@ -152,8 +153,8 @@ class _PesquisarProcessoAtivoPageState
 
                   Buttons(
                     texto: "Ver Processos",
-                    corBotao: Colors.white,
-                    corTexto: const Color(0xFF5A81FA),
+                    corBotao: context.cores.surface,
+                    corTexto: context.cores.primary,
                     onPressed: () {
                       Navigator.pop(context);
                     },

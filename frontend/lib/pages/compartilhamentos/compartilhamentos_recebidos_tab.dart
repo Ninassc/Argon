@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 import 'package:frontend/models/compartilhamento_processo.dart';
 import 'package:frontend/pages/processo/detalhe_processo_page.dart';
 import 'package:frontend/viewmodels/compartilhamento_processo_viewmodel.dart';
@@ -56,7 +57,7 @@ class _CompartilhamentosRecebidosTabState
           children: [
             Text(
               "Compartilhado por ${compartilhamento.usuarioOrigem.nome}",
-              style: const TextStyle(color: Color(0xFF848484)),
+              style: TextStyle(color: context.cores.onSurfaceVariant),
             ),
 
             const SizedBox(height: 6),

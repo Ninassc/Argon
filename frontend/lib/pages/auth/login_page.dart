@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 import 'package:frontend/pages/auth/cadastro_page.dart';
 import 'package:frontend/pages/home/home_page.dart';
 import 'package:frontend/pages/welcome/welcome_page.dart';
@@ -59,12 +60,12 @@ class _LoginPageState extends State<LoginPage> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Color(0xFFE0E0E0), width: 2),
+                border: Border.all(color: context.cores.outlineVariant, width: 2),
               ),
               child: Icon(
                 Icons.chevron_left,
                 size: 30,
-                color: Color(0xFF848484),
+                color: context.cores.onSurfaceVariant,
               ),
             ),
           ),
@@ -95,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Text(
                     "Esqueci minha senha",
                     style: TextStyle(
-                      color: const Color(0xFF5A81FA),
+                      color: context.cores.primary,
                       fontSize: 14,
                     ),
                   ),
@@ -103,14 +104,14 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 5),
                 Buttons(
                   texto: "Entrar",
-                  corBotao: const Color(0xFF5A81FA),
-                  corTexto: Colors.white,
+                  corBotao: context.cores.primary,
+                  corTexto: context.cores.onPrimary,
                   onPressed: fazerLogin,
                 ),
                 Buttons(
                   texto: "Não Possuo uma Conta",
-                  corBotao: Colors.white,
-                  corTexto: const Color(0xFF5A81FA),
+                  corBotao: context.cores.surface,
+                  corTexto: context.cores.primary,
                   onPressed: () {
                     Navigator.push(
                       context,

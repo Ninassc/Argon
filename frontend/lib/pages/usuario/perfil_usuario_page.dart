@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 import 'package:frontend/pages/processo/detalhe_processo_page.dart';
 import 'package:frontend/viewmodels/ativo_viewmodel.dart';
 import 'package:frontend/viewmodels/usuario_viewmodel.dart';
@@ -68,12 +69,12 @@ class _PerfilUsuarioPageState extends State<PerfilUsuarioPage> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xFFE0E0E0), width: 2),
+                border: Border.all(color: context.cores.outlineVariant, width: 2),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.chevron_left,
                 size: 30,
-                color: Color(0xFF848484),
+                color: context.cores.onSurfaceVariant,
               ),
             ),
           ),
@@ -96,10 +97,10 @@ class _PerfilUsuarioPageState extends State<PerfilUsuarioPage> {
 
                     Text(
                       usuario.nome,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF5A81FA),
+                        color: context.cores.primary,
                       ),
                     ),
 
@@ -109,19 +110,19 @@ class _PerfilUsuarioPageState extends State<PerfilUsuarioPage> {
                       usuario.dtCadastro != null
                           ? "Membro desde ${DateFormat('dd/MM/yyyy').format(usuario.dtCadastro!)}"
                           : "Data de cadastro não informada",
-                      style: const TextStyle(color: Color(0xFF848484)),
+                      style: TextStyle(color: context.cores.onSurfaceVariant),
                     ),
 
                     const SizedBox(height: 25),
 
-                    const Align(
+                    Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Ativos",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF5A81FA),
+                          color: context.cores.primary,
                         ),
                       ),
                     ),

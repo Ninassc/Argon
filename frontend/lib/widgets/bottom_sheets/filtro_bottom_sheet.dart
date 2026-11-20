@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 import 'package:frontend/models/filtro_processo.dart';
 import 'package:frontend/services/processo_service.dart';
 import 'package:frontend/widgets/bottom_sheets/selecionar_substancia_bottom_sheet.dart';
@@ -35,13 +36,13 @@ class _FiltroBottomSheetState extends State<FiltroBottomSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Center(
+            Center(
               child: Text(
                 "Filtrar Processos",
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF5A81FA),
+                  color: context.cores.primary,
                 ),
               ),
             ),
@@ -141,7 +142,7 @@ class _FiltroBottomSheetState extends State<FiltroBottomSheet> {
                 Expanded(
                   child: FilledButton(
                     style: FilledButton.styleFrom(
-                      backgroundColor: Color(0xFF5A81FA),
+                      backgroundColor: context.cores.primary,
                     ),
                     onPressed: () {
                       Navigator.pop(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 import 'package:frontend/pages/auth/cadastro_page.dart';
 import 'package:frontend/pages/auth/login_page.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
@@ -24,7 +25,7 @@ class OnboardingButtons extends StatelessWidget {
               if (paginaAtual > 0)
                 Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFF5A81FA),
+                    color: context.cores.primary,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: IconButton(
@@ -34,9 +35,9 @@ class OnboardingButtons extends StatelessWidget {
                         curve: Curves.easeInOut,
                       );
                     },
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.arrow_back_ios_new,
-                      color: Colors.white,
+                      color: context.cores.onPrimary,
                     ),
                   ),
                 ),
@@ -59,14 +60,14 @@ class OnboardingButtons extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF5A81FA),
+                      backgroundColor: context.cores.primary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       "Comece a Pesquisar",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      style: TextStyle(color: context.cores.onPrimary, fontSize: 16),
                     ),
                   ),
                 ),
@@ -77,7 +78,7 @@ class OnboardingButtons extends StatelessWidget {
               if (paginaAtual < 2)
                 Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFF5A81FA),
+                    color: context.cores.primary,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: IconButton(
@@ -88,9 +89,9 @@ class OnboardingButtons extends StatelessWidget {
                       );
                     },
 
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.arrow_forward_ios,
-                      color: Colors.white,
+                      color: context.cores.onPrimary,
                     ),
                   ),
                 ),
@@ -101,8 +102,8 @@ class OnboardingButtons extends StatelessWidget {
 
           Buttons(
             texto: "Já Possuo uma Conta",
-            corBotao: Colors.white,
-            corTexto: const Color(0xFF5A81FA),
+            corBotao: context.cores.surface,
+            corTexto: context.cores.primary,
             onPressed: () {
               Navigator.push(
                 context,

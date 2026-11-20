@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../widgets/buttons/theme_button.dart';
 import '../../widgets/onboarding/onboarding_buttons.dart';
 import '../../widgets/onboarding/onboarding_indicator.dart';
 import '../../widgets/onboarding/onboarding_page_widget.dart';
@@ -27,6 +28,7 @@ class _WelcomePageState extends State<WelcomePage> {
       appBar: AppBar(
         centerTitle: true,
         title: Image.asset("assets/images/ArgON.png", height: 42),
+        actions: const [BotaoTema()],
         automaticallyImplyLeading: false,
       ),
 

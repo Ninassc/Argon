@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
+import 'package:frontend/widgets/buttons/theme_button.dart';
 import 'package:frontend/pages/auth/login_page.dart';
 import 'package:frontend/pages/processo/detalhe_processo_page.dart';
 import 'package:frontend/pages/usuario/editar_perfil_page.dart';
@@ -39,10 +41,10 @@ class _PerfilPageState extends State<PerfilPage> {
     final confirmar = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text(
+        title: Text(
           "Sair da conta",
           style: TextStyle(
-            color: Color(0xFF5A81FA),
+            color: context.cores.primary,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -97,6 +99,7 @@ class _PerfilPageState extends State<PerfilPage> {
         //automaticallyImplyLeading: false,
         centerTitle: true,
         title: Image.asset("assets/images/ArgON.png", height: 42),
+        actions: const [BotaoTema()],
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: InkWell(
@@ -104,12 +107,12 @@ class _PerfilPageState extends State<PerfilPage> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Color(0xFFE0E0E0), width: 2),
+                border: Border.all(color: context.cores.outlineVariant, width: 2),
               ),
               child: Icon(
                 Icons.chevron_left,
                 size: 30,
-                color: Color(0xFF848484),
+                color: context.cores.onSurfaceVariant,
               ),
             ),
           ),
@@ -132,10 +135,10 @@ class _PerfilPageState extends State<PerfilPage> {
 
                     Text(
                       usuario.nome,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF5A81FA),
+                        color: context.cores.primary,
                       ),
                     ),
 
@@ -143,7 +146,7 @@ class _PerfilPageState extends State<PerfilPage> {
 
                     Text(
                       usuario.email ?? usuario.telefone ?? "Não informado",
-                      style: const TextStyle(color: Color(0xFF848484)),
+                      style: TextStyle(color: context.cores.onSurfaceVariant),
                     ),
 
                     const SizedBox(height: 12),
@@ -152,7 +155,7 @@ class _PerfilPageState extends State<PerfilPage> {
                       usuario.dtCadastro != null
                           ? "Membro desde ${DateFormat('dd/MM/yyyy HH:mm').format(usuario.dtCadastro!)}"
                           : "Data de cadastro não informada",
-                      style: const TextStyle(color: Color(0xFF848484)),
+                      style: TextStyle(color: context.cores.onSurfaceVariant),
                     ),
 
                     const SizedBox(height: 20),
@@ -183,14 +186,14 @@ class _PerfilPageState extends State<PerfilPage> {
                     ),
                     const SizedBox(height: 25),
 
-                    const Align(
+                    Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Meus Ativos",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF5A81FA),
+                          color: context.cores.primary,
                         ),
                       ),
                     ),

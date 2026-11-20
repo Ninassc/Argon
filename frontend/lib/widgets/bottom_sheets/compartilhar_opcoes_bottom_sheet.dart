@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 
 import 'package:frontend/models/processo_minerario.dart';
 import 'package:frontend/viewmodels/exportacao_viewmodel.dart';
@@ -21,21 +22,21 @@ class CompartilharOpcoesBottomSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               "Compartilhar processo",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF5A81FA),
+                color: context.cores.primary,
               ),
             ),
 
             const SizedBox(height: 20),
 
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.person_outline,
-                color: Color(0xFF5A81FA),
+                color: context.cores.primary,
               ),
               title: const Text("Compartilhar no Argon"),
               subtitle: const Text(
@@ -64,9 +65,9 @@ class CompartilharOpcoesBottomSheet extends StatelessWidget {
             const Divider(),
 
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.ios_share_outlined,
-                color: Color(0xFF5A81FA),
+                color: context.cores.primary,
               ),
               title: Text(
                 exportacaoViewModel.exportando

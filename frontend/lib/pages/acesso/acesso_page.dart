@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 import 'package:frontend/pages/acesso/historico_solicitacoes_acesso_page.dart';
 import 'package:frontend/pages/acesso/solicitacoes_acesso_enviadas_tab.dart';
 import 'package:frontend/pages/acesso/solicitacoes_acesso_tab.dart';
@@ -21,20 +22,20 @@ class AcessoPage extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: const Color(0xFFE0E0E0), width: 2),
+                  border: Border.all(color: context.cores.outlineVariant, width: 2),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.chevron_left,
                   size: 30,
-                  color: Color(0xFF848484),
+                  color: context.cores.onSurfaceVariant,
                 ),
               ),
             ),
           ),
-          bottom: const TabBar(
-            labelColor: Color(0xFF5A81FA),
-            unselectedLabelColor: Color(0xFF848484),
-            indicatorColor: Color(0xFF5A81FA),
+          bottom: TabBar(
+            labelColor: context.cores.primary,
+            unselectedLabelColor: context.cores.onSurfaceVariant,
+            indicatorColor: context.cores.primary,
             tabs: [
               Tab(text: "Pendentes"),
               Tab(text: "Histórico"),

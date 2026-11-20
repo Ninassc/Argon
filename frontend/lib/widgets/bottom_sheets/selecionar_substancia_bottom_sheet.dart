@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 import 'package:frontend/services/processo_service.dart';
 import 'package:frontend/widgets/textfields/pesquisar_input.dart';
 
@@ -58,12 +59,12 @@ class _SelecionarSubstanciaBottomSheetState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               "Selecionar substância",
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF5A81FA),
+                color: context.cores.primary,
               ),
             ),
 

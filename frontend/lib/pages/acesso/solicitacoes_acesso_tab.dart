@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 import 'package:frontend/pages/processo/detalhe_processo_page.dart';
 import 'package:frontend/viewmodels/acesso_viewmodel.dart';
 import 'package:intl/intl.dart';
@@ -82,7 +83,7 @@ class _SolicitacoesAcessoPageState extends State<SolicitacoesAcessoTab> {
                 children: [
                   Text(
                     "*Solicitações de acesso recebidas para aprovar/recusar",
-                    style: TextStyle(color: Color(0xFF848484), fontSize: 13),
+                    style: TextStyle(color: context.cores.onSurfaceVariant, fontSize: 13),
                   ),
                   Expanded(
                     child: ListView.builder(
@@ -92,10 +93,10 @@ class _SolicitacoesAcessoPageState extends State<SolicitacoesAcessoTab> {
 
                         return Card(
                           margin: const EdgeInsets.only(bottom: 16),
-                          color: Colors.white,
+                          color: context.cores.surface,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadiusGeometry.circular(10),
-                            side: BorderSide(color: Color(0xFFE0E0E0)),
+                            side: BorderSide(color: context.cores.outlineVariant),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(16),
@@ -115,8 +116,8 @@ class _SolicitacoesAcessoPageState extends State<SolicitacoesAcessoTab> {
 
                                 Text(
                                   acesso.usuario?.email ?? "",
-                                  style: const TextStyle(
-                                    color: Color(0xFF848484),
+                                  style: TextStyle(
+                                    color: context.cores.onSurfaceVariant,
                                   ),
                                 ),
 
@@ -129,10 +130,10 @@ class _SolicitacoesAcessoPageState extends State<SolicitacoesAcessoTab> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          const Text(
+                                          Text(
                                             "Ativo / Processo",
                                             style: TextStyle(
-                                              color: Color(0xFF848484),
+                                              color: context.cores.onSurfaceVariant,
                                               fontSize: 13,
                                             ),
                                           ),
@@ -179,8 +180,8 @@ class _SolicitacoesAcessoPageState extends State<SolicitacoesAcessoTab> {
                                 if (acesso.dtSolicitacao != null)
                                   Text(
                                     "Solicitado em ${DateFormat('dd/MM/yyyy HH:mm').format(acesso.dtSolicitacao!)}",
-                                    style: const TextStyle(
-                                      color: Color(0xFF848484),
+                                    style: TextStyle(
+                                      color: context.cores.onSurfaceVariant,
                                       fontSize: 13,
                                     ),
                                   ),

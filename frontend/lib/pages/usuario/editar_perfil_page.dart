@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 import 'package:frontend/models/usuario.dart';
 import 'package:frontend/viewmodels/usuario_viewmodel.dart';
 import 'package:frontend/widgets/buttons/buttons.dart';
@@ -95,12 +96,12 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Color(0xFFE0E0E0), width: 2),
+                border: Border.all(color: context.cores.outlineVariant, width: 2),
               ),
               child: Icon(
                 Icons.chevron_left,
                 size: 30,
-                color: Color(0xFF848484),
+                color: context.cores.onSurfaceVariant,
               ),
             ),
           ),
@@ -122,28 +123,28 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 
                 Text(
                   widget.usuario.nome,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF5A81FA),
+                    color: context.cores.primary,
                   ),
                 ),
 
                 Text(
                   widget.usuario.tipoConta.descricao,
-                  style: const TextStyle(color: Colors.grey),
+                  style: TextStyle(color: context.cores.onSurfaceVariant),
                 ),
 
                 const SizedBox(height: 30),
 
-                const Align(
+                Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Informações Pessoais",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF5A81FA),
+                      color: context.cores.primary,
                     ),
                   ),
                 ),
@@ -172,14 +173,14 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 
                 const SizedBox(height: 25),
 
-                const Align(
+                Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Segurança",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF5A81FA),
+                      color: context.cores.primary,
                     ),
                   ),
                 ),
@@ -212,8 +213,8 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
 
                 Buttons(
                   texto: "Salvar Alterações",
-                  corBotao: const Color(0xFF5A81FA),
-                  corTexto: Colors.white,
+                  corBotao: context.cores.primary,
+                  corTexto: context.cores.onPrimary,
                   onPressed: atualizarPerfil,
                 ),
               ],

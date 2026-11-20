@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import '../../viewmodels/documento_viewmodel.dart';
@@ -136,12 +137,12 @@ class _DocumentosAtivoPageState extends State<DocumentosAtivoPage> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Color(0xFFE0E0E0), width: 2),
+                border: Border.all(color: context.cores.outlineVariant, width: 2),
               ),
               child: Icon(
                 Icons.chevron_left,
                 size: 30,
-                color: Color(0xFF848484),
+                color: context.cores.onSurfaceVariant,
               ),
             ),
           ),
@@ -153,8 +154,8 @@ class _DocumentosAtivoPageState extends State<DocumentosAtivoPage> {
               onPressed: documentoViewModel.carregando
                   ? null
                   : selecionarDocumento,
-              backgroundColor: const Color(0xFF5A81FA),
-              foregroundColor: Colors.white,
+              backgroundColor: context.cores.primary,
+              foregroundColor: context.cores.onPrimary,
               icon: const Icon(Icons.upload_file_outlined),
               label: const Text("Anexar documento"),
             )
@@ -175,9 +176,9 @@ class _DocumentosAtivoPageState extends State<DocumentosAtivoPage> {
                   final documento = documentos[index];
 
                   return ListTile(
-                    leading: const Icon(
+                    leading: Icon(
                       Icons.insert_drive_file_outlined,
-                      color: Color(0xFF5A81FA),
+                      color: context.cores.primary,
                     ),
                     title: Text(documento.nomeOriginal),
                     subtitle: Text(

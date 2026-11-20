@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 import 'package:frontend/models/processo_minerario.dart';
 
 class CardProcessoMinerario extends StatelessWidget {
@@ -11,10 +12,10 @@ class CardProcessoMinerario extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Card(
-        color: Colors.white,
+        color: context.cores.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusGeometry.circular(10),
-          side: BorderSide(color: Color(0xFFE0E0E0)),
+          side: BorderSide(color: context.cores.outlineVariant),
         ),
         child: Padding(
           padding: EdgeInsetsGeometry.all(10),
@@ -31,7 +32,7 @@ class CardProcessoMinerario extends StatelessWidget {
                     children: [
                       Text(
                         "Processo",
-                        style: TextStyle(color: Color(0xFF848484)),
+                        style: TextStyle(color: context.cores.onSurfaceVariant),
                       ),
                       Text(processo.processo),
                     ],
@@ -42,7 +43,7 @@ class CardProcessoMinerario extends StatelessWidget {
                     children: [
                       Text(
                         "Substância",
-                        style: TextStyle(color: Color(0xFF848484)),
+                        style: TextStyle(color: context.cores.onSurfaceVariant),
                       ),
                       Text(processo.subs),
                     ],
@@ -51,7 +52,7 @@ class CardProcessoMinerario extends StatelessWidget {
               ),
 
               Icon(
-                Icons.open_in_new, color: Color(0xFF5A81FA), size: 28
+                Icons.open_in_new, color: context.cores.primary, size: 28
               )
             ],
           ),

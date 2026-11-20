@@ -1,5 +1,6 @@
 // tipo_conta.dart
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 
 class TipoContaUsuario extends StatefulWidget {
   final List<String> opcoes;
@@ -37,13 +38,13 @@ class _TipoContaUsuarioState extends State<TipoContaUsuario> {
                     margin: EdgeInsets.only(left: i == 0 ? 0 : 4),
                     decoration: BoxDecoration(
                       color: ativo
-                          ? const Color(0xFF5A81FA)
+                          ? context.cores.primary
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: ativo
-                            ? const Color(0xFF5A81FA)
-                            : const Color(0xFFE0E0E0),
+                            ? context.cores.primary
+                            : context.cores.outlineVariant,
                         width: 1.5,
                       ),
                     ),
@@ -51,7 +52,7 @@ class _TipoContaUsuarioState extends State<TipoContaUsuario> {
                     child: Text(
                       widget.opcoes[i],
                       style: TextStyle(
-                        color: ativo ? Colors.white : Colors.black54,
+                        color: ativo ? context.cores.onPrimary : context.cores.onSurfaceVariant,
                         fontWeight: FontWeight.w500,
                         fontSize: 14,
                       ),

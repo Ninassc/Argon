@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 
 class ActionButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -15,11 +16,11 @@ class ActionButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.zero,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), side: BorderSide(
-            color: Color(0xFFE0E0E0)
+            color: context.cores.outlineVariant
           )),
-          backgroundColor: Colors.white
+          backgroundColor: context.cores.surface
         ),
-        child: Icon(icone, size: 24, color: Color(0xFF848484),),
+        child: Icon(icone, size: 24, color: context.cores.onSurfaceVariant,),
       ),
     );
   }

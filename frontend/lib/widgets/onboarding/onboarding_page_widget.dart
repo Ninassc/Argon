@@ -19,28 +19,19 @@ class OnboardingPageWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(
-            imagem,
-            height: 250,
-          ),
+          Flexible(child: Image.asset(imagem, height: 250)),
 
           const SizedBox(height: 32),
 
           Text(
             titulo,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 16),
 
-          Text(
-            descricao,
-            textAlign: TextAlign.center,
-          ),
+          Text(descricao, textAlign: TextAlign.center),
         ],
       ),
     );

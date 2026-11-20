@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 import 'package:frontend/viewmodels/compartilhamento_processo_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -74,12 +75,12 @@ class _CompartilharProcessoBottomSheetState
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             "Compartilhar processo",
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF5A81FA),
+              color: context.cores.primary,
             ),
           ),
 
@@ -113,7 +114,7 @@ class _CompartilharProcessoBottomSheetState
               Expanded(
                 child: FilledButton(
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF5A81FA),
+                    backgroundColor: context.cores.primary,
                   ),
                   onPressed:
                       compartilhamentoProcessoViewmodel.carregandoCompartilhar

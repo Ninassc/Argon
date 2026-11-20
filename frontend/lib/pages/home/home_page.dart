@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
+import 'package:frontend/widgets/buttons/theme_button.dart';
 import 'package:frontend/models/filtro_processo.dart';
 import 'package:frontend/models/processo_minerario.dart';
 import 'package:frontend/pages/acesso/acesso_page.dart';
@@ -86,6 +88,7 @@ class _HomePageState extends State<HomePage> {
         automaticallyImplyLeading: false,
         centerTitle: true,
         title: Image.asset("assets/images/ArgON.png", height: 42),
+        actions: const [BotaoTema()],
       ),
 
       body: SafeArea(
@@ -161,14 +164,15 @@ class _HomePageState extends State<HomePage> {
                   buttonSize: const Size(56, 56), // botão principal
                   childrenButtonSize: const Size(56, 56),
                   icon: Icons.add,
-                  iconTheme: IconThemeData(color: Colors.white),
+                  iconTheme: IconThemeData(color: context.cores.onPrimary),
                   activeIcon: Icons.remove,
-                  backgroundColor: Color(0xFF5A81FA),
+                  backgroundColor: context.cores.primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadiusGeometry.circular(12),
                   ),
                   children: [
                     buttonSpeedChild(
+                      context,
                       icone: Icons.check_box_outlined,
                       label: 'Cadastrar Ativo Próprio',
                       onTap: () {
@@ -181,6 +185,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     buttonSpeedChild(
+                      context,
                       icone: Icons.bookmark_border,
                       label: 'Salvos',
                       onTap: () {
@@ -193,6 +198,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     buttonSpeedChild(
+                      context,
                       icone: Icons.group_outlined,
                       label: 'Compartilhados',
                       onTap: () {
@@ -206,6 +212,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     buttonSpeedChild(
+                      context,
                       icone: Icons.move_to_inbox_outlined,
                       label: 'Solicitações de Acesso',
                       onTap: () {
@@ -218,6 +225,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     buttonSpeedChild(
+                      context,
                       icone: Icons.person_outline,
                       label: 'Perfil',
                       onTap: () {

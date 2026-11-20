@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 import 'package:frontend/pages/auth/login_page.dart';
 import 'package:frontend/pages/auth/termo_consentimento_page.dart';
 import 'package:frontend/pages/welcome/welcome_page.dart';
@@ -102,12 +103,12 @@ class _CadastroPageState extends State<CadastroPage> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Color(0xFFE0E0E0), width: 2),
+                border: Border.all(color: context.cores.outlineVariant, width: 2),
               ),
               child: Icon(
                 Icons.chevron_left,
                 size: 30,
-                color: Color(0xFF848484),
+                color: context.cores.onSurfaceVariant,
               ),
             ),
           ),
@@ -159,7 +160,7 @@ class _CadastroPageState extends State<CadastroPage> {
                   children: [
                     Checkbox(
                       value: _aceitouTermo,
-                      activeColor: const Color(0xFF5A81FA),
+                      activeColor: context.cores.primary,
                       onChanged: (value) {
                         setState(() {
                           _aceitouTermo = value ?? false;
@@ -182,10 +183,10 @@ class _CadastroPageState extends State<CadastroPage> {
                                 ),
                               );
                             },
-                            child: const Text(
+                            child: Text(
                               "Termo de Consentimento",
                               style: TextStyle(
-                                color: Color(0xFF5A81FA),
+                                color: context.cores.primary,
                                 decoration: TextDecoration.underline,
                               ),
                             ),
@@ -201,14 +202,14 @@ class _CadastroPageState extends State<CadastroPage> {
           
                 Buttons(
                   texto: "Criar Conta",
-                  corBotao: const Color(0xFF5A81FA),
-                  corTexto: Colors.white,
+                  corBotao: context.cores.primary,
+                  corTexto: context.cores.onPrimary,
                   onPressed: _aceitouTermo ? cadastrar : null,
                 ),
                 Buttons(
                   texto: "Já Possuo uma Conta",
-                  corBotao: Colors.white,
-                  corTexto: const Color(0xFF5A81FA),
+                  corBotao: context.cores.surface,
+                  corTexto: context.cores.primary,
                   onPressed: () {
                     Navigator.push(
                       context,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 import 'package:frontend/viewmodels/favorito_viewmodel.dart';
 import 'package:frontend/widgets/textfields/pesquisar_input.dart';
 import 'package:provider/provider.dart';
@@ -53,12 +54,12 @@ class _ProcessosSalvosPageState extends State<ProcessosSalvosPage> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Color(0xFFE0E0E0), width: 2),
+                border: Border.all(color: context.cores.outlineVariant, width: 2),
               ),
               child: Icon(
                 Icons.chevron_left,
                 size: 30,
-                color: Color(0xFF848484),
+                color: context.cores.onSurfaceVariant,
               ),
             ),
           ),
@@ -73,14 +74,14 @@ class _ProcessosSalvosPageState extends State<ProcessosSalvosPage> {
               padding: const EdgeInsetsGeometry.all(24.0),
               child: Column(
                 children: [
-                  const Align(
+                  Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "Processos Salvos",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF5A81FA),
+                        color: context.cores.primary,
                       ),
                     ),
                   ),

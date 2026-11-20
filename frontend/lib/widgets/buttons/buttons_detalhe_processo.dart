@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 
 class ButtonsDetalheProcesso extends StatelessWidget {
   final IconData icone;
@@ -19,11 +20,11 @@ class ButtonsDetalheProcesso extends StatelessWidget {
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.cores.surface,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: const Color(0xFF5A81FA), width: 2),
+          border: Border.all(color: context.cores.primary, width: 2),
         ),
-        child: Icon(icone, color: const Color(0xFF5A81FA), size: 24),
+        child: Icon(icone, color: context.cores.primary, size: 24),
       ),
     );
   }

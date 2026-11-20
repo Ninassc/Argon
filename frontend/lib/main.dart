@@ -5,7 +5,10 @@ import 'package:frontend/viewmodels/compartilhamento_processo_viewmodel.dart';
 import 'package:frontend/viewmodels/exportacao_viewmodel.dart';
 import 'package:frontend/viewmodels/usuario_viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'theme/app_theme.dart';
+import 'theme/theme_preference.dart';
 import 'viewmodels/processo_viewmodel.dart';
 import 'viewmodels/auth_viewmodel.dart';
 import 'viewmodels/favorito_viewmodel.dart';
@@ -13,12 +16,16 @@ import 'viewmodels/acesso_viewmodel.dart';
 import 'viewmodels/ativo_viewmodel.dart';
 import 'viewmodels/documento_viewmodel.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final preferencias = await SharedPreferences.getInstance();
+
   runApp(
     DevicePreview(
       enabled: false,
       builder: (context) => MultiProvider(
         providers: [
+          ChangeNotifierProvider(create: (_) => PreferenciaTema(preferencias)),
           ChangeNotifierProvider(create: (_) => ProcessoViewModel()),
           ChangeNotifierProvider(create: (_) => AuthViewModel()),
           ChangeNotifierProvider(create: (_) => FavoritoViewModel()),
@@ -45,28 +52,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Argon',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF5A81FA)),
-        scaffoldBackgroundColor: Colors.white,
-        appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
-        snackBarTheme: SnackBarThemeData(
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color.fromARGB(255, 168, 173, 187),  
-          contentTextStyle: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 4,
-        ),
-      ),
+      theme: temaArgon(Brightness.light),
+      darkTheme: temaArgon(Brightness.dark),
+      themeMode: context.watch<PreferenciaTema>().modo,
       home: const WelcomePage(),
     );
   }
 }
-
-//#5A81FA

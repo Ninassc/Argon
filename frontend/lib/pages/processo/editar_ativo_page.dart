@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 import 'package:frontend/models/ativo_minerario.dart';
 import 'package:frontend/models/processo_minerario.dart';
 import 'package:frontend/viewmodels/ativo_viewmodel.dart';
@@ -89,12 +90,12 @@ class _EditarAtivoPageState extends State<EditarAtivoPage> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Color(0xFFE0E0E0), width: 2),
+                border: Border.all(color: context.cores.outlineVariant, width: 2),
               ),
               child: Icon(
                 Icons.chevron_left,
                 size: 30,
-                color: Color(0xFF848484),
+                color: context.cores.onSurfaceVariant,
               ),
             ),
           ),
@@ -113,15 +114,15 @@ class _EditarAtivoPageState extends State<EditarAtivoPage> {
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
-                    color: Color(0xFFDBE3FE),
+                    color: context.cores.primaryContainer,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.construction, color: Color(0xFF848484)),
+                  child: Icon(Icons.construction, color: context.cores.onSurfaceVariant),
                 ),
                 Text(
                   widget.processo.processo,
                   style: TextStyle(
-                    color: Color(0xFF5A81FA),
+                    color: context.cores.primary,
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                   ),
@@ -130,12 +131,12 @@ class _EditarAtivoPageState extends State<EditarAtivoPage> {
             ),
             SizedBox(height: 20),
 
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 "Descrição",
                 style: TextStyle(
-                  color: Color(0xFF848484),
+                  color: context.cores.onSurfaceVariant,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -148,22 +149,22 @@ class _EditarAtivoPageState extends State<EditarAtivoPage> {
               maxLines: 6,
               decoration: InputDecoration(
                 hintText: "Escreva a descrição...",
-                hintStyle: const TextStyle(color: Color(0xFFBDBDBD)),
+                hintStyle: TextStyle(color: context.cores.onSurfaceVariant),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: context.cores.surface,
                 contentPadding: const EdgeInsets.all(16),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                  borderSide: BorderSide(color: context.cores.outlineVariant),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                  borderSide: BorderSide(color: context.cores.outlineVariant),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(
-                    color: Color(0xFF5A81FA),
+                  borderSide: BorderSide(
+                    color: context.cores.primary,
                     width: 2,
                   ),
                 ),
@@ -177,8 +178,8 @@ class _EditarAtivoPageState extends State<EditarAtivoPage> {
                     texto: ativoViewModel.salvando
                         ? "Salvando..."
                         : "Salvar e Sair",
-                    corBotao: const Color(0xFF5A81FA),
-                    corTexto: Colors.white,
+                    corBotao: context.cores.primary,
+                    corTexto: context.cores.onPrimary,
                     onPressed: () {
                       if (!ativoViewModel.salvando) {
                         salvarAlteracoes();

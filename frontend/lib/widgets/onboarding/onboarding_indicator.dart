@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 
 class OnboardingIndicator extends StatelessWidget {
   final int paginaAtual;
@@ -21,8 +22,8 @@ class OnboardingIndicator extends StatelessWidget {
           height: 8,
           decoration: BoxDecoration(
             color: paginaAtual == index
-                ? const Color(0xFF5A81FA)
-                : Colors.grey.shade300,
+                ? context.cores.primary
+                : context.cores.outlineVariant,
             borderRadius: BorderRadius.circular(20),
           ),
         ),

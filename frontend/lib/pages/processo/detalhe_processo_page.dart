@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 import 'package:frontend/models/processo_minerario.dart';
 import 'package:frontend/pages/documento/documentos_ativo_page.dart';
 import 'package:frontend/pages/processo/editar_ativo_page.dart';
@@ -15,7 +16,7 @@ import '../../viewmodels/auth_viewmodel.dart';
 import '../../viewmodels/favorito_viewmodel.dart';
 import '../../viewmodels/acesso_viewmodel.dart';
 import '../../viewmodels/ativo_viewmodel.dart';
-import '../../viewmodels/documento_viewmodel.dart';
+
 
 import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
@@ -258,12 +259,12 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     "Análise com IA",
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF5A81FA),
+                      color: context.cores.primary,
                     ),
                   ),
 
@@ -315,7 +316,7 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                   const SizedBox(height: 8),
                   Text(
                     analise["observacao"] ?? "",
-                    style: const TextStyle(color: Color(0xFF848484)),
+                    style: TextStyle(color: context.cores.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -367,12 +368,12 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Color(0xFFE0E0E0), width: 2),
+                border: Border.all(color: context.cores.outlineVariant, width: 2),
               ),
               child: Icon(
                 Icons.chevron_left,
                 size: 30,
-                color: Color(0xFF848484),
+                color: context.cores.onSurfaceVariant,
               ),
             ),
           ),
@@ -396,77 +397,77 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                         children: [
                           SelectableText(
                             "Processo",
-                            style: TextStyle(color: Color(0xFF848484)),
+                            style: TextStyle(color: context.cores.onSurfaceVariant),
                           ),
                           SelectableText(processo.processo),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "Substância",
-                            style: TextStyle(color: Color(0xFF848484)),
+                            style: TextStyle(color: context.cores.onSurfaceVariant),
                           ),
                           SelectableText(processo.subs),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "Ano",
-                            style: TextStyle(color: Color(0xFF848484)),
+                            style: TextStyle(color: context.cores.onSurfaceVariant),
                           ),
                           SelectableText(processo.ano),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "Área",
-                            style: TextStyle(color: Color(0xFF848484)),
+                            style: TextStyle(color: context.cores.onSurfaceVariant),
                           ),
                           SelectableText("${processo.areaHa} ha"),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "Fase",
-                            style: TextStyle(color: Color(0xFF848484)),
+                            style: TextStyle(color: context.cores.onSurfaceVariant),
                           ),
                           SelectableText(processo.fase),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "Último Evento",
-                            style: TextStyle(color: Color(0xFF848484)),
+                            style: TextStyle(color: context.cores.onSurfaceVariant),
                           ),
                           SelectableText(processo.ultEvento),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "Nome",
-                            style: TextStyle(color: Color(0xFF848484)),
+                            style: TextStyle(color: context.cores.onSurfaceVariant),
                           ),
                           SelectableText(processo.nome),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "Uso",
-                            style: TextStyle(color: Color(0xFF848484)),
+                            style: TextStyle(color: context.cores.onSurfaceVariant),
                           ),
                           SelectableText(processo.uso),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "DSProcesso",
-                            style: TextStyle(color: Color(0xFF848484)),
+                            style: TextStyle(color: context.cores.onSurfaceVariant),
                           ),
                           SelectableText(processo.dsProcesso),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "ID Processo",
-                            style: TextStyle(color: Color(0xFF848484)),
+                            style: TextStyle(color: context.cores.onSurfaceVariant),
                           ),
                           SelectableText(processo.idAnm),
 
                           const SizedBox(height: 12),
                           SelectableText(
                             "ID",
-                            style: TextStyle(color: Color(0xFF848484)),
+                            style: TextStyle(color: context.cores.onSurfaceVariant),
                           ),
                           SelectableText(processo.idProcesso.toString()),
 
@@ -478,14 +479,14 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                             const SizedBox(height: 12),
                             SelectableText(
                               "Descrição",
-                              style: TextStyle(color: Color(0xFF848484)),
+                              style: TextStyle(color: context.cores.onSurfaceVariant),
                             ),
                             SelectableText(ativo.descricao),
 
                             const SizedBox(height: 12),
-                            const SelectableText(
+                            SelectableText(
                               "Titular",
-                              style: TextStyle(color: Color(0xFF848484)),
+                              style: TextStyle(color: context.cores.onSurfaceVariant),
                             ),
                             Row(
                               spacing: 10,
@@ -504,9 +505,9 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                                   },
                                   child: Text(
                                     "Ver perfil",
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       decoration: TextDecoration.underline,
-                                      color: Color(0xFF5A81FA),
+                                      color: context.cores.primary,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -517,7 +518,7 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                             const SizedBox(height: 12),
                             SelectableText(
                               "Data de Cadastro",
-                              style: TextStyle(color: Color(0xFF848484)),
+                              style: TextStyle(color: context.cores.onSurfaceVariant),
                             ),
                             SelectableText(
                               DateFormat(
@@ -616,8 +617,8 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
               ),
               Buttons(
                 texto: "Analisar com IA",
-                corBotao: const Color(0xFF5A81FA),
-                corTexto: Colors.white,
+                corBotao: context.cores.primary,
+                corTexto: context.cores.onPrimary,
                 onPressed: analisarComIa,
               ),
 
@@ -629,24 +630,24 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                 else if (statusAcesso == null)
                   Buttons(
                     texto: "Solicitar Acesso",
-                    corBotao: const Color(0xFF5A81FA),
-                    corTexto: Colors.white,
+                    corBotao: context.cores.primary,
+                    corTexto: context.cores.onPrimary,
                     onPressed: solicitarAcesso,
                   )
                 else if (statusAcesso == "pendente")
-                  const Text(
+                  Text(
                     "Solicitação de acesso pendente",
-                    style: TextStyle(color: Color(0xFF848484)),
+                    style: TextStyle(color: context.cores.onSurfaceVariant),
                   )
                 else if (statusAcesso == "aprovado")
-                  const Text(
+                  Text(
                     "Você possui acesso a este ativo",
-                    style: TextStyle(color: Color(0xFF848484)),
+                    style: TextStyle(color: context.cores.onSurfaceVariant),
                   )
                 else if (statusAcesso == "recusado")
-                  const Text(
+                  Text(
                     "Solicitação de acesso recusada",
-                    style: TextStyle(color: Color(0xFF848484)),
+                    style: TextStyle(color: context.cores.onSurfaceVariant),
                   ),
 
                 const SizedBox(height: 12),
@@ -656,8 +657,8 @@ class _DetalheProcessoPageState extends State<DetalheProcessoPage> {
                 const SizedBox(height: 10),
                 Buttons(
                   texto: "Cadastrar Ativo",
-                  corBotao: const Color(0xFF5A81FA),
-                  corTexto: Colors.white,
+                  corBotao: context.cores.primary,
+                  corTexto: context.cores.onPrimary,
                   onPressed: cadastrarAtivo,
                 ),
               ],

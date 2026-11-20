@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/theme/app_theme.dart';
 
 class CampoInput extends StatelessWidget {
   final TextEditingController controller;
@@ -20,14 +21,17 @@ class CampoInput extends StatelessWidget {
           obscureText: obscureText,
           decoration: InputDecoration(
             hintText: label,
-            hintStyle: TextStyle(fontSize: 16.0, color: Color(0xFFE0E0E0)),
+            hintStyle: TextStyle(
+              fontSize: 16.0,
+              color: context.cores.onSurfaceVariant,
+            ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Color(0xFFE0E0E0)),
+              borderSide: BorderSide(color: context.cores.outlineVariant),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Color(0xFFE0E0E0)),
+              borderSide: BorderSide(color: context.cores.primary),
             ),
           ),
         ),
